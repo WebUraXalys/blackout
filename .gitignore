@@ -1,2 +1,9 @@
 *.backup
 *.env
+.idea/
+.fleet/
+*.pyc
+*.pdb
+**/*.rs.bk
+debug/
+target/
