@@ -1,4 +1,37 @@
 # blackout
 
----
-Моніторинг відключень електроенергії в одному додатку. І... в одному веб-сайті... *(що ми взагалі тут робимо???)*... У нас взагалі не одна єдина річ. Однак ми не здаємось і страємось ~~розібратсь в цьому всьому~~ об'єднати все до чогось спільного, щоб зробити ~~крутий~~ робочий продукт *(давайте для початку зробимо так щоб воно хочаб запустилось, а потім вже будемо будемо думати про крутий)*.
+## How to run
+1. Clone repository
+```
+git clone https://github.com/WebUraXalys/blackout.git
+```
+
+2. Switch directory
+```
+cd blackout
+```
+
+### Linux, MacOS next steps:
+
+3. Install requirements
+```
+pip3 install -r requirements.txt
+```
+
+4. Run app
+```
+python3 blackout/manage.py runserver
+```
+
+
+### Windows next steps:
+
+3. Install requirements
+```
+pip install -r requirements.txt
+```
+
+4. Run app
+```
+python blackout/manage.py runserver
+```
