@@ -8,4 +8,5 @@
 debug/
 target/
 venv/
+env/
 *.sqlite3
