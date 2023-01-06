@@ -40,6 +40,7 @@ for i in index:
 
         info = Street.create(name=street, OTG=OTG, city=town, region=reg)
         for building in buildings_list:
+            building = building.replace(',', ' ')
             build = Building.create(address=str(building), street=info, group=i)
 
         print(f"Запис №{a} внесено до бази даних")
