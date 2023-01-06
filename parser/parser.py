@@ -45,7 +45,7 @@ def scrap_data(page):
         other = row.find_all("td")
         buildings = []
         for building in other[3].text.split(", "):
-            if building is not "":
+            if building != "":
                 buildings.append(building)
         j = {
             "district": row.find("th").text,
@@ -62,7 +62,7 @@ def scrap_data(page):
         for x in data:
             print(x["buildings"], end=" ")
             print("")
-        #print(data)
+        print(data)
 
 
 def parse():
