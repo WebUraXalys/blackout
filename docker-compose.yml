@@ -12,6 +12,7 @@ services:
       - ./blackout:/blackout
     # ports:
     #   - 8000:8000
+    tty: true
   nginx:
     image: nginx:stable
     depends_on:
@@ -24,7 +25,7 @@ services:
     image: redis:bullseye
   celery:
     build: ./blackout
-    command: celery -A blackout worker -l INFO
+    command: celery -A blackout worker -l INFO --pool=gevent
     depends_on:
       - redis
     volumes:
