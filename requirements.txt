@@ -7,3 +7,7 @@ python-dotenv==0.21.0
 requests==2.28.1
 sqlparse==0.4.3
 urllib3==1.26.13
+pandas==1.5.2
+openpyxl==3.0.10
+numpy==1.24.1
+peewee==3.15.4

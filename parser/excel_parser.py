@@ -1,47 +1,57 @@
 import pandas
 from peewee import *
 
-from models import Street, Building, Region
-
-
-# Change path to the database when Django will create its own one
-db = SqliteDatabase('../blackout/blackout/sqlite3.db')
-db.connect()
-db.create_tables([Region, Street, Building])
-
-# Uncomment if region isn't in database
-# lviv = Region.create(name="Lviv")
-
+from models import Street, Building, Region, db
 
 group = input("Введіть через пробіл номери груп, які потрібно спарсити: ")
 index = group.split()
-reg = Region.get(Region.name == "Lviv")
 
+db.connect()
+db.create_tables([Region, Street, Building])
+
+if Region.select(Region.name == "Lviv").count() < 1:
+    reg = Region.create(name="Lviv")
+else:
+    reg = Region.get(name="Lviv")
 
 for i in index:
-    sheets = pandas.read_excel(f"excel/Grupa_GPV_{i}.xlsx")
-    sheet = sheets.dropna(subset=['Вулиця'])  # Excluding rows with empty cell "Street"
+    table = pandas.read_excel(f"excel/Grupa_GPV_{i}.xlsx")
+    sheet = table.dropna(subset=['Вулиця'])  # Excluding rows with empty cell "Street"
+
     a = 0
     while True:
+        buildings_list = []
         try:
             OTG = sheet['ОТГ'].iloc[a]
-            town = sheet['Місто'].iloc[a]
+            city = sheet['Місто'].iloc[a]
             street = sheet['Вулиця'].iloc[a]
             try:
-                buildings = sheet['Будинок'].iloc[a]
+                buildings = sheet['Будинок'].iloc[a]  # This cell might be empty
                 buildings_list = buildings.split()
             except:
-                buildings_list = []
                 buildings_list.append(buildings)
             a += 1
 
         except:
             break
 
-        info = Street.create(name=street, OTG=OTG, city=town, region=reg)
+        try:
+            # Looking for existing record in DB
+            record = Street.get(Street.name == street, Street.OTG == OTG, Street.city == city, Street.region == reg)
+        except:
+            # Creating new record
+            record = Street.create(name=street, OTG=OTG, city=city, region=reg)
+
         for building in buildings_list:
-            building = building.replace(',', ' ')
-            build = Building.create(address=str(building), street=info, group=i)
+            building = str(building).replace(',', ' ')
+            try:
+                # Looking for existing record in DB and updating it
+                structure = Building.get(Building.address == str(building), Building.street == record)
+                structure.group = i
+                structure.save()
+            except:
+                # Creating new record
+                structure = Building.create(address=building, street=record, group=i)
 
         print(f"Запис №{a} внесено до бази даних")
         print('_________________________________________________________________________')

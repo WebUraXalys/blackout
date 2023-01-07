@@ -1,7 +1,7 @@
 from peewee import *  # peewee==3.15.4
 
 # Change path to the database when Django will create its own one
-db = SqliteDatabase('../blackout/blackout/sqlite3.db')
+db = SqliteDatabase('../blackout/db.sqlite3')
 
 
 class BaseModel(Model):
