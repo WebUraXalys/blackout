@@ -19,7 +19,7 @@ for i in index:
     sheet = table.dropna(subset=['Вулиця'])  # Excluding rows with empty cell "Street"
 
     a = 0
-    if i == 3:
+    if i == "3":
         buildings_list = []
         while True:
             try:
