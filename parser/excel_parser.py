@@ -37,6 +37,6 @@ for i in index:
                     # Creating new record
                     record = Street.create(name=s, OTG=OTG, city=city, region=reg)
         
-        a += 1
+            a += 1
         print(f"Запис №{a} внесено до бази даних")
         print('_________________________________________________________________________')
