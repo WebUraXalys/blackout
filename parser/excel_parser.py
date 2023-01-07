@@ -30,6 +30,7 @@ for i in index:
                 break
             street_list = street.split()
             for s in street_list:
+                s = s.replace(",", " ")
                 try:
                     # Looking for existing record in DB
                     record = Street.get(Street.name == s, Street.OTG == OTG, Street.city == city, Street.region == reg)
