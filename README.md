@@ -11,27 +11,9 @@ git clone https://github.com/WebUraXalys/blackout.git
 cd blackout
 ```
 
-### Linux, MacOS next steps:
-
-3. Install requirements
+3. Run with docker-compose
 ```
-pip3 install -r requirements.txt
+docker compose up
 ```
 
-4. Run app
-```
-python3 blackout/manage.py runserver
-```
-
-
-### Windows next steps:
-
-3. Install requirements
-```
-pip install -r requirements.txt
-```
-
-4. Run app
-```
-python blackout/manage.py runserver
-```
+4. Appliaction will appear on localhost:80
