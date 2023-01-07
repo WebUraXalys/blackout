@@ -33,16 +33,17 @@ for i in index:
                 break
             try:
                 street_list = street.split()
-                for s in street_list:
-                    s = s.replace(",", " ")
-                    try:
-                        # Looking for existing record in DB
-                        record = Street.get(Street.name == s, Street.OTG == OTG, Street.city == city, Street.region == reg)
-                    except:
-                        # Creating new record
-                        record = Street.create(name=s, OTG=OTG, city=city, region=reg)
             except:
                 record = Street.create(OTG=OTG, city=city, region=reg)
+            for s in street_list:
+                s = s.replace(",", " ")
+                try:
+                    # Looking for existing record in DB
+                    record = Street.get(Street.name == s, Street.OTG == OTG, Street.city == city, Street.region == reg)
+                except:
+                    # Creating new record
+                    record = Street.create(name=s, OTG=OTG, city=city, region=reg)
+            
                     
 
             a += 1
