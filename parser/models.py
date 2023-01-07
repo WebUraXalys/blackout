@@ -14,7 +14,7 @@ class Region(BaseModel):
 
 
 class Street(BaseModel):
-    name = CharField()
+    name = CharField(null=True)
     city = CharField()
     OTG = CharField()
     region = ForeignKeyField(Region, backref="addresses")
