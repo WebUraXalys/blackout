@@ -19,9 +19,9 @@ for i in index:
     sheet = table.dropna(subset=['Вулиця'])  # Excluding rows with empty cell "Street"
 
     a = 0
-    while True:
+    if i == 3:
         buildings_list = []
-        if i == 3:
+        while True:
             try:
                 OTG = sheet['ОТГ'].iloc[a]
                 city = sheet['Місто'].iloc[a]
