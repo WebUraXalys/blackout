@@ -21,37 +21,21 @@ for i in index:
     a = 0
     while True:
         buildings_list = []
-        try:
-            OTG = sheet['ОТГ'].iloc[a]
-            city = sheet['Місто'].iloc[a]
-            street = sheet['Вулиця'].iloc[a]
+        if i == 3:
             try:
-                buildings = sheet['Будинок'].iloc[a]  # This cell might be empty
-                buildings_list = buildings.split()
+                OTG = sheet['ОТГ'].iloc[a]
+                city = sheet['Місто'].iloc[a]
+                street = sheet['Вулиця'].iloc[a]
             except:
-                buildings_list.append(buildings)
-            a += 1
-
-        except:
-            break
-
-        try:
-            # Looking for existing record in DB
-            record = Street.get(Street.name == street, Street.OTG == OTG, Street.city == city, Street.region == reg)
-        except:
-            # Creating new record
-            record = Street.create(name=street, OTG=OTG, city=city, region=reg)
-
-        for building in buildings_list:
-            building = str(building).replace(',', ' ')
-            try:
-                # Looking for existing record in DB and updating it
-                structure = Building.get(Building.address == str(building), Building.street == record)
-                structure.group = i
-                structure.save()
-            except:
-                # Creating new record
-                structure = Building.create(address=building, street=record, group=i)
+                break
+            street_list = street.split()
+            for s in street_list:
+                try:
+                    # Looking for existing record in DB
+                    record = Street.get(Street.name == s, Street.OTG == OTG, Street.city == city, Street.region == reg)
+                except:
+                    # Creating new record
+                    record = Street.create(name=s, OTG=OTG, city=city, region=reg)
 
         print(f"Запис №{a} внесено до бази даних")
         print('_________________________________________________________________________')
