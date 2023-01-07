@@ -29,6 +29,7 @@ for i in index:
             except:
                 break
             street_list = street.split()
+            a += 1
             for s in street_list:
                 try:
                     # Looking for existing record in DB
@@ -36,7 +37,6 @@ for i in index:
                 except:
                     # Creating new record
                     record = Street.create(name=s, OTG=OTG, city=city, region=reg)
-            a += 1
 
         print(f"Запис №{a} внесено до бази даних")
         print('_________________________________________________________________________')
