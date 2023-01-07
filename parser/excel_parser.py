@@ -1,4 +1,5 @@
 import pandas
+import numpy
 from peewee import *
 
 from models import Street, Building, Region, db
@@ -16,10 +17,7 @@ else:
 
 for i in index:
     table = pandas.read_excel(f"excel/Grupa_GPV_{i}.xlsx")
-    if i != "3":
-        sheet = table.dropna(subset=['Вулиця'])  # Excluding rows with empty cell "Street"
-    else:
-        sheet = table  # Third group has cells where cities don't have streets but are represented by single row
+    sheet = table.dropna(subset=['Вулиця'])  # Excluding rows with empty cell "Street"
 
     a = 0
     if i == "3":
@@ -31,23 +29,35 @@ for i in index:
                 street = sheet['Вулиця'].iloc[a]
             except:
                 break
-            try:
-                street_list = street.split()
-                for s in street_list:
-                    s = s.replace(",", " ")
-                    try:
-                        # Looking for existing record in DB
-                        record = Street.get(Street.name == s, Street.OTG == OTG, Street.city == city, Street.region == reg)
-                    except:
-                        # Creating new record
-                        record = Street.create(name=s, OTG=OTG, city=city, region=reg)
-            except:
-                record = Street.create(OTG=OTG, city=city, region=reg)
-                    
+            street_list = street.split()
+            for s in street_list:
+                s = s.replace(",", " ")
+                try:
+                    # Looking for existing record in DB
+                    record = Street.get(Street.name == s, Street.OTG == OTG, Street.city == city, Street.region == reg)
+                except:
+                    # Creating new record
+                    record = Street.create(name=s, OTG=OTG, city=city, region=reg)
 
             a += 1
             print(f"Запис №{a} внесено до бази даних")
             print('_________________________________________________________________________')
+
+        sheet = table[table.Вулиця.isna()]  # Looking for empty cells
+        a = 0
+        while True:
+            try:
+                OTG = sheet['ОТГ'].iloc[a]
+                city = sheet['Місто'].iloc[a]
+                a += 1
+            except:
+                break
+            try:
+                # Looking for existing record in DB
+                record = Street.get(Street.OTG == OTG, Street.city == city, Street.region == reg)
+            except:
+                # Creating new record
+                record = Street.create(OTG=OTG, city=city, region=reg)
     else:
         while True:
             buildings_list = []
@@ -85,3 +95,4 @@ for i in index:
 
             print(f"Запис №{a} внесено до бази даних")
             print('_________________________________________________________________________')
+sheet = numpy.where(pandas.isnull(sheet))
