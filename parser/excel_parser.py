@@ -24,12 +24,12 @@ for i in index:
         buildings_list = []
         while True:
             try:
-                OTG = sheet['ОТГ'].iloc[a]
-                city = sheet['Місто'].iloc[a]
-                street = sheet['Вулиця'].iloc[a]
+                OTG = sheet['ОТГ'].iloc[a].title()
+                city = sheet['Місто'].iloc[a].title()
+                street = sheet['Вулиця'].iloc[a].title()
             except:
                 break
-            street_list = street.split()
+            street_list = street.split(",")
             for s in street_list:
                 s = s.replace(",", " ")
                 try:
@@ -47,8 +47,8 @@ for i in index:
         a = 0
         while True:
             try:
-                OTG = sheet['ОТГ'].iloc[a]
-                city = sheet['Місто'].iloc[a]
+                OTG = sheet['ОТГ'].iloc[a].title()
+                city = sheet['Місто'].iloc[a].title()
                 a += 1
             except:
                 break
@@ -57,14 +57,17 @@ for i in index:
                 record = Street.get(Street.OTG == OTG, Street.city == city, Street.region == reg)
             except:
                 # Creating new record
-                record = Street.create(OTG=OTG, city=city, region=reg)
+                record = Street.create(name="None", OTG=OTG, city=city, region=reg)
+                print(f"Запис №{a} внесено до бази даних")
+                print('_________________________________________________________________________')
+
     else:
         while True:
             buildings_list = []
             try:
-                OTG = sheet['ОТГ'].iloc[a]
-                city = sheet['Місто'].iloc[a]
-                street = sheet['Вулиця'].iloc[a]
+                OTG = sheet['ОТГ'].iloc[a].title()
+                city = sheet['Місто'].iloc[a].title()
+                street = sheet['Вулиця'].iloc[a].title()
                 try:
                     buildings = sheet['Будинок'].iloc[a]  # This cell might be empty
                     buildings_list = buildings.split()
@@ -84,6 +87,7 @@ for i in index:
 
             for building in buildings_list:
                 building = str(building).replace(',', ' ')
+                building = building.title()
                 try:
                     # Looking for existing record in DB and updating it
                     structure = Building.get(Building.address == str(building), Building.street == record)

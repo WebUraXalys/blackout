@@ -71,8 +71,15 @@ def parse():
     return data
 
 
+def save_data(data):
+    for j in data:
+        print(j)
+        print("___________________________")
+
+
 if __name__ == "__main__":
     start = datetime.now()
-    parse()
+    data = parse()
+    save_data(data)
     end = datetime.now()
     print(f"(parser): Finished in {end - start}")
