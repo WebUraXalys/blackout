@@ -2,6 +2,9 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 import requests
 import orjson
+import peewee
+
+from models import db, Region, Street, Building
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:107.0) Gecko/20100101 Firefox/107.0",
@@ -62,7 +65,7 @@ def scrap_data(page):
         for x in data:
             print(x["buildings"], end=" ")
             print("")
-        #print(data)
+    return data
 
 
 def parse():
@@ -72,9 +75,29 @@ def parse():
 
 
 def save_data(data):
-    for j in data:
-        print(j)
-        print("___________________________")
+    db.connect()
+    region = Region.get(name="Lviv")
+    for x in data:
+        otg = x['otg']
+        city = x['np']
+        street = x['street']
+        try:
+            street = Street.get(city=city, OTG=otg, name=street)
+        except:
+            street = Street.create(name=street, city=city, OTG=otg, region=region)
+            print(street)
+        buildings=x['buildings']
+        save_buildings(buildings, street)
+
+
+def save_buildings(buildings, street):
+    for building in buildings:
+        try:
+            structure = Building.get(address=building, street=street)
+            print(f"Будинок номер {building} вже є в базі")
+        except:
+            structure = Building.create(address=building, street=street)
+            print(f"Будинок номер {building} додано")
 
 
 if __name__ == "__main__":
