@@ -15,7 +15,7 @@ def get_csrftoken(page_text: str):
     return inp.get("value", None)
 
 
-def step_to_group(adress_data: list):
+def step_to_group(address_data: list):
     session = requests.Session()
     session.headers.update(HEADERS)
     for id_step, step in enumerate(STEP_BY):
@@ -26,7 +26,7 @@ def step_to_group(adress_data: list):
             csrftoken = get_csrftoken(req.text)
             r = session.post(f"{POWEROFF_URL}{step[0]}", data={
                 "csrfmiddlewaretoken": csrftoken,
-                step[1]: adress_data[id_step],
+                step[1]: address_data[id_step],
                 "q": "Далі"
             })
             if not r.ok:
@@ -38,7 +38,7 @@ def step_to_group(adress_data: list):
             return req.text
 
 
-def check_group(city: str, street: str, building: str) -> int:
+def get_group_by_address(city: str, street: str, building: str) -> int:
     group_page = step_to_group([city, street, building])
     if group_page is None:
         print("Такої адреси не знайдено")
@@ -58,4 +58,4 @@ if __name__ == "__main__":
         street = input("Вулиця: ")
         building = input("Будинок: ")
 
-        print(f"Виявлено групу: {check_group(city, street, building)}")
+        print(f"Виявлено групу: {get_group_by_address(city, street, building)}")
