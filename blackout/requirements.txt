@@ -3,3 +3,6 @@ gunicorn
 celery
 gevent
 redis
+bs4
+requests
+orjson

@@ -2,6 +2,7 @@
 *.env
 .idea/
 .fleet/
+__pycache__/
 *.pyc
 *.pdb
 **/*.rs.bk
@@ -11,3 +12,4 @@ venv/
 env/
 *.sqlite3
 *.sqlite3-journal
+migrations/

@@ -2,9 +2,14 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 import requests
 import orjson
-import peewee
+from django.conf import settings
+import django
 
-from models import db, Region, Street, Building
+from blackout.blackout.settings import DATABASES, INSTALLED_APPS
+settings.configure(DATABASES=DATABASES, INSTALLED_APPS=INSTALLED_APPS)
+django.setup()
+
+import blackout.parserapp.models as db
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:107.0) Gecko/20100101 Firefox/107.0",
@@ -48,7 +53,7 @@ def scrap_data(page):
         other = row.find_all("td")
         buildings = []
         for building in other[3].text.split(", "):
-            if building is not "":
+            if building != "":
                 buildings.append(building)
         j = {
             "district": row.find("th").text,
@@ -75,16 +80,15 @@ def parse():
 
 
 def save_data(data):
-    db.connect()
-    region = Region.get(name="Lviv")
+    region = db.Region.objects.get(name="Lviv")
     for x in data:
         otg = x['otg']
         city = x['np']
         street = x['street']
         try:
-            street = Street.get(city=city, OTG=otg, name=street)
+            street = db.Street.objects.get(city=city, OTG=otg, name=street)
         except:
-            street = Street.create(name=street, city=city, OTG=otg, region=region)
+            street = db.Street.objects.create(name=street, city=city, OTG=otg, region=region)
             print(street)
         buildings=x['buildings']
         save_buildings(buildings, street)
@@ -93,10 +97,10 @@ def save_data(data):
 def save_buildings(buildings, street):
     for building in buildings:
         try:
-            structure = Building.get(address=building, street=street)
+            structure = db.Building.objects.get(address=building, street=street)
             print(f"Будинок номер {building} вже є в базі")
         except:
-            structure = Building.create(address=building, street=street)
+            structure = db.Building.objects.create(address=building, street=street)
             print(f"Будинок номер {building} додано")
 
 
