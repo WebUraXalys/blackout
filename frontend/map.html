@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+   <link rel="stylesheet" href="style/style.css">
+   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+      integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+      integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+   <script src="leaflet-heat.js"></script>
+</head>
+
+<body>
+   <main class="main main_mobile">
+      <h1>Blackout</h1>
+      <hr>
+      </hr>
+      <div class="desktop">
+        <div id="map">
+        </div>
+      </div>
+      <hr>
+      </hr>
+      <div class="nav_bar">
+         <nav class="menu">
+            <a href="index.html" class="menu_a">Головна</a>
+            <a href="#" class="menu_a">Таймер</a>
+            <a href="#" class="menu_a">Карта</a>
+            <a href="#" class="menu_a">Зустріч</a>
+         </nav>
+      </div>
+   </main>
+   <script src="script/main.js"></script>
+   <script>
+      var map = L.map('map').setView([49.287, 23.4162], 13);
+
+      L.tileLayer('//tiles.openstreetmap.org.ua/osm/{z}/{x}/{y}.png', {
+         minZoom: 6,
+         maxZoom: 18,
+         // attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright/">OpenStreetMap</a> contributors, <a href="http://opendatacommons.org/licenses/odbl/">ODbL</a>',
+         id: 'base'
+      }).addTo(map);
+
+      var heat = L.heatLayer(heat_points, {
+         radius: 12,
+         blur: 25,
+         maxZoom: 11
+      }).addTo(map).setOpacity(255);
+
+      var heat = L.heatLayer(heat_points, {radius:12,blur:25,maxZoom:11}).addTo(map).setOpacity(255);
+   </script>
+
+</body>
+
+</html>
