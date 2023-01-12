@@ -1,0 +1,41 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+.App {
+    width: 390px;
+    height: 844px;
+    margin: auto;
+    text-align: center;
+    background-color: #000;
+}
+.upper-logo {
+    position: relative;
+    top: 26px;
+}
+.bottom-menu {
+    bottom: 26px;
+    display: flex;
+    position: fixed;
+    width: 100%;
+    overflow-x: auto;
+}
+.menu-item{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: center;
+    overflow: hidden;
+    white-space: nowrap;
+    align-items: center;
+    font-family: "Inter", sans-serif;
+
+}
+span.menu-description {
+    padding-top: 4px;
+}
+a {
+    text-decoration: none;
+    color: #8E8E93;
+}
