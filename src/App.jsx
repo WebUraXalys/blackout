@@ -1,6 +1,6 @@
 /* import { useState } from 'react' */
 import './styles/App.css'
-import MenuItem from "./components/MenuItem.jsx";
+import MenuItem from "./components/MenuItem.js";
 import home from "./assets/home-v.svg"
 import meet from "./assets/meet-v.svg"
 import map from "./assets/map-v.svg"
