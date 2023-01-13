@@ -1,0 +1,47 @@
+body{
+   margin: 0;
+   background-color: #000000;
+}
+.logo{
+   margin-top: 5px;
+   margin-left: 25px;
+}
+.header_line{
+   width: 99.8%;
+   margin-top: 3px;
+   border: 1px solid #1C1C1E;
+   box-shadow: -1px -1px 4px #48484A;
+} 
+.footer{
+   position: absolute;
+   bottom: 5px;
+   width: 99.8%;
+}
+.footer_line{
+   width: 99.8%;
+   border: 1px solid #1C1C1E;
+   box-shadow: -1px -1px 4px #48484A;
+}
+.menu{
+   display: flex;
+   justify-content: center;
+}
+.menu_el{
+   margin-right: 36px;
+}
+.svg_menu{
+   /* margin: 0 2.5px 0 2.5px; */
+   margin: auto;
+}
+.menu_text{
+   width: 41px;
+   height: 13px;
+   font-family: 'Inter';
+   font-style: normal;
+   font-weight: 400;
+   font-size: 11px;
+   line-height: 13px;
+   color: #8E8E93;
+   text-align: center;
+   margin-top: 0;
+}
