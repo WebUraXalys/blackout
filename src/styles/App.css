@@ -5,8 +5,9 @@
 }
 .App {
     width: 390px;
-    height: 844px;
-    margin: auto;
+    border-radius: 10px;
+    height: 644px;
+    margin: 20px auto;
     text-align: center;
     background-color: #000;
 }
@@ -15,19 +16,17 @@
     top: 26px;
 }
 .bottom-menu {
-    bottom: 26px;
+    bottom: 36px;
     display: flex;
     position: fixed;
-    width: 100%;
+    width: 390px;
+    justify-content: space-around;
     overflow-x: auto;
 }
 .menu-item{
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
     justify-content: center;
-    overflow: hidden;
-    white-space: nowrap;
     align-items: center;
     font-family: "Inter", sans-serif;
 
@@ -38,4 +37,24 @@ span.menu-description {
 a {
     text-decoration: none;
     color: #8E8E93;
+}
+.top-line{
+    box-shadow: -1px -1px 4px #48484A;
+    position: fixed;
+    width: 390px;
+    top: 86px;
+    color: #1C1C1E;
+    border: 1px solid #1C1C1E;
+}
+.bottom-line{
+    box-shadow: -1px -1px 4px #48484A;
+    position: fixed;
+    width: 390px;
+    bottom: 96px;
+    color: #1C1C1E;
+    border: 1px solid #1C1C1E;
+}
+.location-section {
+    display: flex;
+    flex-direction: column;
 }
