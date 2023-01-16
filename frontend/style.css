@@ -1,3 +1,6 @@
+* {
+   box-sizing: border-box;
+}
 body{
    margin: 0;
    background-color: #000000;
@@ -28,20 +31,50 @@ body{
 }
 .menu_el{
    margin-right: 36px;
+   text-align: center;
+}
+.menu_el:last-child{
+   margin-right: 0;
+}
+.menu_el:nth-last-child(2){
+   margin-right: 22px;
 }
 .svg_menu{
    /* margin: 0 2.5px 0 2.5px; */
    margin: auto;
 }
 .menu_text{
-   width: 41px;
+   /* width: 41px; */
    height: 13px;
    font-family: 'Inter';
    font-style: normal;
    font-weight: 400;
-   font-size: 11px;
+   font-size: 12px;
    line-height: 13px;
    color: #8E8E93;
    text-align: center;
    margin-top: 0;
+}
+
+@media (max-width: 500px) {
+   .logo_d{
+      display: flex;
+      justify-content: center;
+   }
+   .logo{
+      margin-left: 0;
+   }
+}
+@media (max-width: 380px) {
+   .menu_el{
+      margin-right: 26px;
+   }
+}
+@media (max-width: 350px) {
+   .menu_el {
+      margin-right: 20px;
+   }
+   .menu_el:nth-last-child(2){
+      margin-right: 16px;
+   }
 }
