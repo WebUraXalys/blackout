@@ -3,58 +3,84 @@
     margin: 0;
     box-sizing: border-box;
 }
-.App {
-    width: 390px;
-    border-radius: 10px;
-    height: 644px;
-    margin: 20px auto;
-    text-align: center;
-    background-color: #000;
-}
-.upper-logo {
-    position: relative;
-    top: 26px;
-}
-.bottom-menu {
-    bottom: 36px;
-    display: flex;
-    position: fixed;
-    width: 390px;
-    justify-content: space-around;
-    overflow-x: auto;
-}
-.menu-item{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-family: "Inter", sans-serif;
 
+body {
+    margin: 0;
+    background-color: #000000;
 }
-span.menu-description {
-    padding-top: 4px;
+
+.logo{
+    margin-top: 5px;
+    margin-left: 25px;
 }
-a {
-    text-decoration: none;
-    color: #8E8E93;
-}
-.top-line{
-    box-shadow: -1px -1px 4px #48484A;
-    position: fixed;
-    width: 390px;
-    top: 86px;
-    color: #1C1C1E;
+.header_line{
+    width: 99.8%;
+    margin-top: 3px;
     border: 1px solid #1C1C1E;
-}
-.bottom-line{
     box-shadow: -1px -1px 4px #48484A;
-    position: fixed;
-    width: 390px;
-    bottom: 96px;
-    color: #1C1C1E;
-    border: 1px solid #1C1C1E;
 }
-.location-section {
+.footer{
+    position: absolute;
+    bottom: 5px;
+    width: 99.8%;
+}
+.footer-line{
+    margin-bottom: 8px;
+    width: 99.8%;
+    border: 1px solid #1C1C1E;
+    box-shadow: -1px -1px 4px #48484A;
+}
+.menu{
     display: flex;
-    flex-direction: column;
+    justify-content: center;
+}
+.menu_el{
+    margin-right: 36px;
+    text-align: center;
+    cursor: pointer;
+}
+.menu_el:last-child{
+    margin-right: 0;
+}
+.menu_el:nth-last-child(2){
+    margin-right: 22px;
+}
+.svg_menu{
+    /* margin: 0 2.5px 0 2.5px; */
+    margin: auto;
+}
+.menu_text{
+    /* width: 41px; */
+    height: 13px;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 13px;
+    color: #8E8E93;
+    text-align: center;
+    margin-top: 0;
+}
+
+@media (max-width: 500px) {
+    .logo_d{
+        display: flex;
+        justify-content: center;
+    }
+    .logo{
+        margin-left: 0;
+    }
+}
+@media (max-width: 380px) {
+    .menu_el{
+        margin-right: 26px;
+    }
+}
+@media (max-width: 350px) {
+    .menu_el {
+        margin-right: 20px;
+    }
+    .menu_el:nth-last-child(2){
+        margin-right: 16px;
+    }
 }
