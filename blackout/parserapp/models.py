@@ -11,34 +11,41 @@ class Streets(models.Model):
         verbose_name_plural = 'Streets'
 
     def __str__(self):
-        return self.Name
+        return f"{self.Name}"
 
 class Interruptions(models.Model):
-    type_choices = [
-        ('0', 'Plan'),
-        ('1', 'Emergency')
-    ]
 
-
+    class TypeChoices(models.TextChoices):
+        PLAN = "Plan"
+        EMERGENCY = "Emergency"
+    
     Start = models.DateTimeField('Start',null=True)
     End = models.DateTimeField('End',null=True)
-    Type = models.CharField('Type', choices=type_choices, max_length=1, default=type_choices[0])
+    Type = models.CharField('Type', choices=TypeChoices.choices, max_length=10, default=TypeChoices.PLAN)
 
     class Meta():
         verbose_name = 'Interruption'
         verbose_name_plural = 'Interruptions'
 
-class Buildings(models.Model):
-    group_choices = [
-        ('1','First'),
-        ('2','Second'),
-        ('3','Third'),
-    ]
+    def __str__(self):
+        if self.Start and self.End:
 
+            time_start = self.Start.time().strftime('%H:%M')
+            time_end = self.End.time().strftime('%H:%M')
+            return f"{time_start} - {time_end}"
+        else:
+            return  
+
+class Buildings(models.Model):
+    class GroupChoices(models.TextChoices):
+        FIRST = "First"
+        SECOND = "Second"
+        THIRD = 'Third'
+    
     Address = models.CharField('Address', max_length=4)
     Street = models.ForeignKey(Streets, verbose_name='Street', null=True, on_delete=models.CASCADE)
-    Group = models.CharField('Group',max_length=1, choices=group_choices, blank=True)
-    Interruption = models.ForeignKey(Interruptions,blank=True,null=True, on_delete=models.CASCADE)
+    Group = models.CharField('Group',max_length=10, choices=GroupChoices.choices, blank=True)
+    Interruption = models.ForeignKey(Interruptions,null=True,blank=True, on_delete=models.CASCADE,default=None)
         
     class Meta():
         verbose_name = 'Building'

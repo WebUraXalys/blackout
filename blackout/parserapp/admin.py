@@ -9,9 +9,17 @@ class StreetsAdmin(admin.ModelAdmin):
     ordering = ['Name']
 
 @admin.register(Buildings)
-class StreetsAdmin(admin.ModelAdmin):
-    list_display = ['pk','Address', 'Street', 'Group','Interruption']
-    ordering = ['Address']
+class BuildingsAdmin(admin.ModelAdmin):
+    list_display = ['pk','Address', 'Street', 'Group','Interruption','get_type_interruption']
+    ordering = ['pk']
+
+    def get_type_interruption(self, obj):
+        if obj.Interruption:
+            return obj.Interruption.Type
+    
+    
+    
+    get_type_interruption.short_description = 'Type Interruption'
 
 @admin.register(Interruptions)
 class InterruptionAdmin(admin.ModelAdmin):
