@@ -67,9 +67,18 @@ a {
 .menu__link-active {
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), #FFD60A;
     box-shadow: 1px 1px 4px rgba(255, 192, 95, 0.33);
+    color: #FFD60A;
 }
-.menu__text-active {
-    text-shadow: 1px 1px 4px rgba(255, 192, 95, 0.33);
+.menu__link {
+    height: 13px;
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    color: #8E8E93;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
 }
 @media (max-width: 500px) {
     .logo_d{

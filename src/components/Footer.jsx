@@ -8,7 +8,7 @@ import settings from "../assets/settings-v.svg";
 
 const Footer = () => {
 
-    const activeLink = "menu__link menu__link-active menu__text-active";
+    const activeLink = "menu__link menu__link-active";
     const link = "menu__link";
 
     return (
@@ -57,13 +57,3 @@ const Footer = () => {
 };
 
 export default Footer;
-
-/*
-            <nav className="menu">
-                <MenuItem item={{title: "Дім", img: home}}/>
-                <MenuItem item={{title: "Таймер", img: timer}}/>
-                <MenuItem item={{title: "Мапа", img: map}}/>
-                <MenuItem item={{title: "Зустріч", img: meet}}/>
-                <MenuItem item={{title: "Налаштування", img: settings}}/>
-            </nav>
- */
