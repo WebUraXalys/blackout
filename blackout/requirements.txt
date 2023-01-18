@@ -3,3 +3,4 @@ gunicorn
 celery
 gevent
 redis
+python-dotenv
