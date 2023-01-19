@@ -67,9 +67,6 @@ def scrap_data(page):
             "poweron_time": other[7].text
         }
         data.append(j)
-        for x in data:
-            print(x["buildings"], end=" ")
-            print("")
     return data
 
 
@@ -107,6 +104,7 @@ def save_buildings(buildings, street):
 if __name__ == "__main__":
     start = datetime.now()
     data = parse()
+    print(data)
     save_data(data)
     end = datetime.now()
     print(f"(parser): Finished in {end - start}")
