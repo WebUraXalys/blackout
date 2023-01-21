@@ -10,7 +10,7 @@ class StreetsAdmin(admin.ModelAdmin):
 
 @admin.register(Buildings)
 class BuildingsAdmin(admin.ModelAdmin):
-    list_display = ['pk','Address', 'Street', 'Group','Interruption','get_type_interruption']
+    list_display = ['pk','Address', 'Street', 'Group','Interruption','get_type_interruption','Longitude','Latitude']
     ordering = ['pk']
 
     def get_type_interruption(self, obj):
