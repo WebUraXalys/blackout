@@ -17,3 +17,5 @@ docker compose up
 ```
 
 4. Appliaction will appear on localhost:80
+
+## [Deploy guide](deploy/server-setup-guide.md)
