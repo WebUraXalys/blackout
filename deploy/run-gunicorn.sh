@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd /home/ubuntu/blackout/deploy
+
 /bin/bash rebuild-app.sh
 
 cd /home/ubuntu/blackout/blackout
