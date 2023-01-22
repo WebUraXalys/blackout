@@ -1,4 +1,4 @@
 
 # SET UP SERVER IP ENVIRONMENT VARIABLE
-SERVER_IP=$(hostname -I)
+SERVER_IP=$(wget -O - -q https://checkip.amazonaws.com)
 export SERVER_IP

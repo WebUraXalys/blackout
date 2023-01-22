@@ -7,17 +7,17 @@ System and network requirements:
 ### Prepeare system:
 #### 1. Upgrade system packages
 ```sh
-sudo apt update
-sudo apt upgrade
+sudo apt update -y
+sudo apt upgrade -y
 ```
 #### 2. Install software dependencies
 ```sh
-sudo apt install git python3 python3-pip nginx
+sudo apt install -y git python3 python3-pip python3-venv nginx
 ```
 #### 3. Install NodeJS v14
 ```sh
 curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
-sudo apt install nodejs
+sudo apt install -y nodejs
 ```
 
 ### Set up gunicorn server
@@ -26,30 +26,33 @@ sudo apt install nodejs
 cd ~
 git clone https://github.com/WebUraXalys/blackout.git
 ```
-#### 2. Select the desired branch
-```sh
-git switch <DESIRED BRANCH>
-```
-#### 3. Set up the virtual environment
+#### 2. Set up the virtual environment
 ```
 python3 -m venv venv
-./venv/bin/activate
+. venv/bin/activate
+```
+#### 3. Select the desired branch, if you don't know what branch to choose, just use main branch.
+```sh
+cd blackout
+git checkout <DESIRED BRANCH>
 ```
 #### 4. Install Python requirements
 ```sh
-pip3 install -r ~/blackout/blackout/requirements.txt
+sudo pip3 install -r ~/blackout/blackout/requirements.txt
 ```
 #### 5. Set up SERVER_IP environment variable
 ```sh
-echo < ~/blackout/deploy/bashrc-server-ip-environment >> ~/.bashrc
+cat ~/blackout/deploy/bashrc-server-ip-environment >> ~/.bashrc
 ```
-#### 6. Set up and run blackout app service
+#### 6. Reboot the server
+
+#### 7. Set up and run blackout app service
 ```sh 
 sudo ln -s /home/ubuntu/blackout/deploy/blackout.service /etc/systemd/system/blackout.service
 sudo systemctl daemon-reload
 sudo service blackout start
 ```
-#### 7. Check server started
+#### 8. Check server started
 ```sh
 sudo lsof -i :8000
 ```
@@ -70,7 +73,7 @@ sudo rm /etc/nginx/sites-enabled/default
 ```
 #### 2. Install nginx.conf
 ```sh
-sudo ln -sf /home/ubuntu/blackot/deploy/nginx.conf /etc/nginx/nginx.conf
+sudo ln -f /home/ubuntu/blackout/deploy/nginx.conf /etc/nginx/nginx.conf
 ```
 #### 3. Restart Nginx service
 ```sh
@@ -87,6 +90,7 @@ git pull
 ```
 #### 2. Restart app server
 ```sh
+sudo systemctl daemon-reload
 sudo service blackout restart
 ```
 

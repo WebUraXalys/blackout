@@ -6,4 +6,5 @@ python3 manage.py migrate
 
 # Build frontend
 cd ../frontend
+npm i
 npm run build

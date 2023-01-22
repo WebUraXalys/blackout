@@ -1,6 +1,6 @@
 # blackout
 
-## How to run
+## How to run development server (deprecated)
 1. Clone repository
 ```
 git clone https://github.com/WebUraXalys/blackout.git
