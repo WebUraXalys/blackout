@@ -1,4 +1,4 @@
-from blackout.parserapp.services.parser import parsing_process
+from parserapp.services.parser import parsing_process
 # Create your views here.
 
 from django.http import HttpResponse

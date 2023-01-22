@@ -1,37 +1,55 @@
 from django.db import models
 
-class Region(models.Model):
-    name = models.CharField(verbose_name="Назва", max_length=40,unique=True,blank=True)
+class Streets(models.Model):
+    Name = models.CharField('Name',max_length=40)
+    City = models.CharField('City', max_length=40)
+    OTG = models.CharField('OTG',max_length=40)
+    Region = models.CharField('Region', max_length=40)
 
     class Meta():
-        verbose_name = "Область"
-        verbose_name_plural = "Області"
+        verbose_name = 'Street'
+        verbose_name_plural = 'Streets'
+
     def __str__(self):
-        return self.name
+        return f"{self.Name}"
 
-
-class Street(models.Model):
-    name = models.CharField(verbose_name="Назва",max_length=40,blank=True)
-    city = models.CharField(verbose_name="Місто", max_length=40,blank=True)
-    OTG = models.CharField(verbose_name="ОТГ",max_length=40,blank=True)
-    region = models.ForeignKey(Region, verbose_name="Регіон",blank=True, on_delete=models.CASCADE)
+class Interruptions(models.Model):
+    class TypeChoices(models.TextChoices):
+        PLAN = "Plan"
+        EMERGENCY = "Emergency"
+    
+    Start = models.DateTimeField('Start',null=True)
+    End = models.DateTimeField('End',null=True)
+    Type = models.CharField('Type', choices=TypeChoices.choices, max_length=10, default=TypeChoices.PLAN)
 
     class Meta():
-        verbose_name = "Вулиця"
-        verbose_name_plural = "Вулиці"
+        verbose_name = 'Interruption'
+        verbose_name_plural = 'Interruptions'
 
     def __str__(self):
-        return self.name
+        if self.Start and self.End:
 
+            time_start = self.Start.time().strftime('%H:%M')
+            time_end = self.End.time().strftime('%H:%M')
+            return f"{time_start} - {time_end}"
+        else:
+            return  
 
-class Building(models.Model):
-    address = models.CharField(verbose_name="Адреса", max_length=40, blank=True)
-    street = models.ForeignKey(Street,verbose_name="Вулиця", blank=True, on_delete=models.PROTECT)
-    group = models.IntegerField(verbose_name="Група", null=True, default=None, blank=True)
-
+class Buildings(models.Model):
+    class GroupChoices(models.TextChoices):
+        FIRST = "First"
+        SECOND = "Second"
+        THIRD = 'Third'
+    
+    Address = models.CharField('Address', max_length=4)
+    Street = models.ForeignKey(Streets, verbose_name='Street', null=True, on_delete=models.CASCADE)
+    Group = models.CharField('Group',max_length=10, choices=GroupChoices.choices, blank=True)
+    Interruption = models.ForeignKey(Interruptions,null=True,blank=True, on_delete=models.CASCADE,default=None)
+        
     class Meta():
-        verbose_name = "Будинок"
-        verbose_name_plural = "Будинки"
+        verbose_name = 'Building'
+        verbose_name_plural = 'Buildings'
 
     def __str__(self):
-        return self.address
+        return self.Address
+
