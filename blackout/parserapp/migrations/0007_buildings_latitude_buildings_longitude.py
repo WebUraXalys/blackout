@@ -7,18 +7,39 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('parserapp', '0006_alter_buildings_group_alter_buildings_interruption_and_more'),
+        (
+            'parserapp',
+            '0006_alter_buildings_group_alter_buildings_interruption_and_more',
+        ),
     ]
 
     operations = [
         migrations.AddField(
             model_name='buildings',
             name='Latitude',
-            field=models.DecimalField(blank=True, decimal_places=5, max_digits=7, null=True, validators=[django.core.validators.MinValueValidator(-90), django.core.validators.MaxValueValidator(90)]),
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=5,
+                max_digits=7,
+                null=True,
+                validators=[
+                    django.core.validators.MinValueValidator(-90),
+                    django.core.validators.MaxValueValidator(90),
+                ],
+            ),
         ),
         migrations.AddField(
             model_name='buildings',
             name='Longitude',
-            field=models.DecimalField(blank=True, decimal_places=5, max_digits=7, null=True, validators=[django.core.validators.MinValueValidator(-90), django.core.validators.MaxValueValidator(90)]),
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=5,
+                max_digits=7,
+                null=True,
+                validators=[
+                    django.core.validators.MinValueValidator(-90),
+                    django.core.validators.MaxValueValidator(90),
+                ],
+            ),
         ),
     ]

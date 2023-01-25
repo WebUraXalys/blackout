@@ -8,34 +8,69 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
             name='Region',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('name', models.CharField(max_length=40)),
             ],
         ),
         migrations.CreateModel(
             name='Street',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('name', models.CharField(max_length=40)),
                 ('city', models.CharField(max_length=40)),
                 ('OTG', models.CharField(max_length=40)),
-                ('region', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='parserapp.region')),
+                (
+                    'region',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to='parserapp.region',
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
             name='Building',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('address', models.CharField(max_length=40)),
                 ('group', models.IntegerField(default=1)),
-                ('street', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='parserapp.street')),
+                (
+                    'street',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to='parserapp.street',
+                    ),
+                ),
             ],
         ),
     ]

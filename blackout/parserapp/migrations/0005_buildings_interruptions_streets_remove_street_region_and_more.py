@@ -14,9 +14,25 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Buildings',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('Address', models.CharField(max_length=4, verbose_name='Address')),
-                ('Group', models.CharField(blank=True, choices=[('1', 'First'), ('2', 'Second'), ('3', 'Third')], max_length=1, verbose_name='Group')),
+                (
+                    'Group',
+                    models.CharField(
+                        blank=True,
+                        choices=[('1', 'First'), ('2', 'Second'), ('3', 'Third')],
+                        max_length=1,
+                        verbose_name='Group',
+                    ),
+                ),
             ],
             options={
                 'verbose_name': 'Building',
@@ -26,10 +42,26 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Interruptions',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('Start', models.DateTimeField(null=True, verbose_name='Start')),
                 ('End', models.DateTimeField(null=True, verbose_name='End')),
-                ('Type', models.CharField(choices=[('0', 'Plan'), ('1', 'Emergency')], default=('0', 'Plan'), max_length=1, verbose_name='Type')),
+                (
+                    'Type',
+                    models.CharField(
+                        choices=[('0', 'Plan'), ('1', 'Emergency')],
+                        default=('0', 'Plan'),
+                        max_length=1,
+                        verbose_name='Type',
+                    ),
+                ),
             ],
             options={
                 'verbose_name': 'Interruption',
@@ -39,7 +71,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Streets',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('Name', models.CharField(max_length=40, verbose_name='Name')),
                 ('City', models.CharField(max_length=40, verbose_name='City')),
                 ('OTG', models.CharField(max_length=40, verbose_name='OTG')),
@@ -66,11 +106,21 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='buildings',
             name='Interruption',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='parserapp.interruptions'),
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='parserapp.interruptions',
+            ),
         ),
         migrations.AddField(
             model_name='buildings',
             name='Street',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='parserapp.streets', verbose_name='Street'),
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='parserapp.streets',
+                verbose_name='Street',
+            ),
         ),
     ]

@@ -7,23 +7,42 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('parserapp', '0005_buildings_interruptions_streets_remove_street_region_and_more'),
+        (
+            'parserapp',
+            '0005_buildings_interruptions_streets_remove_street_region_and_more',
+        ),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='buildings',
             name='Group',
-            field=models.CharField(blank=True, choices=[('First', 'First'), ('Second', 'Second'), ('Third', 'Third')], max_length=10, verbose_name='Group'),
+            field=models.CharField(
+                blank=True,
+                choices=[('First', 'First'), ('Second', 'Second'), ('Third', 'Third')],
+                max_length=10,
+                verbose_name='Group',
+            ),
         ),
         migrations.AlterField(
             model_name='buildings',
             name='Interruption',
-            field=models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.CASCADE, to='parserapp.interruptions'),
+            field=models.ForeignKey(
+                blank=True,
+                default=None,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to='parserapp.interruptions',
+            ),
         ),
         migrations.AlterField(
             model_name='interruptions',
             name='Type',
-            field=models.CharField(choices=[('Plan', 'Plan'), ('Emergency', 'Emergency')], default='Plan', max_length=10, verbose_name='Type'),
+            field=models.CharField(
+                choices=[('Plan', 'Plan'), ('Emergency', 'Emergency')],
+                default='Plan',
+                max_length=10,
+                verbose_name='Type',
+            ),
         ),
     ]
