@@ -5,60 +5,74 @@ import orjson
 from celery import shared_task
 import sqlite3
 from datetime import datetime
-#from blackout.celery import app
-
-from blackout.parserapp.models import Region, Street, Building
+from blackout.celery import app
+import django
+import os
+from ..models import Streets,Buildings,Interruptions
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "blackout.settings")
+django.setup()
 
 '''HEADERS = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:107.0) Gecko/20100101 Firefox/107.0",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
     "Accept-Language": "uk-UA,uk;q=0.8,en-US;q=0.5,en;q=0.3"
 }'''
-
-
 header={"User-Agent":
-	"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0"
-}
-
+	"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0"}
 url="https://poweroff.loe.lviv.ua/search_off?csrfmiddlewaretoken=JdkfijqL9HQXH1XGw2" \
     "nPRQDedd3TBdyFiIlDBgJYIeDHXzh5yyMoZ1Xq4FmuQw4t&city=&street=&otg=&q=%D0%9F%D0%BE%D1%88%D1%83%D0%BA"
 
 response=requests.get(url,headers=header)
 soup=BeautifulSoup(response.text,"html.parser")
 
-
-args=[]
-
 time_update=soup.find("cite",title="Source Title").text
 data = soup.find("div",style="overflow-x:auto;").find_all("tbody")
 
-
+args=[]
 for item in data:
     full_data=item.find_all("td")
     district_data = item.find_all("th")
-
     district = (district_data[0].text)
     otg=(full_data[0].text)
     city=(full_data[1].text)
     street=(full_data[2].text)
-    house=(full_data[3].text)
+    house=(full_data[3].text.split())
     type_off=(full_data[4].text)
     cause=(full_data[5].text)
     time_off=(full_data[6].text)
     time_on=(full_data[7].text)
 
     args.append((district,otg,city,street,house,type_off,cause,time_off,time_on))
-print(args)
-time_now=datetime.now()
-conn=sqlite3.connect("Data.db")
-cursor=conn.cursor()
-cursor.executemany("INSERT INTO base VALUES (?,?,?,?,?,?,?,?,?)",args)
-conn.commit()
-conn.close()
-print("Час оновлення даних на сайті:",time_update,"\nЧас початку парсинга",time_now)
 
+s1 = Streets.objects.create(Name=street, City=city, OTG=otg, Region=district)
+i1 = Interruptions.objects.create(Start=None, End=None, Type="Plan")
+for b in house:
+    b1 = Buildings.objects.create(Address=b, Street=s1, Group="")
 
-
+# params=time_off.strip().split(' ')
+# params2=time_on.strip().split(' ')
+#
+# day,month_hru,year,gg,time=params
+# month_map={
+#         "січня":1,
+#         "лютого":2,
+#         "березеня": 3,
+#         "квітеня": 4,
+#         "травеня": 5,
+#         "червеня": 6,
+#         "липня": 7,
+#         "серпня": 8,
+#         "вересня": 9,
+#         "жовтня": 10,
+#         "листопада": 11,
+#         "грудня": 12,
+#     }
+# time_off_mas=[]
+# yeat=str(year)
+# month=str(month_map.get(month_hru))
+# day=str(day)
+# time=str(time)
+# time_off_mas.append((year,"-",month,"-",day,"-",time))
 '''def get_page():
     res = requests.get("https://poweroff.loe.lviv.ua/", headers=HEADERS)
     if not res.ok:
@@ -108,6 +122,7 @@ print("Час оновлення даних на сайті:",time_update,"\nЧ�
             "poweron_time": other[7].text
         }
 
+        s1 = Streets.objects.create(Name=other[2].text, City=other[1].text, OTG=other[0].text,Region=row.find("th").text)
 
         #data.append(j)
         # for x in data:
@@ -116,20 +131,13 @@ print("Час оновлення даних на сайті:",time_update,"\nЧ�
     #print(data)
 
     return data'''
-
-
-'''def parse():
+def parse():
     page = get_page()
     data = scrap_data(page)
-    return data'''
-
-
-def save_data(args):
-    try:
-        region = Region.objects.get(name="Lviv")
-    except:
-        region = Region.objects.create(name="Lviv")
-    for x in args:
+    return data
+def save_data(data):
+    region="Lviv"
+    for x in data:
         otg = x['otg']
         city = x['np']
         street = x['street']
@@ -142,31 +150,19 @@ def save_data(args):
             print(f"Вулицю {street.name} додано.")
         buildings=x['buildings']
         save_buildings(buildings, street)
-    message = f"Парсинг завершено. Додано {args.count()} вулиць"
+    message = f"Парсинг завершено. Додано {data.count()} вулиць"
     return message
-
-
-
-
 def save_buildings(buildings, street):
     for building in buildings:
         try:
             structure = Building.objects.get(address=building, street=street)
         except:
             structure = Building.objects.create(address=building, street=street)
-
-'''
-
 # @app.task(bind=True)
-
 def parsing_process():
-    data = parse()
-    message = save_data(data)
+    #data = parse()
+    message = save_data(args)
     return message
-
-
-if __name__ == "__main__":
-    start = datetime.now()
-    parsing_process()
-    end = datetime.now()
-    print(f"(parser): Finished in {end - start}")'''
+    # return Streets.objects.all()
+    # return Buildings.objects.all()
+    # return Interruptions.objects.all()
