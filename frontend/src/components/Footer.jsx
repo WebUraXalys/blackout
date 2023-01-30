@@ -1,57 +1,63 @@
-import React from 'react';
-import {NavLink} from 'react-router-dom';
-import home from "../assets/home-v.svg";
-import timer from "../assets/timer.svg";
-import map from "../assets/map-v.svg";
-import meet from "../assets/meet-v.svg";
-import settings from "../assets/settings-v.svg";
+import React, {useState} from 'react';
+import {Link} from 'react-router-dom'
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
+import TimerOutlinedIcon from '@mui/icons-material/TimerOutlined';
+import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
+import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import BottomNavigation from '@mui/material/BottomNavigation';
+import BottomNavigationAction from '@mui/material/BottomNavigationAction';
+import {Box} from "@mui/material";
+import '../styles/App.css'
 
 const Footer = () => {
 
-    const activeLink = "menu__link menu__link-active";
-    const link = "menu__link";
+    const [selectedCategory, setSelectedCategory] = useState(0)
 
     return (
         <footer className="footer">
             <hr className="footer-line"/>
-            <ul className="menu">
-
-                <li className="menu__el">
-                    <NavLink className={({isActive}) => isActive ? activeLink : link} to="/">
-                        <img className="svg_menu" src={home} alt="picture"/>
-                        <p className="menu__text">Дім</p>
-                    </NavLink>
-                </li>
-
-                <li className="menu__el">
-                    <NavLink className={({isActive}) => isActive ? activeLink : link} to="/timer">
-                        <img className="svg_menu" src={timer} alt="picture"/>
-                        <p className="menu__text">Таймер</p>
-                    </NavLink>
-                </li>
-
-                <li className="menu__el">
-                    <NavLink className={({isActive}) => isActive ? activeLink : link} to="/map">
-                        <img className="svg_menu" src={map} alt="picture"/>
-                        <p className="menu__text">Мапа</p>
-                    </NavLink>
-                </li>
-
-                <li className="menu__el">
-                    <NavLink className={({isActive}) => isActive ? activeLink : link} to="/meet">
-                        <img className="svg_menu" src={meet} alt="picture"/>
-                        <p className="menu__text">Зустріч</p>
-                    </NavLink>
-                </li>
-
-                <li className="menu__el">
-                    <NavLink className={({isActive}) => isActive ? activeLink : link} to="/settings">
-                        <img className="svg_menu" src={settings} alt="picture"/>
-                        <p className="menu__text">Налаштування</p>
-                    </NavLink>
-                </li>
-
-            </ul>
+            <Box sx={{ width: '100%', background: 'none', display: 'flex', justifyContent: 'center'}}>
+                <BottomNavigation
+                    sx={{background: 'none', color: 'red'}}
+                    showLabels
+                    value={selectedCategory}
+                    onChange={(event, newValue) => {
+                        setSelectedCategory(newValue);
+                    }}
+                >
+                    <BottomNavigationAction
+                        component={Link}
+                        to="/"
+                        className="NavItem"
+                        label="Дім"
+                        icon={<HomeOutlinedIcon />} />
+                    <BottomNavigationAction
+                        component={Link}
+                        to="/timer"
+                        className="NavItem"
+                        label="Таймер"
+                        icon={<TimerOutlinedIcon />} />
+                    <BottomNavigationAction
+                        component={Link}
+                        to="/map"
+                        className="NavItem"
+                        label="Мапа"
+                        icon={<MapOutlinedIcon />} />
+                    <BottomNavigationAction
+                        component={Link}
+                        to="/meet"
+                        className="NavItem"
+                        label="Зустріч"
+                        icon={<GroupsOutlinedIcon />} />
+                    <BottomNavigationAction
+                        component={Link}
+                        to="/settings"
+                        className="NavItem"
+                        label="Налаштування"
+                        icon={<SettingsOutlinedIcon />} />
+                </BottomNavigation>
+            </Box>
         </footer>
     );
 };

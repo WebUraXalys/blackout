@@ -2,6 +2,7 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
 }
 
 body {
@@ -30,56 +31,19 @@ body {
     border: 1px solid #1C1C1E;
     box-shadow: -1px -1px 4px #48484A;
 }
-.menu{
-    display: flex;
-    justify-content: center;
-}
-.menu__el{
-    margin-right: 36px;
-    text-align: center;
-    cursor: pointer;
-}
-.menu__el:last-child{
-    margin-right: 0;
-}
-.menu__el:nth-last-child(2){
-    margin-right: 22px;
-}
-.svg_menu{
-    /* margin: 0 2.5px 0 2.5px; */
-    margin: auto;
-}
-.menu__text{
-    /* width: 41px; */
-    height: 13px;
-    font-family: 'Inter', sans-serif;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 13px;
-    color: #8E8E93;
-    text-align: center;
-    margin-top: 0;
-}
 a {
     text-decoration: none;
 }
-.menu__link-active {
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), #FFD60A;
-    box-shadow: 1px 1px 4px rgba(255, 192, 95, 0.33);
-    color: #FFD60A;
+.NavItem {
+    color: #48484a !important;
 }
-.menu__link {
-    height: 13px;
-    font-family: 'Inter', sans-serif;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
-    color: #8E8E93;
-    cursor: pointer;
-    align-items: center;
-    justify-content: center;
+.NavItem.Mui-selected {
+    color: #ffd60a !important;
 }
+span.MuiBottomNavigationAction-label{
+    font-size: 11px !important;
+}
+
 @media (max-width: 500px) {
     .logo_d{
         display: flex;
