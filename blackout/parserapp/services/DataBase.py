@@ -1,10 +1,10 @@
 import sqlite3
 
-conn=sqlite3.connect('db.sqlite3')
-cursor=conn.cursor()
-query="""CREATE TABLE IF NOT EXISTS BASE(district TEXT,otg TEXT,np TEXT,street TEXT,buildings TEXT," \
+conn = sqlite3.connect("db.sqlite3")
+cursor = conn.cursor()
+query = """CREATE TABLE IF NOT EXISTS BASE(district TEXT,otg TEXT,np TEXT,street TEXT,buildings TEXT," \
 "poweroff_type TEXT,poweroff_cause TEXT,poweroff_time TEXT,poweron_time TEXT)"""
-'''query="SELECT * FROM BASE"
+"""query="SELECT * FROM BASE"
 cursor = conn.cursor()
 cursor.execute(query)
 res = cursor.fetchall()
@@ -25,4 +25,4 @@ for r in res:
 #headers.extend(data[0]['teches'].keys())
 
 
-conn.close()'''
+conn.close()"""

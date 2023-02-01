@@ -1,79 +1,17 @@
 from datetime import datetime
 from bs4 import BeautifulSoup
 import requests
-import orjson
-from celery import shared_task
 import sqlite3
-from datetime import datetime
-from blackout.celery import app
-import django
-import os
-from ..models import Streets,Buildings,Interruptions
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "blackout.settings")
-django.setup()
 
-'''HEADERS = {
+
+HEADERS = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:107.0) Gecko/20100101 Firefox/107.0",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-    "Accept-Language": "uk-UA,uk;q=0.8,en-US;q=0.5,en;q=0.3"
-}'''
-header={"User-Agent":
-	"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:108.0) Gecko/20100101 Firefox/108.0"}
-url="https://poweroff.loe.lviv.ua/search_off?csrfmiddlewaretoken=JdkfijqL9HQXH1XGw2" \
-    "nPRQDedd3TBdyFiIlDBgJYIeDHXzh5yyMoZ1Xq4FmuQw4t&city=&street=&otg=&q=%D0%9F%D0%BE%D1%88%D1%83%D0%BA"
+    "Accept-Language": "uk-UA,uk;q=0.8,en-US;q=0.5,en;q=0.3",
+}
 
-response=requests.get(url,headers=header)
-soup=BeautifulSoup(response.text,"html.parser")
 
-time_update=soup.find("cite",title="Source Title").text
-data = soup.find("div",style="overflow-x:auto;").find_all("tbody")
-
-args=[]
-for item in data:
-    full_data=item.find_all("td")
-    district_data = item.find_all("th")
-    district = (district_data[0].text)
-    otg=(full_data[0].text)
-    city=(full_data[1].text)
-    street=(full_data[2].text)
-    house=(full_data[3].text.split())
-    type_off=(full_data[4].text)
-    cause=(full_data[5].text)
-    time_off=(full_data[6].text)
-    time_on=(full_data[7].text)
-
-    args.append((district,otg,city,street,house,type_off,cause,time_off,time_on))
-
-s1 = Streets.objects.create(Name=street, City=city, OTG=otg, Region=district)
-i1 = Interruptions.objects.create(Start=None, End=None, Type="Plan")
-for b in house:
-    b1 = Buildings.objects.create(Address=b, Street=s1, Group="")
-
-# params=time_off.strip().split(' ')
-# params2=time_on.strip().split(' ')
-#
-# day,month_hru,year,gg,time=params
-# month_map={
-#         "січня":1,
-#         "лютого":2,
-#         "березеня": 3,
-#         "квітеня": 4,
-#         "травеня": 5,
-#         "червеня": 6,
-#         "липня": 7,
-#         "серпня": 8,
-#         "вересня": 9,
-#         "жовтня": 10,
-#         "листопада": 11,
-#         "грудня": 12,
-#     }
-# time_off_mas=[]
-# yeat=str(year)
-# month=str(month_map.get(month_hru))
-# day=str(day)
-# time=str(time)
-# time_off_mas.append((year,"-",month,"-",day,"-",time))
-'''def get_page():
+def get_page():
     res = requests.get("https://poweroff.loe.lviv.ua/", headers=HEADERS)
     if not res.ok:
         print(f"Перший запит: {res.status_code}")
@@ -83,19 +21,30 @@ for b in house:
         print("Не вдалось витягнути csrftoken")
         exit()
     soup = BeautifulSoup(res.content, features="html.parser")
-    csrfmiddlewaretoken = soup.find("form", attrs={"action": "/search_off"}).find(attrs={"type": "hidden"}).get("value", None)
+    csrfmiddlewaretoken = (
+        soup.find("form", attrs={"action": "/search_off"})
+        .find(attrs={"type": "hidden"})
+        .get("value", None)
+    )
     if csrfmiddlewaretoken is None:
         print("Не вдалось витягнути csrfmiddlewaretoken")
         exit()
-    res = requests.get(f"https://poweroff.loe.lviv.ua/search_off?csrfmiddlewaretoken={csrfmiddlewaretoken}&city=&street=&otg=&q=%D0%9F%D0%BE%D1%88%D1%83%D0%BA", headers=HEADERS, cookies=csrftoken)
+    res = requests.get(
+        f"https://poweroff.loe.lviv.ua/search_off?csrfmiddlewaretoken={csrfmiddlewaretoken}&city=&street=&otg=&q=%D0%9F%D0%BE%D1%88%D1%83%D0%BA",
+        headers=HEADERS,
+        cookies=csrftoken,
+    )
     if not res.ok:
         print(f"Другий запит: {res.status_code}")
         exit()
-    return res.content'''
+    return res.content
 
 
-'''def scrap_data(page):
+def scrap_data(page):
     soup = BeautifulSoup(page, features="html.parser")
+    time_update = soup.find(
+        "cite", title="Source Title"
+    ).text  # Might be useful in the future
     table = soup.find("table", attrs={"style": "background-color: white;"})
     all_tbody = table.find_all("tbody")
     rows = []
@@ -103,6 +52,7 @@ for b in house:
         tr = tbody.find("tr")
         rows.append(tr)
     print(f"Знайдено {len(rows)} рядків даних")
+    print(time_update)
     data = []
     for row in rows[1:]:
         other = row.find_all("td")
@@ -119,50 +69,109 @@ for b in house:
             "poweroff_type": other[4].text,
             "poweroff_cause": other[5].text,
             "poweroff_time": other[6].text,
-            "poweron_time": other[7].text
+            "poweron_time": other[7].text,
         }
+        data.append(j)
 
-        s1 = Streets.objects.create(Name=other[2].text, City=other[1].text, OTG=other[0].text,Region=row.find("th").text)
+    return data
 
-        #data.append(j)
-        # for x in data:
-        #     print(x["buildings"], end=" ")
-        #     print("")
-    #print(data)
 
-    return data'''
 def parse():
     page = get_page()
     data = scrap_data(page)
     return data
+
+
 def save_data(data):
-    region="Lviv"
-    for x in data:
-        otg = x['otg']
-        city = x['np']
-        street = x['street']
-        try:
-            street = Street.objects.get(city=city, OTG=otg, name=street)
-            print(f"Вулиця {street.name} вже є в базі.")
-        except:
-            street = Street.objects.create(name=street, city=city, OTG=otg, region=region)
-            street = Street.objects.get(name=street, city=city, OTG=otg, region=region)
-            print(f"Вулицю {street.name} додано.")
-        buildings=x['buildings']
-        save_buildings(buildings, street)
-    message = f"Парсинг завершено. Додано {data.count()} вулиць"
+    connection = sqlite3.connect("../../db.sqlite3")
+    cur = connection.cursor()
+
+    for row in data[0, 100]:
+        region = row["district"].title()
+        otg = row["otg"].title()
+        city = row["np"].title()
+        street = row["street"].title()
+        buildings = row["buildings"]
+
+        exist = cur.execute(
+            f"SELECT * FROM parserapp_streets WHERE Name='{street}' AND City='{city}' AND OTG='{otg}';"
+        ).fetchall()
+
+        if len(exist) < 1:
+            cur.execute(
+                f"INSERT INTO parserapp_streets(Name, City, OTG, Region) VALUES('{street}', '{city}', '{otg}', '{region}')"
+            )
+            connection.commit()
+            print(f"{street} додано")
+
+            street_id = cur.lastrowid  # returns id of the last inserted record
+            save_buildings(buildings, street_id, cur, connection)
+
+        else:
+            print(f"Вулиця {street} вже є в базі.")
+            street_id = exist[0][
+                0
+            ]  # exist[0] returns record (id, Name, City, OTG, Region)
+            save_buildings(buildings, street_id, cur, connection)
+
+    connection.close()
+    message = f"Парсинг завершено. Додано {len(data)} вулиць"
+
     return message
-def save_buildings(buildings, street):
+
+
+def save_buildings(buildings, street_id, cur, connection):
     for building in buildings:
-        try:
-            structure = Building.objects.get(address=building, street=street)
-        except:
-            structure = Building.objects.create(address=building, street=street)
-# @app.task(bind=True)
-def parsing_process():
-    #data = parse()
-    message = save_data(args)
+        letter = 0
+        for letters in building:
+            if building[letters].isalpha():  # isalpha method checks
+                letter += 1
+        if letter < 2:
+            exist = cur.execute(
+                f'SELECT * FROM parserapp_buildings WHERE Address="{building}" and Street_id="{street_id}"'
+            ).fetchall()
+            if len(exist) < 1:
+                cur.execute(
+                    f'INSERT INTO parserapp_buildings(Address, Street_id) VALUES("{building}", "{street_id}"'
+                )
+                connection.commit()
+
+
+def saving():
+    data = parse()
+    message = save_data(data)
     return message
-    # return Streets.objects.all()
-    # return Buildings.objects.all()
-    # return Interruptions.objects.all()
+
+
+if __name__ == "__main__":
+    start = datetime.now()
+    saving()
+    time = datetime.now() - start
+    print(f"Швидкість геокодера: {100 / time.total_seconds() * 3600 * 24}")
+
+
+# Following code is written for transforming string into datetime. Now it's unused
+# params=time_off.strip().split(' ')
+# params2=time_on.strip().split(' ')
+#
+# day,month_hru,year,gg,time=params
+# month_map={
+#         "січня":1,
+#         "лютого":2,
+#         "березня": 3,
+#         "квітня": 4,
+#         "травня": 5,
+#         "червня": 6,
+#         "липня": 7,
+#         "серпня": 8,
+#         "вересня": 9,
+#         "жовтня": 10,
+#         "листопада": 11,
+#         "грудня": 12,
+#     }
+# time_off_mas=[]
+# year=str(year)
+# month=str(month_map.get(month_hru))
+# day=str(day)
+# time=str(time)
+# time_off_mas.append((year,"-",month,"-",day,"-",time))

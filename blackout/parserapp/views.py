@@ -1,9 +1,10 @@
-from parserapp.services.parser import parsing_process
+from .services.parser import saving
+
 # Create your views here.
 
 from django.http import HttpResponse
 
 
 def start(request):
-    x = parsing_process()
+    x = saving()
     return HttpResponse(x)

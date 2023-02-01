@@ -5,4 +5,4 @@ gevent
 redis
 bs4
 requests
-orjson
+geocoder
