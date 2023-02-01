@@ -86,7 +86,7 @@ def save_data(data):
     connection = sqlite3.connect("../../db.sqlite3")
     cur = connection.cursor()
 
-    for row in data[0, 100]:
+    for row in data:
         region = row["district"].title()
         otg = row["otg"].title()
         city = row["np"].title()
