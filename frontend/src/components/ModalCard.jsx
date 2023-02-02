@@ -4,9 +4,11 @@ import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import {TextField} from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
+//import {useForm} from "react-hook-form";
 
 
 const ModalCard = () => {
+
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -15,6 +17,11 @@ const ModalCard = () => {
         street: "",
         number: ''
     })
+    // const {register, handleSubmit, watch, formState: { errors } } = useForm();
+    // const onSubmit = (data) => console.log(data);
+    //console.log(errors)
+
+
 
     const handleChange = (e) => {
         const value = e.target.value;
@@ -71,7 +78,7 @@ const ModalCard = () => {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Box
+                <Box onSubmit={}
                     sx={{
                         position: 'absolute',
                         display: 'flex', justifyContent: 'center', flexDirection: 'column',
@@ -92,7 +99,7 @@ const ModalCard = () => {
                         id="City"
                         label="Lviv"
                         name="city"
-                        helperText="Enter your city name"
+                        helperText=" "
                         variant="outlined"
                         size="small"
                         type="text"
@@ -105,7 +112,7 @@ const ModalCard = () => {
                         id="Street"
                         label="Horodotska"
                         name="street"
-                        helperText="Enter your street name"
+                        helperText=" "
                         variant="outlined"
                         size="small"
                         type="text"
@@ -118,7 +125,7 @@ const ModalCard = () => {
                         id="House number"
                         label="123"
                         name="number"
-                        helperText="Enter your house number"
+                        helperText=" "
                         variant="outlined"
                         size="small"
                         type="text"
