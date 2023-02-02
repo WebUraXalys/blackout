@@ -9,6 +9,13 @@ body {
     margin: 0;
     background-color: #000000;
 }
+.leaflet-container {
+    width: 100%;
+    position: fixed;
+    top: 75px;
+    height: 80.5vh;
+    z-index: 1;
+}
 
 .logo{
     margin-top: 5px;

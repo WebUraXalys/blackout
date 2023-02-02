@@ -89,6 +89,7 @@ const ModalCard = () => {
                     component="form"
                 >
                     <TextField sx={style}
+                        error
                         id="City"
                         label="Lviv"
                         name="city"
