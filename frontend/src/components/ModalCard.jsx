@@ -4,7 +4,6 @@ import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import {TextField} from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
-//import {useForm} from "react-hook-form";
 
 
 const ModalCard = () => {
@@ -17,11 +16,6 @@ const ModalCard = () => {
         street: "",
         number: ''
     })
-    // const {register, handleSubmit, watch, formState: { errors } } = useForm();
-    // const onSubmit = (data) => console.log(data);
-    //console.log(errors)
-
-
 
     const handleChange = (e) => {
         const value = e.target.value;
@@ -60,10 +54,6 @@ const ModalCard = () => {
         },
     }
 
-
-
-
-
     return (
         <Box sx={{display: 'flex', justifyContent: 'center'}}>
             <Button sx={{margin: '10px 0', color: '#ffd60a',
@@ -96,6 +86,7 @@ const ModalCard = () => {
                     component="form"
                 >
                     <TextField sx={style}
+                        error
                         id="City"
                         label="Lviv"
                         name="city"
