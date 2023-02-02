@@ -50,6 +50,9 @@ a {
 span.MuiBottomNavigationAction-label{
     font-size: 11px !important;
 }
+svg.MuiSvgIcon-root{
+    font-size: 2rem !important;
+}
 
 @media (max-width: 500px) {
     .logo_d{
