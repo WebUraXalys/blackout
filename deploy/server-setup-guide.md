@@ -34,18 +34,21 @@ python3 -m venv venv
 #### 3. Select the desired branch, if you don't know what branch to choose, just use main branch.
 ```sh
 cd blackout
-git checkout <DESIRED BRANCH>
+git checkout deploy-ready
 ```
 #### 4. Install Python requirements
 ```sh
-sudo pip3 install -r ~/blackout/blackout/requirements.txt
+sudo pip3 install gevent
+pip3 install -r ~/blackout/blackout/requirements.txt
 ```
 #### 5. Set up SERVER_IP environment variable
 ```sh
-cat ~/blackout/deploy/bashrc-server-ip-environment >> ~/.bashrc
+sudo /bin/bash -c "cat ~/blackout/deploy/bashrc-server-ip-environment >> ~/.bashrc"
 ```
 #### 6. Reboot the server
-
+```sh
+sudo reboot
+```
 #### 7. Set up and run blackout app service
 ```sh 
 sudo ln -s /home/ubuntu/blackout/deploy/blackout.service /etc/systemd/system/blackout.service
