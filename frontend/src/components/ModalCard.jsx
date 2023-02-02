@@ -5,7 +5,6 @@ import Modal from '@mui/material/Modal';
 import {TextField} from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
 
-
 const ModalCard = () => {
 
     const [open, setOpen] = React.useState(false);
@@ -14,7 +13,7 @@ const ModalCard = () => {
     const [state, setState] = React.useState({
         city: "",
         street: "",
-        number: ''
+        number: ""
     })
 
     const handleChange = (e) => {
@@ -68,73 +67,73 @@ const ModalCard = () => {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Box onSubmit={}
-                    sx={{
-                        position: 'absolute',
-                        display: 'flex', justifyContent: 'center', flexDirection: 'column',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: 300,
-                        borderRadius: '10px',
-                        p: 2,
-                        backdropFilter: 'blur(16px) saturate(181%)',
-                        "::webkitBackdropFilter": 'blur(16px) saturate(181%)',
-                        backgroundColor: 'rgba(17, 25, 40, 0.96)',
-                        border: '1px solid rgba(255, 255, 255, 0.125)',
-                    }}
-                    component="form"
-                >
-                    <TextField sx={style}
-                        error
-                        id="City"
-                        label="Lviv"
-                        name="city"
-                        helperText=" "
-                        variant="outlined"
-                        size="small"
-                        type="text"
-                        margin="dense"
-                        onChange={handleChange}
-                        value={state.city}
-                        required
-                    />
-                    <TextField sx={style}
-                        id="Street"
-                        label="Horodotska"
-                        name="street"
-                        helperText=" "
-                        variant="outlined"
-                        size="small"
-                        type="text"
-                        margin="dense"
-                        onChange={handleChange}
-                        value={state.street}
-                        required
-                    />
-                    <TextField sx={style}
-                        id="House number"
-                        label="123"
-                        name="number"
-                        helperText=" "
-                        variant="outlined"
-                        size="small"
-                        type="text"
-                        margin="dense"
-                        onChange={handleChange}
-                        value={state.number}
-                        required
-                    />
-                    <Button
-                        sx={{margin: '20px 0 10px'}}
-                        variant="outlined"
-                        endIcon={<SendIcon />}
-                        onClick={sendData}
+                <form>
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            display: 'flex', justifyContent: 'center', flexDirection: 'column',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: 300,
+                            borderRadius: '10px',
+                            p: 2,
+                            backdropFilter: 'blur(16px) saturate(181%)',
+                            "::webkitBackdropFilter": 'blur(16px) saturate(181%)',
+                            backgroundColor: 'rgba(17, 25, 40, 0.96)',
+                            border: '1px solid rgba(255, 255, 255, 0.125)',
+                        }}
                     >
-                        Send
-                    </Button>
+                        <TextField sx={style}
+                            id="City"
+                            label="City"
+                            name="city"
+                            helperText=" "
+                            variant="outlined"
+                            size="small"
+                            type="text"
+                            margin="dense"
+                            onChange={handleChange}
+                            value={state.city}
+                        />
+                        <TextField sx={style}
+                            id="Street"
+                            label="Street"
+                            name="street"
+                            helperText=" "
+                            variant="outlined"
+                            size="small"
+                            type="text"
+                            margin="dense"
+                            onChange={handleChange}
+                            value={state.street}
 
-                </Box>
+                        />
+                        <TextField sx={style}
+                            id="House number"
+                            label="Number"
+                            name="number"
+                            helperText=" "
+                            variant="outlined"
+                            size="small"
+                            type="text"
+                            margin="dense"
+                            onChange={handleChange}
+                            value={state.number}
+
+                        />
+                        <Button
+                            type="submit"
+                            sx={{margin: '20px 0 10px'}}
+                            variant="outlined"
+                            endIcon={<SendIcon />}
+                            onClick={sendData}
+                        >
+                            Send
+                        </Button>
+                    </Box>
+
+                </form>
             </Modal>
         </Box>
     );
