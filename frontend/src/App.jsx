@@ -9,7 +9,9 @@ function App() {
     <div className="App">
         <Router>
             <Header/>
-            <AppRouter/>
+            <div className="contend">
+              <AppRouter/>
+            </div>
             <Footer/>
         </Router>
     </div>

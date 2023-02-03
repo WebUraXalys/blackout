@@ -5,74 +5,115 @@
     font-family: 'Inter', sans-serif;
 }
 
+html {
+    height: 100%;
+    overflow-x: hidden;
+    /* overflow-y: hidden; */
+}
+
 body {
     margin: 0;
     background-color: #000000;
 }
-.leaflet-container {
-    width: 100%;
-    position: fixed;
-    top: 75px;
-    height: 80.5vh;
-    z-index: 1;
-}
 
-.logo{
+.logo {
     margin-top: 5px;
     margin-left: 25px;
 }
-.header_line{
+
+.header_line {
     width: 99.8%;
     margin-top: 3px;
     border: 1px solid #1C1C1E;
     box-shadow: -1px -1px 4px #48484A;
 }
-.footer{
-    position: absolute;
-    bottom: 5px;
-    width: 99.8%;
+
+.contend {
+    height: 82vh;
 }
-.footer-line{
+
+.leaflet-container {
+    width: 100%;
+    margin-top: 5px;
+    height: 100%;
+    /* z-index: -10; */
+}
+
+.footer {
+    /* position: absolute;
+    bottom: 5px; */
+    width: 99.8vw;
+}
+
+.footer-line {
     margin-bottom: 8px;
     width: 99.8%;
     border: 1px solid #1C1C1E;
     box-shadow: -1px -1px 4px #48484A;
 }
+
 a {
     text-decoration: none;
 }
+
 .NavItem {
     color: #48484a !important;
 }
+
 .NavItem.Mui-selected {
     color: #ffd60a !important;
 }
-span.MuiBottomNavigationAction-label{
+
+span.MuiBottomNavigationAction-label {
     font-size: 11px !important;
 }
-svg.MuiSvgIcon-root{
+
+svg.MuiSvgIcon-root {
     font-size: 2rem !important;
 }
 
+
 @media (max-width: 500px) {
-    .logo_d{
+    .logo_d {
         display: flex;
         justify-content: center;
     }
-    .logo{
+
+    .logo {
         margin-left: 0;
     }
+
+    .leaflet-container {
+        margin-top: 5px;
+        height: 80.5vh;
+
+    }
+    svg.MuiSvgIcon-root {
+        font-size: 1.5rem !important;
+    }
+    a.MuiButtonBase-root{
+        padding: 0 5px !important;
+        min-width: 60px !important;
+    }
+    a.MuiButtonBase-root:last-child {
+        padding-left: 15px  !important;
+        min-width: 60px !important;
+    }
+    
 }
+
 @media (max-width: 380px) {
-    .menu__el{
+    .menu__el {
         margin-right: 26px;
     }
 }
+
 @media (max-width: 350px) {
     .menu__el {
         margin-right: 20px;
     }
-    .menu__el:nth-last-child(2){
+
+    .menu__el:nth-last-child(2) {
         margin-right: 16px;
     }
 }
