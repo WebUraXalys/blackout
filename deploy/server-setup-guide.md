@@ -77,6 +77,7 @@ sudo rm /etc/nginx/sites-enabled/default
 #### 2. Install nginx.conf
 ```sh
 sudo ln -f /home/ubuntu/blackout/deploy/nginx.conf /etc/nginx/nginx.conf
+sudo /bin/bash -c "/etc/nginx/nginx.conf < envsubst '$SERVER_IP' < /etc/nginx/nginx.conf"
 ```
 #### 3. Restart Nginx service
 ```sh
