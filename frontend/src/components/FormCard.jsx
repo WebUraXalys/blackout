@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Button from "@mui/material/Button";
 import {TextField} from "@mui/material";
 import validation from "./Validation";
@@ -10,22 +10,22 @@ const FormCard = () => {
         street: "",
         number: "",
     })
-    const [error, setError] = useState({
-        // city: null,
-        // street: null,
-        // number: null,
-    })
+    const [errors, setErrors] = useState({})
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        setError(validation(values))
+        const errors = validation(values)
 
-        const data = new FormData(e.target)
-        console.log(Object.fromEntries(data.entries()))
-
-
+        if (errors) {
+            setErrors(validation(values))
+        }
     }
+    useEffect(() => {
+        if (errors.city === false && errors.street === false && errors.number === false){
+            console.log(values)
+        }
+    }, [errors])
 
     const handleChange = (e) => {
         setValues({
@@ -33,6 +33,8 @@ const FormCard = () => {
             [e.target.name]: e.target.value
         })
     }
+
+
 
 
     const style = {
@@ -64,10 +66,10 @@ const FormCard = () => {
 
             <TextField
                 sx={style}
-                error={Boolean(error.city)}
+                error={Boolean(errors.city)}
                 margin="dense"
                 size="small"
-                helperText={Boolean(error.city) ? "Write your city(ex: Lviv)" : " "}
+                helperText={Boolean(errors.city) ? "Write your city(ex: Lviv)" : " "}
                 label="City"
                 name="city"
                 value={values.city}
@@ -75,10 +77,10 @@ const FormCard = () => {
             />
             <TextField
                 sx={style}
-                error={Boolean(error.street)}
+                error={Boolean(errors.street)}
                 margin="dense"
                 size="small"
-                helperText={Boolean(error.street) ? "Write your street(ex: Skisna)" : " "}
+                helperText={Boolean(errors.street) ? "Write your street(ex: Skisna)" : " "}
                 label="Street"
                 name="street"
                 value={values.street}
@@ -86,10 +88,10 @@ const FormCard = () => {
             />
             <TextField
                 sx={style}
-                error={Boolean(error.number)}
+                error={Boolean(errors.number)}
                 margin="dense"
                 size="small"
-                helperText={Boolean(error.number) ? "Write your number(ex: 21B)" : " "}
+                helperText={Boolean(errors.number) ? "Write your number(ex: 21B)" : " "}
                 label="Number"
                 name="number"
                 value={values.number}
