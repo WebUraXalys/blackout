@@ -38,7 +38,7 @@ git checkout deploy-ready
 ```
 #### 4. Install Python requirements
 ```sh
-sudo pip3 install gevent
+sudo /home/ubuntu/venv/bin/pip3 install gevent
 pip3 install -r ~/blackout/blackout/requirements.txt
 ```
 #### 5. Set up SERVER_IP environment variable
@@ -76,8 +76,7 @@ sudo rm /etc/nginx/sites-enabled/default
 ```
 #### 2. Install nginx.conf
 ```sh
-sudo ln -f /home/ubuntu/blackout/deploy/nginx.conf /etc/nginx/nginx.conf
-sudo /bin/bash -c "/etc/nginx/nginx.conf < envsubst '$SERVER_IP' < /etc/nginx/nginx.conf"
+envsubst '$SERVER_IP' < /home/ubuntu/blackout/deploy/nginx.conf > /etc/nginx/nginx.conf
 ```
 #### 3. Restart Nginx service
 ```sh
