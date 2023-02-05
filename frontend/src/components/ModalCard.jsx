@@ -1,56 +1,32 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
-import {TextField} from "@mui/material";
-import SendIcon from '@mui/icons-material/Send';
+import FormCard from "./FormCard.jsx";
+import FormCardConfirm from "./FormCardConfirm.jsx";
+
 
 const ModalCard = () => {
 
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
+    const [formIsSubmitted, setFormIsSubmitted] = useState(false)
+    const [data, getData] = useState({
+        city: '',
+        street: '',
+        number: '',
+    })
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    const [state, setState] = React.useState({
-        city: "",
-        street: "",
-        number: ""
-    })
 
-    const handleChange = (e) => {
-        const value = e.target.value;
-        setState({
-            ...state,
-            [e.target.name]: value
-        });
+    const submitForm = () => {
+        setFormIsSubmitted(true);
     }
-
-    const sendData = () => {
-        setState({
-            city: "",
-            street: "",
-            number: ''
+    const setData = (data) => {
+        getData({
+            city: data.city,
+            street: data.street,
+            number: data.number,
         })
-    }
-
-    const style = {
-        input: { color: 'white'},
-        '& label': {color: '#48484A'},
-        '.MuiFormHelperText-root': {color: '#48484A'},
-        '& label.Mui-focused': {
-            color: '#48484A',
-        },
-        '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-                borderColor: '#48484A',
-            },
-            '&:hover fieldset': {
-                transition: '.4s ease-in-out',
-                borderColor: 'white',
-            },
-            '&.Mui-focused fieldset': {
-                borderColor: 'white',
-            },
-        },
     }
 
     return (
@@ -67,73 +43,25 @@ const ModalCard = () => {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <form>
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            display: 'flex', justifyContent: 'center', flexDirection: 'column',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            width: 300,
-                            borderRadius: '10px',
-                            p: 2,
-                            backdropFilter: 'blur(16px) saturate(181%)',
-                            "::webkitBackdropFilter": 'blur(16px) saturate(181%)',
-                            backgroundColor: 'rgba(17, 25, 40, 0.96)',
-                            border: '1px solid rgba(255, 255, 255, 0.125)',
-                        }}
-                    >
-                        <TextField sx={style}
-                            id="City"
-                            label="City"
-                            name="city"
-                            helperText=" "
-                            variant="outlined"
-                            size="small"
-                            type="text"
-                            margin="dense"
-                            onChange={handleChange}
-                            value={state.city}
-                        />
-                        <TextField sx={style}
-                            id="Street"
-                            label="Street"
-                            name="street"
-                            helperText=" "
-                            variant="outlined"
-                            size="small"
-                            type="text"
-                            margin="dense"
-                            onChange={handleChange}
-                            value={state.street}
+                <Box sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 400,
+                    backdropFilter: 'blur(16px) saturate(180%)',
+                    webkitBackdropFilter: 'blur(16px) saturate(180%)',
+                    backgroundColor: 'rgba(17, 25, 40, 0.82)',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(255, 255, 255, 0.125)',
+                    p: 4
+                }}>
+                    {!formIsSubmitted
+                        ? <FormCard submitForm={submitForm} onSubmit={setData}/>
+                        : <FormCardConfirm setFormIsSubmitted={setFormIsSubmitted} sendData={data} getData={getData} handleClose={handleClose}/>}
 
-                        />
-                        <TextField sx={style}
-                            id="House number"
-                            label="Number"
-                            name="number"
-                            helperText=" "
-                            variant="outlined"
-                            size="small"
-                            type="text"
-                            margin="dense"
-                            onChange={handleChange}
-                            value={state.number}
 
-                        />
-                        <Button
-                            type="submit"
-                            sx={{margin: '20px 0 10px'}}
-                            variant="outlined"
-                            endIcon={<SendIcon />}
-                            onClick={sendData}
-                        >
-                            Send
-                        </Button>
-                    </Box>
-
-                </form>
+                </Box>
             </Modal>
         </Box>
     );
