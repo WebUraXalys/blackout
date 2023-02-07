@@ -2,79 +2,71 @@ from datetime import datetime
 from bs4 import BeautifulSoup
 import requests
 import sqlite3
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+import time
 
 
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:107.0) Gecko/20100101 Firefox/107.0",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-    "Accept-Language": "uk-UA,uk;q=0.8,en-US;q=0.5,en;q=0.3",
-}
+options = webdriver.ChromeOptions()
+options.add_argument("--disable-blink-features=AutomationControlled")
 
+s = Service(executable_path='path_to_chromedriver')
+driver = webdriver.Chrome(service=s,options=options)
 
+driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+    'source': '''
+        delete window.cdc_adoQpoasnfa76pfcZLmcfl_Array;
+        delete window.cdc_adoQpoasnfa76pfcZLmcfl_Promise;
+        delete window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol;
+  '''
+})
 def get_page():
-    res = requests.get("https://poweroff.loe.lviv.ua/", headers=HEADERS)
-    if not res.ok:
-        print(f"Перший запит: {res.status_code}")
-        exit()
-    csrftoken = res.cookies
-    if csrftoken is None:
-        print("Не вдалось витягнути csrftoken")
-        exit()
-    soup = BeautifulSoup(res.content, features="html.parser")
-    csrfmiddlewaretoken = (
-        soup.find("form", attrs={"action": "/search_off"})
-        .find(attrs={"type": "hidden"})
-        .get("value", None)
-    )
-    if csrfmiddlewaretoken is None:
-        print("Не вдалось витягнути csrfmiddlewaretoken")
-        exit()
-    res = requests.get(
-        f"https://poweroff.loe.lviv.ua/search_off?csrfmiddlewaretoken={csrfmiddlewaretoken}&city=&street=&otg=&q=%D0%9F%D0%BE%D1%88%D1%83%D0%BA",
-        headers=HEADERS,
-        cookies=csrftoken,
-    )
-    if not res.ok:
-        print(f"Другий запит: {res.status_code}")
-        exit()
-    return res.content
+    url = "https://poweroff.loe.lviv.ua/search_off?csrfmiddlewaretoken=RQrf7SkNXi1AM9WNlaRv50wMeqqoDa5I" \
+          "LN7t6S0PNd5eR7zOaXc9Iy5QgxG1mld2&city=&street=&otg=&q=%D0%9F%D0%BE%D1%88%D1%83%D0%BA"
+    try:
+        driver.get(url)
+        time.sleep(10)
+        data = driver.page_source
+        scrap_data(page_data=data)
 
+    except Exception as ex:
+        print(ex)
+    finally:
+        driver.close()
+        driver.quit()
 
-def scrap_data(page):
-    soup = BeautifulSoup(page, features="html.parser")
-    time_update = soup.find(
-        "cite", title="Source Title"
-    ).text  # Might be useful in the future
-    table = soup.find("table", attrs={"style": "background-color: white;"})
-    all_tbody = table.find_all("tbody")
+def scrap_data(page_data):
+    soup = BeautifulSoup(page_data, "html.parser")
+    page_table = soup.find("table", style="background-color: white;")
+    page_tbody = page_table.find_all("tbody")
+    args = []
     rows = []
-    for tbody in all_tbody:
+    for tbody in page_tbody:
         tr = tbody.find("tr")
         rows.append(tr)
-    print(f"Знайдено {len(rows)} рядків даних")
-    print(time_update)
-    data = []
     for row in rows[1:]:
         other = row.find_all("td")
         buildings = []
         for building in other[3].text.split(", "):
             if building != "":
                 buildings.append(building)
+        # for i in page_tbody:
+        #     full_data = i.find_all("td")
+        #     district_data = i.find_all("th")
         j = {
-            "district": row.find("th").text,
-            "otg": other[0].text,
-            "np": other[1].text,
+            'district': row.find("th").text,
+            'otg': other[0].text,
+            "city": other[1].text,
             "street": other[2].text,
-            "buildings": buildings,
-            "poweroff_type": other[4].text,
-            "poweroff_cause": other[5].text,
-            "poweroff_time": other[6].text,
-            "poweron_time": other[7].text,
+            "house": other[3].text,
+            "type_off": other[4].text,
+            "cause": other[5].text,
+            "time_off": other[6].text,
+            "time_on": other[7].text
         }
-        data.append(j)
-
-    return data
-
+        args.append(j)
+    print(args)
+    return args
 
 def parse():
     page = get_page()
@@ -175,3 +167,4 @@ if __name__ == "__main__":
 # day=str(day)
 # time=str(time)
 # time_off_mas.append((year,"-",month,"-",day,"-",time))
+
