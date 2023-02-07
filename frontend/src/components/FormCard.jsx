@@ -1,7 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import Button from "@mui/material/Button";
-import {TextField} from "@mui/material";
+import {InputAdornment, TextField} from "@mui/material";
 import validation from "./Validation";
+import LocationCityOutlinedIcon from '@mui/icons-material/LocationCityOutlined'; // city
+import AddRoadOutlinedIcon from '@mui/icons-material/AddRoadOutlined'; // street
+import PinOutlinedIcon from '@mui/icons-material/PinOutlined'; // number
 
 
 const FormCard = ({submitForm, onSubmit}) => {
@@ -75,6 +78,13 @@ const FormCard = ({submitForm, onSubmit}) => {
                 name="city"
                 value={values.city}
                 onChange={handleChange}
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <LocationCityOutlinedIcon sx={{color: 'white', fontSize: '1px'}}/>
+                        </InputAdornment>
+                    ),
+                }}
             />
             <TextField
                 sx={style}
@@ -86,6 +96,13 @@ const FormCard = ({submitForm, onSubmit}) => {
                 name="street"
                 value={values.street}
                 onChange={handleChange}
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <AddRoadOutlinedIcon sx={{color: 'white', fontSize: '1px !important'}}/>
+                        </InputAdornment>
+                    ),
+                }}
             />
             <TextField
                 sx={style}
@@ -97,6 +114,13 @@ const FormCard = ({submitForm, onSubmit}) => {
                 name="number"
                 value={values.number}
                 onChange={handleChange}
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <PinOutlinedIcon sx={{color: 'white', fontSize: '1px !important'}}/>
+                        </InputAdornment>
+                    ),
+                }}
             />
             <Button sx={{marginTop: 2, color: '#ffd60a',
                 border: '1px solid rgba(255,214,10,0.55)',

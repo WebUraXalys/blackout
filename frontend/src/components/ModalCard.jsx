@@ -48,19 +48,19 @@ const ModalCard = () => {
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    width: 400,
+                    width: '30%',
+                    height: '45%',
                     backdropFilter: 'blur(16px) saturate(180%)',
                     webkitBackdropFilter: 'blur(16px) saturate(180%)',
                     backgroundColor: 'rgba(17, 25, 40, 0.82)',
                     borderRadius: '12px',
-                    border: '1px solid rgba(255, 255, 255, 0.125)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
                     p: 4
                 }}>
                     {!formIsSubmitted
                         ? <FormCard submitForm={submitForm} onSubmit={setData}/>
-                        : <FormCardConfirm setFormIsSubmitted={setFormIsSubmitted} sendData={data} getData={getData} handleClose={handleClose}/>}
-
-
+                        : <FormCardConfirm setFormIsSubmitted={setFormIsSubmitted} data={data} handleClose={handleClose}/>
+                    }
                 </Box>
             </Modal>
         </Box>
