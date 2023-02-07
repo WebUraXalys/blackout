@@ -6,7 +6,7 @@ import FormCard from "./FormCard.jsx";
 import FormCardConfirm from "./FormCardConfirm.jsx";
 
 
-const ModalCard = () => {
+const useModalCard = () => {
 
     const [open, setOpen] = useState(false);
     const [formIsSubmitted, setFormIsSubmitted] = useState(false)
@@ -15,6 +15,8 @@ const ModalCard = () => {
         street: '',
         number: '',
     })
+    const [locationName, setLocationName] = useState('')
+    const [icon, setIcon] = useState('')
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
@@ -29,7 +31,10 @@ const ModalCard = () => {
         })
     }
 
-    return (
+    return {
+
+        locationName, data, icon,
+        render: (
         <Box sx={{display: 'flex', justifyContent: 'center'}}>
             <Button sx={{margin: '10px 0', color: '#ffd60a',
                 border: '1px solid rgba(255,214,10,0.55)',
@@ -49,7 +54,7 @@ const ModalCard = () => {
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
                     width: '30%',
-                    height: '45%',
+                    height: '50%',
                     backdropFilter: 'blur(16px) saturate(180%)',
                     webkitBackdropFilter: 'blur(16px) saturate(180%)',
                     backgroundColor: 'rgba(17, 25, 40, 0.82)',
@@ -57,14 +62,15 @@ const ModalCard = () => {
                     border: '1px solid rgba(255, 255, 255, 0.2)',
                     p: 4
                 }}>
+
                     {!formIsSubmitted
                         ? <FormCard submitForm={submitForm} onSubmit={setData}/>
-                        : <FormCardConfirm setFormIsSubmitted={setFormIsSubmitted} data={data} handleClose={handleClose}/>
+                        : <FormCardConfirm setFormIsSubmitted={setFormIsSubmitted} setLocationName={setLocationName} setIcon={setIcon} data={data} handleClose={handleClose}/>
                     }
                 </Box>
             </Modal>
         </Box>
-    );
+    )}
 };
 
-export default ModalCard;
+export default useModalCard;

@@ -1,9 +1,15 @@
 import React, {useState} from 'react';
-import {Typography, TextField, Box} from "@mui/material";
+import {Typography, TextField, Box, ToggleButtonGroup, ToggleButton as MuiToggleButton} from "@mui/material";
 import Button from "@mui/material/Button";
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
+import FitnessCenterRoundedIcon from '@mui/icons-material/FitnessCenterRounded';
+import WorkRoundedIcon from '@mui/icons-material/WorkRounded';
+import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded';
+import RoomIcon from '@mui/icons-material/Room';
+import SchoolIcon from '@mui/icons-material/School';
+import { styled } from '@mui/material/styles';
 
-
-const FormCardConfirm = ({setFormIsSubmitted, data, handleClose}) => {
+const FormCardConfirm = ({setFormIsSubmitted, data, handleClose, setLocationName, setIcon}) => {
 
     const [name, setName] = useState("")
 
@@ -15,10 +21,19 @@ const FormCardConfirm = ({setFormIsSubmitted, data, handleClose}) => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        console.log(data, name)
-        handleClose()
+        //console.log(name, data)
         setFormIsSubmitted(false)
+        setLocationName(name)
+        setIcon(alignment)
+        handleClose()
+
     }
+    const [alignment, setAlignment] = useState('');
+
+    const handleAlignment = (event, newAlignment) => {
+        setAlignment(newAlignment);
+        console.log(typeof(alignment))
+    };
 
     const style = {
         input: { color: 'white'},
@@ -44,10 +59,37 @@ const FormCardConfirm = ({setFormIsSubmitted, data, handleClose}) => {
         },
     }
 
+    const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
+        '& .MuiToggleButtonGroup-grouped': {
+            margin: theme.spacing(1),
+            color: '#48484A',
+
+            '&:not(:first-of-type)': {
+                // borderRadius: theme.shape.borderRadius,
+                borderRadius: '50%',
+            },
+            '&:first-of-type': {
+                borderRadius: '50%',
+            },
+
+
+        },
+    }));
+
+    const ToggleButton = styled(MuiToggleButton)({
+        "&.Mui-selected": {
+            color: "#ffd60a",
+            backgroundColor: 'transparent'
+        },
+        "&:hover": {
+            color: "#ffd60a",
+            transition: '.2s ease-in-out',
+        }
+    });
+
     return (
         <div>
             <form onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column'}}>
-
                 <Box
                     color="#48484A"
                     mb={2}
@@ -76,7 +118,6 @@ const FormCardConfirm = ({setFormIsSubmitted, data, handleClose}) => {
                     </Typography>
                 </Box>
 
-
                 <TextField
                     sx={style}
                     margin="dense"
@@ -87,6 +128,33 @@ const FormCardConfirm = ({setFormIsSubmitted, data, handleClose}) => {
                     value={name}
                     onChange={handleName}/>
 
+                    <StyledToggleButtonGroup
+                        size="small"
+                        value={alignment}
+                        exclusive
+                        onChange={handleAlignment}
+                        aria-label="text alignment"
+                    >
+                        <ToggleButton value="home" aria-label="right aligned">
+                            <HomeRoundedIcon />
+                        </ToggleButton>
+                        <ToggleButton value="work" aria-label="right aligned">
+                            <WorkRoundedIcon />
+                        </ToggleButton>
+                        <ToggleButton value="gym" aria-label="right aligned">
+                            <FitnessCenterRoundedIcon />
+                        </ToggleButton>
+                        <ToggleButton value="room" aria-label="right aligned">
+                            <RoomIcon />
+                        </ToggleButton>
+                        <ToggleButton value="school" aria-label="right aligned">
+                            <SchoolIcon />
+                        </ToggleButton>
+                        <ToggleButton value="cart" aria-label="right aligned">
+                            <ShoppingCartRoundedIcon />
+                        </ToggleButton>
+
+                    </StyledToggleButtonGroup>
                     <Button sx={{marginTop: 2, color: 'rgb(27,176,30)',
                         border: '1px solid rgba(27,176,30, 0.5)',
                         '&:hover': {

@@ -1,11 +1,20 @@
 import React from 'react';
-import ModalCard from "../components/ModalCard.jsx";
+import useModalCard from "../components/ModalCard.jsx";
+import {Box} from "@mui/material";
 
 
 const Home = () => {
+
+    const {render, locationName, data, icon} = useModalCard()
+
     return (
         <div>
-            <ModalCard />
+            {render}
+            <Box sx={{color: 'red'}}>
+                {locationName}
+                {data.number}{data.city}{data.street}
+                {icon}
+            </Box>
         </div>
     );
 };
