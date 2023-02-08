@@ -34,6 +34,7 @@ const useModalCard = () => {
     return {
 
         locationName, data, icon,
+
         render: (
         <Box sx={{display: 'flex', justifyContent: 'center'}}>
             <Button sx={{margin: '10px 0', color: '#ffd60a',

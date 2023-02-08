@@ -64,11 +64,11 @@ a {
     color: #ffd60a !important;
 }
 
-span.MuiBottomNavigationAction-label {
+.MuiBottomNavigation-root span.MuiBottomNavigationAction-label {
     font-size: 11px !important;
 }
 
-svg.MuiSvgIcon-root {
+.MuiBottomNavigation-root svg.MuiSvgIcon-root {
     font-size: 2rem !important;
 }
 

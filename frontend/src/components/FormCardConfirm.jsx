@@ -135,22 +135,22 @@ const FormCardConfirm = ({setFormIsSubmitted, data, handleClose, setLocationName
                         onChange={handleAlignment}
                         aria-label="text alignment"
                     >
-                        <ToggleButton value="home" aria-label="right aligned">
+                        <ToggleButton value="HomeRoundedIcon" aria-label="right aligned">
                             <HomeRoundedIcon />
                         </ToggleButton>
-                        <ToggleButton value="work" aria-label="right aligned">
+                        <ToggleButton value="WorkRoundedIcon" aria-label="right aligned">
                             <WorkRoundedIcon />
                         </ToggleButton>
-                        <ToggleButton value="gym" aria-label="right aligned">
+                        <ToggleButton value="FitnessCenterRoundedIcon" aria-label="right aligned">
                             <FitnessCenterRoundedIcon />
                         </ToggleButton>
-                        <ToggleButton value="room" aria-label="right aligned">
+                        <ToggleButton value="RoomIcon" aria-label="right aligned">
                             <RoomIcon />
                         </ToggleButton>
-                        <ToggleButton value="school" aria-label="right aligned">
+                        <ToggleButton value="SchoolIcon" aria-label="right aligned">
                             <SchoolIcon />
                         </ToggleButton>
-                        <ToggleButton value="cart" aria-label="right aligned">
+                        <ToggleButton value="ShoppingCartRoundedIcon" aria-label="right aligned">
                             <ShoppingCartRoundedIcon />
                         </ToggleButton>
 
