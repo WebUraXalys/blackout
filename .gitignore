@@ -2,6 +2,7 @@
 *.env
 .idea/
 .fleet/
+__pycache__/
 *.pyc
 *.pdb
 **/*.rs.bk
