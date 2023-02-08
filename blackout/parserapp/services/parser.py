@@ -1,33 +1,36 @@
 from datetime import datetime
 from bs4 import BeautifulSoup
-import requests
 import sqlite3
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 import time
 
 
-options = webdriver.ChromeOptions()
-options.add_argument("--disable-blink-features=AutomationControlled")
+def start_browser():
+    options = webdriver.ChromeOptions()
+    options.add_argument("--disable-blink-features=AutomationControlled")
 
-s = Service(executable_path='path_to_chromedriver')
-driver = webdriver.Chrome(service=s,options=options)
+    s = Service(executable_path='path_to_chromedriver')
+    driver = webdriver.Chrome(service=s, options=options)
 
-driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
-    'source': '''
-        delete window.cdc_adoQpoasnfa76pfcZLmcfl_Array;
-        delete window.cdc_adoQpoasnfa76pfcZLmcfl_Promise;
-        delete window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol;
-  '''
-})
-def get_page():
+    driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+        'source': '''
+            delete window.cdc_adoQpoasnfa76pfcZLmcfl_Array;
+            delete window.cdc_adoQpoasnfa76pfcZLmcfl_Promise;
+            delete window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol;
+      '''
+    })
+    return driver
+
+
+def get_page(driver):
     url = "https://poweroff.loe.lviv.ua/search_off?csrfmiddlewaretoken=RQrf7SkNXi1AM9WNlaRv50wMeqqoDa5I" \
           "LN7t6S0PNd5eR7zOaXc9Iy5QgxG1mld2&city=&street=&otg=&q=%D0%9F%D0%BE%D1%88%D1%83%D0%BA"
     try:
         driver.get(url)
         time.sleep(10)
         data = driver.page_source
-        scrap_data(page_data=data)
+        return scrap_data(page_data=data)
 
     except Exception as ex:
         print(ex)
@@ -35,11 +38,12 @@ def get_page():
         driver.close()
         driver.quit()
 
+
 def scrap_data(page_data):
     soup = BeautifulSoup(page_data, "html.parser")
     page_table = soup.find("table", style="background-color: white;")
     page_tbody = page_table.find_all("tbody")
-    args = []
+    data = []
     rows = []
     for tbody in page_tbody:
         tr = tbody.find("tr")
@@ -50,33 +54,27 @@ def scrap_data(page_data):
         for building in other[3].text.split(", "):
             if building != "":
                 buildings.append(building)
-        # for i in page_tbody:
-        #     full_data = i.find_all("td")
-        #     district_data = i.find_all("th")
         j = {
             'district': row.find("th").text,
             'otg': other[0].text,
-            "city": other[1].text,
+            "np": other[1].text,
             "street": other[2].text,
-            "house": other[3].text,
+            "buildings": other[3].text,
             "type_off": other[4].text,
             "cause": other[5].text,
             "time_off": other[6].text,
             "time_on": other[7].text
         }
-        args.append(j)
-    print(args)
-    return args
-
-def parse():
-    page = get_page()
-    data = scrap_data(page)
+        data.append(j)
+    print(data)
     return data
 
 
 def save_data(data):
     connection = sqlite3.connect("../../db.sqlite3")
     cur = connection.cursor()
+    summary = 0
+    streets_number = 0
 
     for row in data:
         region = row["district"].title()
@@ -95,51 +93,51 @@ def save_data(data):
             )
             connection.commit()
             print(f"{street} додано")
+            streets_number += 1
 
             street_id = cur.lastrowid  # returns id of the last inserted record
-            save_buildings(buildings, street_id, cur, connection)
+            buildings_number = save_buildings(buildings, street_id, cur, connection)
+            summary += buildings_number
 
         else:
             print(f"Вулиця {street} вже є в базі.")
-            street_id = exist[0][
-                0
-            ]  # exist[0] returns record (id, Name, City, OTG, Region)
-            save_buildings(buildings, street_id, cur, connection)
+            street_id = exist[0][0]  # exist[0] returns record (id, Name, City, OTG, Region)
+            buildings_number = save_buildings(buildings, street_id, cur, connection)
+            summary += buildings_number
 
-    connection.close()
-    message = f"Парсинг завершено. Додано {len(data)} вулиць"
+    counts = [streets_number, summary]
+    print(f"Парсинг завершено. Додано {streets_number} вулиць")
 
-    return message
+    return counts
 
 
 def save_buildings(buildings, street_id, cur, connection):
+    buildings_number = 0
+    buildings = buildings.split(",")
     for building in buildings:
         letter = 0
+        building = building.replace('"', "")
         for letters in building:
-            if building[letters].isalpha():  # isalpha method checks
+            if letters.isalpha() and letter < 2:  # isalpha method checks
                 letter += 1
         if letter < 2:
-            exist = cur.execute(
-                f'SELECT * FROM parserapp_buildings WHERE Address="{building}" and Street_id="{street_id}"'
-            ).fetchall()
+            exist = cur.execute(f'SELECT * FROM parserapp_buildings WHERE Address="{building}" and Street_id="{street_id}"').fetchall()
             if len(exist) < 1:
-                cur.execute(
-                    f'INSERT INTO parserapp_buildings(Address, Street_id) VALUES("{building}", "{street_id}"'
-                )
+                cur.execute(f'INSERT INTO parserapp_buildings(Address, Street_id) VALUES("{building}", "{street_id}")')
                 connection.commit()
-
-
-def saving():
-    data = parse()
-    message = save_data(data)
-    return message
+                buildings_number += 1
+    return buildings_number
 
 
 if __name__ == "__main__":
     start = datetime.now()
-    saving()
+    driver = start_browser()
+    data = get_page(driver)
+    counts = save_data(data)
     time = datetime.now() - start
-    print(f"Швидкість геокодера: {100 / time.total_seconds() * 3600 * 24}")
+    print(f"Час виконання завдання: {time}")
+    print(f"Швидкість запису парсера: {100 / time.total_seconds() * 3600} вул/год")
+    print(f"Кількість будинків: {counts[1]}\nШвидкість запису:{counts[1] / time.total_seconds() * 3600} буд/год")
 
 
 # Following code is written for transforming string into datetime. Now it's unused
@@ -167,4 +165,3 @@ if __name__ == "__main__":
 # day=str(day)
 # time=str(time)
 # time_off_mas.append((year,"-",month,"-",day,"-",time))
-

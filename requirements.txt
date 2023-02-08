@@ -13,3 +13,4 @@ numpy==1.24.1
 geocoder==1.38.1
 celery==5.2.7
 beautifulsoup4==4.11.1
+selenium==4.8.0

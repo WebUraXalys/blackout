@@ -6,7 +6,7 @@ from models import Street, Building, Region
 group = input("Введіть через пробіл номери груп, які потрібно спарсити: ")
 index = group.split()
 
-if Region.select(Region.name == "Lviv").count() < 1:
+if Region.select(Region.name == "Lviv").counts() < 1:
     reg = Region.create(name="Lviv")
 else:
     reg = Region.get(name="Lviv")
