@@ -1,37 +1,54 @@
-import React from 'react';
-import {Paper, Box} from "@mui/material";
-import {Typography} from "@mui/material";
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
-import FlashOffIcon from '@mui/icons-material/FlashOff';
-import TimerOutlinedIcon from '@mui/icons-material/TimerOutlined';
+import React, { useContext } from "react";
+import Box from "@mui/material/Box";
+import Stepper from "@mui/material/Stepper";
+import Step from "@mui/material/Step";
+import StepLabel from "@mui/material/StepLabel";
+import Typography from "@mui/material/Typography";
+import FirstStep from "./FirstStep";
+import SecondStep from "./SecondStep";
+import Confirm from "./Confirm";
+import Success from "./Success";
+import { AppContext } from "../Context";
 
+const labels = ["First Step", "Second Step", "Confirmation"];
 
-const LocationForm = (props, {electricity}) => {
-
+const handleSteps = (step) => {
+    switch (step) {
+        case 0:
+            return <FirstStep/>
+        case 1:
+            return <SecondStep/>
+        case 2:
+            return <Confirm/>
+        default:
+            throw new Error("Unknown step");
+    }
+};
+export default function StepForm() {
+    const { activeStep } = useContext(AppContext);
 
     return (
-
-           electricity
-               ? <Paper elevation={3} sx={{backgroundColor: '#20202194',margin: '5px auto',display: 'flex', justifyItems: 'center', alignItems: 'center', flexDirection: 'column', width: '200px', borderRadius: '15px'}}>
-                <HomeRoundedIcon sx={{marginTop: '14px', backgroundColor: '#ffd60a', borderRadius: '5px', color: '#fff', fontSize: '60px', padding: '2px'}}/>
-                <Typography variant="h5" sx={{color: '#ffd60a', margin: '12px 0'}}>Home</Typography>
-                <Typography sx={{color: '#636366'}}>Time until blackout: </Typography>
-                <Box sx={{display: 'flex', alignItems: 'center', margin: '6px 0 12px 0'}}>
-                    <TimerOutlinedIcon sx={{color: '#ffd60a', marginRight: '5px'}}/>
-                    <Typography sx={{color: '#ffd60a'}}>1h 28m</Typography>
+        activeStep === labels.length
+            ? (<Success />)
+            : (<>
+                <Box sx={{ my: 5 }}>
+                    <Typography variant="h4" align="center">
+                        Multi Step Form
+                    </Typography>
+                    <Typography variant="subtitle2" align="center" sx={{ mt: 2 }}>
+                        React Material UI multi step form with basic form validation
+                        logic.
+                    </Typography>
                 </Box>
-              </Paper>
+                <Stepper activeStep={activeStep} sx={{ py: 3 }} alternativeLabel>
+                    {labels.map((label) => (
+                        <Step key={label}>
+                            <StepLabel>{label}</StepLabel>
+                        </Step>
+                    ))}
+                </Stepper>
 
-            : <Paper elevation={3} sx={{backgroundColor: '#20202194',margin: '5px auto',display: 'flex', justifyItems: 'center', alignItems: 'center', flexDirection: 'column', width: '200px', borderRadius: '15px'}}>
-                <HomeRoundedIcon sx={{marginTop: '14px', backgroundColor: '#48484A', borderRadius: '5px', color: '#CCCABE', fontSize: '60px', padding: '2px'}}/>
-                <Typography variant="h5" sx={{color: '#8E8E93', margin: '12px 0'}}>Home</Typography>
-                <Typography sx={{color: '#636366'}}>Time before blackout: </Typography>
-                <Box sx={{display: 'flex', alignItems: 'center', margin: '6px 0 12px 0'}}>
-                    <FlashOffIcon sx={{color: '#FF453A'}}/>
-                    <Typography sx={{color: '#8E8E93'}}>1h 28m</Typography>
-                </Box>
-            </Paper>
-    );
-};
-
-export default LocationForm;
+                {handleSteps(activeStep)}
+            </>)
+)
+}
