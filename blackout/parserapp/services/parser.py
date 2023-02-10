@@ -66,7 +66,6 @@ def scrap_data(page_data):
             "time_on": other[7].text
         }
         data.append(j)
-    print(data)
     return data
 
 
@@ -83,6 +82,14 @@ def save_data(data):
         street = row["street"].title()
         buildings = row["buildings"]
 
+        interruption = save_interruption(
+            cause=row["cause"],
+            time_off=row["time_off"],
+            time_on=row["time_on"],
+            cur=cur,
+            con=connection
+        )
+
         exist = cur.execute(
             f"SELECT * FROM parserapp_streets WHERE Name='{street}' AND City='{city}' AND OTG='{otg}';"
         ).fetchall()
@@ -92,28 +99,64 @@ def save_data(data):
                 f"INSERT INTO parserapp_streets(Name, City, OTG, Region) VALUES('{street}', '{city}', '{otg}', '{region}')"
             )
             connection.commit()
-            print(f"{street} додано")
+            print(f"{street} added")
             streets_number += 1
 
             street_id = cur.lastrowid  # returns id of the last inserted record
-            buildings_number = save_buildings(buildings, street_id, cur, connection)
+            buildings_number = save_buildings(buildings, street_id, cur, connection, interruption)
             summary += buildings_number
 
         else:
-            print(f"Вулиця {street} вже є в базі.")
+            print(f"Street {street} already exist.")
             street_id = exist[0][0]  # exist[0] returns record (id, Name, City, OTG, Region)
-            buildings_number = save_buildings(buildings, street_id, cur, connection)
+            buildings_number = save_buildings(buildings, street_id, cur, connection, interruption)
             summary += buildings_number
 
     counts = [streets_number, summary]
-    print(f"Парсинг завершено. Додано {streets_number} вулиць")
+    print(f"Parsing finished. Added {streets_number} streets")
 
     return counts
 
 
-def save_buildings(buildings, street_id, cur, connection):
+def save_interruption(cause, time_off, time_on, cur, con):
+    if cause == "ГПВ":
+        cause = "Plan"
+    else:
+        cause = "Emergency"
+
+    month_dict = {
+            "січня": "01",
+            "лютого": "02",
+            "березня": "03",
+            "квітня": "04",
+            "травня": "05",
+            "червня": "06",
+            "липня": "07",
+            "серпня": "08",
+            "вересня": "09",
+            "жовтня": "10",
+            "листопада": "11",
+            "грудня": "12",
+        }
+    time_off = time_off.split(" ")
+    time_off = f"{time_off[0]}/{month_dict[time_off[1]]}/{time_off[2]} {time_off[4]}"
+    time_off_obj = datetime.strptime(time_off, '%d/%m/%Y %H:%M')
+
+    time_on = time_on.split(" ")
+    time_on = f"{time_on[0]}/{month_dict[time_on[1]]}/{time_on[2]} {time_on[4]}"
+    time_on_obj = datetime.strptime(time_off, '%d/%m/%Y %H:%M')
+    cur.execute(
+        f"INSERT INTO parserapp_interruptions(Start, End, Type) VALUES('{time_on_obj}', '{time_off}', '{cause}')"
+    )
+    con.commit()
+    interruption_id = cur.lastrowid
+    return interruption_id
+
+
+def save_buildings(buildings, street_id, cur, connection, interruption):
     buildings_number = 0
     buildings = buildings.split(",")
+    print(interruption)
     for building in buildings:
         letter = 0
         building = building.replace('"', "")
@@ -123,9 +166,14 @@ def save_buildings(buildings, street_id, cur, connection):
         if letter < 2:
             exist = cur.execute(f'SELECT * FROM parserapp_buildings WHERE Address="{building}" and Street_id="{street_id}"').fetchall()
             if len(exist) < 1:
-                cur.execute(f'INSERT INTO parserapp_buildings(Address, Street_id) VALUES("{building}", "{street_id}")')
+                cur.execute(f'INSERT INTO parserapp_buildings(Address, Street_id, Interruption_id) VALUES("{building}", "{street_id}", "{interruption}")')
                 connection.commit()
                 buildings_number += 1
+            else:
+                cur.execute(f'UPDATE parserapp_buildings '
+                            f'SET Interruption_id = {interruption} '
+                            f'WHERE id="{exist[0][0]}"')
+                connection.commit()
     return buildings_number
 
 
@@ -135,33 +183,6 @@ if __name__ == "__main__":
     data = get_page(driver)
     counts = save_data(data)
     time = datetime.now() - start
-    print(f"Час виконання завдання: {time}")
-    print(f"Швидкість запису парсера: {100 / time.total_seconds() * 3600} вул/год")
-    print(f"Кількість будинків: {counts[1]}\nШвидкість запису:{counts[1] / time.total_seconds() * 3600} буд/год")
-
-
-# Following code is written for transforming string into datetime. Now it's unused
-# params=time_off.strip().split(' ')
-# params2=time_on.strip().split(' ')
-#
-# day,month_hru,year,gg,time=params
-# month_map={
-#         "січня":1,
-#         "лютого":2,
-#         "березня": 3,
-#         "квітня": 4,
-#         "травня": 5,
-#         "червня": 6,
-#         "липня": 7,
-#         "серпня": 8,
-#         "вересня": 9,
-#         "жовтня": 10,
-#         "листопада": 11,
-#         "грудня": 12,
-#     }
-# time_off_mas=[]
-# year=str(year)
-# month=str(month_map.get(month_hru))
-# day=str(day)
-# time=str(time)
-# time_off_mas.append((year,"-",month,"-",day,"-",time))
+    print(f"Time of working: {time}")
+    print(f"Parser recording speed: {100 / time.total_seconds() * 3600} streets per hour")
+    print(f"Count of buildings: {counts[1]}\nRecording speed:{counts[1] / time.total_seconds() * 3600} buildings per hour")
