@@ -1,11 +1,22 @@
 import React from "react";
-import Typography from "@mui/material/Typography";
+import {Alert, Snackbar} from "@mui/material";
 
 export default function Success() {
+
+    const [open, setOpen] = React.useState(true);
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     return (
         <>
-            <Typography variant="h2" align="center" sx={{py:4} }>Thank you!</Typography>
-            <Typography component="p" align="center">You will get an email with further instructions</Typography>
+            <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
+                <Alert onClose={handleClose} variant="filled" elevation={6} severity="success" sx={{ width: '100%' }}>
+                    This is a success message!
+                    You will get an email with further instructions
+                </Alert>
+            </Snackbar>
         </>
     );
 }

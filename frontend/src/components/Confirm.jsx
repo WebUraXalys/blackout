@@ -8,8 +8,8 @@ import Button from "@mui/material/Button";
 import { AppContext } from "../Context";
 
 export default function Confirm() {
-    const { formValues, handleBack, handleNext } = useContext(AppContext);
-    const {firstName, lastName, email, gender ,city, street, number} = formValues;
+    const { formValues, handleBack, handleNext, variant } = useContext(AppContext);
+    const {firstName, lastName, email ,city, street, number} = formValues;
 
     const handleSubmit = () => {
         let form = {};
@@ -26,17 +26,27 @@ export default function Confirm() {
     return (
         <>
             <List disablePadding>
-                <ListItem>
+                <ListItem sx={{padding: '0 15px'}}>
                     <ListItemText
-                        primary="First Name"
+                        sx={{
+                            '& .MuiListItemText-primary, .MuiListItemText-secondary': {
+                                fontFamily: 'Rubik, sans-serif'
+                            }
+                        }}
+                        primary={`First Name`}
                         secondary={firstName.value || "Not Provided"}
                     />
                 </ListItem>
 
                 <Divider />
 
-                <ListItem>
+                <ListItem sx={{padding: '0 15px'}}>
                     <ListItemText
+                        sx={{
+                            '& .MuiListItemText-primary, .MuiListItemText-secondary': {
+                                fontFamily: 'Rubik, sans-serif'
+                            }
+                        }}
                         primary="Last Name"
                         secondary={lastName.value || "Not Provided"}
                     />
@@ -44,8 +54,13 @@ export default function Confirm() {
 
                 <Divider />
 
-                <ListItem>
+                <ListItem sx={{padding: '0 15px'}}>
                     <ListItemText
+                        sx={{
+                            '& .MuiListItemText-primary, .MuiListItemText-secondary': {
+                                fontFamily: 'Rubik, sans-serif'
+                            }
+                        }}
                         primary="Email Address"
                         secondary={email.value || "Not Provided"}
                     />
@@ -53,17 +68,13 @@ export default function Confirm() {
 
                 <Divider />
 
-                <ListItem>
+                <ListItem sx={{padding: '0 15px'}}>
                     <ListItemText
-                        primary="Gender"
-                        secondary={gender.value || "Not Provided"}
-                    />
-                </ListItem>
-
-                <Divider />
-
-                <ListItem>
-                    <ListItemText
+                        sx={{
+                            '& .MuiListItemText-primary, .MuiListItemText-secondary': {
+                                fontFamily: 'Rubik, sans-serif'
+                            }
+                        }}
                         primary="City"
                         secondary={city.value || "Not Provided"}
                     />
@@ -71,8 +82,13 @@ export default function Confirm() {
 
                 <Divider />
 
-                <ListItem>
+                <ListItem sx={{padding: '0 15px'}}>
                     <ListItemText
+                        sx={{
+                            '& .MuiListItemText-primary, .MuiListItemText-secondary': {
+                                fontFamily: 'Rubik, sans-serif'
+                            }
+                        }}
                         primary="Street"
                         secondary={street.value || "Not Provided"}
                     />
@@ -80,20 +96,25 @@ export default function Confirm() {
 
                 <Divider />
 
-                <ListItem>
+                <ListItem sx={{padding: '0 15px'}}>
                     <ListItemText
+                        sx={{
+                            '& .MuiListItemText-primary, .MuiListItemText-secondary': {
+                                fontFamily: 'Rubik, sans-serif'
+                            }
+                        }}
                         primary="Number"
                         secondary={number.value || "Not Provided"}
                     />
                 </ListItem>
             </List>
 
-            <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
-                <Button sx={{ mr: 1 }} onClick={handleBack}>
+            <Box sx={{ display: "flex", justifyContent: "space-around", mt: 1, p: 2 }}>
+                <Button variant={variant} sx={{ mr: 1 }} onClick={handleBack}>
                     Back
                 </Button>
                 <Button variant="contained" color="success" onClick={handleSubmit}>
-                    Confirm & Continue
+                    Confirm & Send
                 </Button>
             </Box>
         </>

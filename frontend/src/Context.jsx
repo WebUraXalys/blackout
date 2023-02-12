@@ -9,6 +9,7 @@ const isNumber = /^\d+$/;
 
 const variant = "outlined";
 const margin = "normal";
+const size = "small"
 
 export const AppContext = createContext({
 	activeStep: 0,
@@ -17,7 +18,8 @@ export const AppContext = createContext({
 	handleNext() { },
 	handleBack() { },
 	variant,
-	margin
+	margin,
+	size
 });
 
 function reducer(state, action) {
@@ -131,7 +133,8 @@ export function StepsProvider({ children }) {
 		handleNext,
 		handleBack,
 		variant,
-		margin
+		margin,
+		size
 	}), [activeStep, formValues, handleChange, handleNext, handleBack]);
 	return (
 		<AppContext.Provider value={contextValue}>

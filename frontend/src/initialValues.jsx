@@ -31,6 +31,7 @@ export const initialValues = {
         error: '',
         validate: 'text',
         minLength: 3,
+        required: true,
         maxLength: 15
     },
     street: {
@@ -38,22 +39,23 @@ export const initialValues = {
         error: '',
         validate: 'text',
         minLength: 3,
+        required: true,
         maxLength: 20
     },
     number: {
         value: '',
         error: '',
         minLength: 1,
+        required: true,
         maxLength: 5
     },
-
-    // agreenemt: {
-    //     value: false,
-    //     error: '',
-    //     required: true,
-    //     validate: 'checkbox',
-    //     helperText: 'Please accept our terms and conditions'
-    // },
+    agreement: {
+        value: false,
+        error: '',
+        required: true,
+        validate: 'checkbox',
+        helperText: 'Please accept our terms and conditions'
+    },
     phone: {
         value: '',
         error: '',

@@ -30,25 +30,25 @@ export default function StepForm() {
     return (
         activeStep === labels.length
             ? (<Success />)
-            : (<>
-                <Box sx={{ my: 5 }}>
-                    <Typography variant="h4" align="center">
-                        Multi Step Form
-                    </Typography>
-                    <Typography variant="subtitle2" align="center" sx={{ mt: 2 }}>
-                        React Material UI multi step form with basic form validation
-                        logic.
+            : (<div style={{ borderRadius: '7px'}}>
+                <Box>
+                    <Typography variant="h4" align="center" sx={{fontFamily: 'Rubik, sans-serif', padding: '10px 0'}}>
+                        Registration
                     </Typography>
                 </Box>
-                <Stepper activeStep={activeStep} sx={{ py: 3 }} alternativeLabel>
+                <Stepper activeStep={activeStep} sx={{ py: 2 }} alternativeLabel>
                     {labels.map((label) => (
-                        <Step key={label}>
+                        <Step sx={{
+                            '& 	.MuiStepLabel-label': {
+                                fontFamily: 'Rubik, sans-serif'
+                            }
+                        }} key={label}>
                             <StepLabel>{label}</StepLabel>
                         </Step>
                     ))}
                 </Stepper>
 
                 {handleSteps(activeStep)}
-            </>)
+            </div>)
 )
 }

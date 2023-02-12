@@ -8,7 +8,7 @@ import { AppContext } from "../Context";
 
 export default function FirstStep() {
 
-	const { formValues, handleChange, handleNext, variant, margin } = useContext(AppContext);
+	const { formValues, handleChange, handleNext, variant, size } = useContext(AppContext);
 	const { firstName, lastName, email, gender } = formValues;
 
 	const isError = useCallback(() =>
@@ -21,11 +21,16 @@ export default function FirstStep() {
 
 	return (
 		<>
-			<Grid container spacing={2}>
-				<Grid item xs={12} sm={6}>
+			<Grid justifyContent="center" container spacing={1}>
+				<Grid item xs={12} sm={10}>
 					<TextField
+						sx={{
+							'& .MuiInputLabel-root, .MuiInputBase-root': {
+								fontFamily: 'Rubik, sans-serif'
+							}
+						}}
 						variant={variant}
-						margin={margin}
+						size={size}
 						fullWidth
 						label="First Name"
 						name="firstName"
@@ -33,14 +38,19 @@ export default function FirstStep() {
 						value={firstName.value}
 						onChange={handleChange}
 						error={!!firstName.error}
-						helperText={firstName.error}
+						helperText={firstName.error || " "}
 						required={firstName.required}
 					/>
 				</Grid>
-				<Grid item xs={12} sm={6}>
+				<Grid item xs={12} sm={10}>
 					<TextField
+						sx={{
+							'& .MuiInputLabel-root, .MuiInputBase-root': {
+								fontFamily: 'Rubik, sans-serif'
+							}
+						}}
 						variant={variant}
-						margin={margin}
+						size={size}
 						fullWidth
 						label="Last Name"
 						name="lastName"
@@ -48,15 +58,20 @@ export default function FirstStep() {
 						value={lastName.value}
 						onChange={handleChange}
 						error={!!lastName.error}
-						helperText={lastName.error}
+						helperText={lastName.error || " "}
 						required={lastName.required}
 					/>
 				</Grid>
 
-				<Grid item xs={12} sm={6}>
+				<Grid item xs={12} sm={10}>
 					<TextField
+						sx={{
+							'& .MuiInputLabel-root, .MuiInputBase-root': {
+								fontFamily: 'Rubik, sans-serif'
+							}
+						}}
 						variant={variant}
-						margin={margin}
+						size={size}
 						fullWidth
 						label="Email"
 						name="email"
@@ -65,39 +80,17 @@ export default function FirstStep() {
 						value={email.value}
 						onChange={handleChange}
 						error={!!email.error}
-						helperText={email.error}
+						helperText={email.error || " "}
 						required={email.required}
-					/>
-				</Grid>
 
-				<Grid item xs={12} sm={6}>
-					<TextField
-						variant={variant}
-						margin={margin}
-						fullWidth
-						select
-						SelectProps={{
-							native: true
-						}}
-						label="Gender"
-						name="gender"
-						value={gender.value}
-						onChange={handleChange}
-						error={!!gender.error}
-						helperText={gender.error}
-						required={gender.required}
-					>
-						<option value=""> </option>
-						<option value="Male">Male</option>
-						<option value="Female">Female</option>
-					</TextField>
+					/>
 				</Grid>
 			</Grid>
 
-			<Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+			<Box sx={{ display: "flex", justifyContent: "space-around", p: 2 }}>
 				<Button
 					variant="contained"
-					sx={{ mt: 3, ml: 1 }}
+					sx={{ mt: 1, width: '200px'}}
 					disabled={isError()}
 					color="primary"
 					onClick={!isError() ? handleNext : () => null}
