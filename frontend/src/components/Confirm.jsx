@@ -9,7 +9,7 @@ import { AppContext } from "../Context";
 
 export default function Confirm() {
     const { formValues, handleBack, handleNext } = useContext(AppContext);
-    const { firstName, lastName, email, gender, date, city, phone } = formValues;
+    const {firstName, lastName, email, gender ,city, street, number} = formValues;
 
     const handleSubmit = () => {
         let form = {};
@@ -64,15 +64,6 @@ export default function Confirm() {
 
                 <ListItem>
                     <ListItemText
-                        primary="Date of birth"
-                        secondary={date.value || "Not Provided"}
-                    />
-                </ListItem>
-
-                <Divider />
-
-                <ListItem>
-                    <ListItemText
                         primary="City"
                         secondary={city.value || "Not Provided"}
                     />
@@ -82,8 +73,17 @@ export default function Confirm() {
 
                 <ListItem>
                     <ListItemText
-                        primary="phone"
-                        secondary={phone.value || "Not Provided"}
+                        primary="Street"
+                        secondary={street.value || "Not Provided"}
+                    />
+                </ListItem>
+
+                <Divider />
+
+                <ListItem>
+                    <ListItemText
+                        primary="Number"
+                        secondary={number.value || "Not Provided"}
                     />
                 </ListItem>
             </List>

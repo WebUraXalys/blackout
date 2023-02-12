@@ -1,4 +1,4 @@
-export const InitialValues = {
+export const initialValues = {
     firstName: {
         value: '',
         error: '',
@@ -26,24 +26,34 @@ export const InitialValues = {
         error: '',
         validate: 'select'
     },
-    date: {
-        value: '',
-        error: ''
-    },
     city: {
+        value: '',
+        error: '',
+        validate: 'text',
+        minLength: 3,
+        maxLength: 15
+    },
+    street: {
         value: '',
         error: '',
         validate: 'text',
         minLength: 3,
         maxLength: 20
     },
-    agreenemt: {
-        value: false,
+    number: {
+        value: '',
         error: '',
-        required: true,
-        validate: 'checkbox',
-        helperText: 'Please accept our terms and conditions'
+        minLength: 1,
+        maxLength: 5
     },
+
+    // agreenemt: {
+    //     value: false,
+    //     error: '',
+    //     required: true,
+    //     validate: 'checkbox',
+    //     helperText: 'Please accept our terms and conditions'
+    // },
     phone: {
         value: '',
         error: '',

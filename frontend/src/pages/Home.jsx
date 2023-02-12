@@ -7,7 +7,7 @@ const Home = () => {
 
     return (
         <>
-            <Box sx={{color: 'white', backgroundColor: 'red'}}>
+            <Box sx={{color: 'white', width: '300px', margin: '0 auto', backgroundColor: 'gray'}}>
                 <LocationForm/>
 
             </Box>

@@ -3,23 +3,20 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormHelperText from "@mui/material/FormHelperText";
-import Checkbox from "@mui/material/Checkbox";
 import { AppContext } from "../Context";
 
 export default function SecondStep() {
     const {formValues, handleChange, handleBack, handleNext, variant, margin} = useContext(AppContext);
-    const {city, date, phone, agreenemt} = formValues;
+    const {city, street, phone, number} = formValues;
 
     const isError = useCallback(
         () =>
-            Object.keys({city, date, phone, agreenemt}).some(
+            Object.keys({city, street, phone, number}).some(
                 (name) =>
                     (formValues[name].required && !formValues[name].value) ||
                     formValues[name].error
             ),
-        [formValues, city, date, phone, agreenemt]
+        [formValues, city, street, phone, number]
     );
 
     return (
@@ -32,7 +29,7 @@ export default function SecondStep() {
                         fullWidth
                         label="City"
                         name="city"
-                        placeholder="Enter your city"
+                        placeholder="Lviv"
                         value={city.value}
                         onChange={handleChange}
                         error={!!city.error}
@@ -45,15 +42,14 @@ export default function SecondStep() {
                         variant={variant}
                         margin={margin}
                         fullWidth
-                        InputLabelProps={{
-                            shrink: true
-                        }}
-                        label="Date of birth"
-                        name="date"
-                        type="date"
-                        defaultValue={date.value}
+                        label="Street"
+                        name="street"
+                        placeholder="Skisna"
+                        value={street.value}
                         onChange={handleChange}
-                        required={date.required}
+                        error={!!street.error}
+                        helperText={street.error}
+                        required={street.required}
                     />
                 </Grid>
                 <Grid item xs={12}>
@@ -61,33 +57,33 @@ export default function SecondStep() {
                         variant={variant}
                         margin={margin}
                         fullWidth
-                        label="Phone number"
-                        name="phone"
-                        placeholder="i.e: xxx-xxx-xxxx"
-                        value={phone.value}
+                        label="Number"
+                        name="number"
+                        placeholder="21B"
+                        value={number.value}
                         onChange={handleChange}
-                        error={!!phone.error}
-                        helperText={phone.error}
-                        required={phone.required}
+                        error={!!number.error}
+                        helperText={number.error}
+                        required={number.required}
                     />
                 </Grid>
-                <Grid item xs={12}>
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={agreenemt.value}
-                                onChange={handleChange}
-                                name="agreenemt"
-                                color="primary"
-                                required={agreenemt.required}
-                            />
-                        }
-                        label="Agree to terms and conditions"
-                    />
-                    <FormHelperText error={!!agreenemt.error}>
-                        {agreenemt.error}
-                    </FormHelperText>
-                </Grid>
+                {/*<Grid item xs={12}>*/}
+                {/*    <FormControlLabel*/}
+                {/*        control={*/}
+                {/*            <Checkbox*/}
+                {/*                checked={agreenemt.value}*/}
+                {/*                onChange={handleChange}*/}
+                {/*                name="agreenemt"*/}
+                {/*                color="primary"*/}
+                {/*                required={agreenemt.required}*/}
+                {/*            />*/}
+                {/*        }*/}
+                {/*        label="Agree to terms and conditions"*/}
+                {/*    />*/}
+                {/*    <FormHelperText error={!!agreenemt.error}>*/}
+                {/*        {agreenemt.error}*/}
+                {/*    </FormHelperText>*/}
+                {/*</Grid>*/}
             </Grid>
 
             <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
