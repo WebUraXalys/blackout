@@ -9,6 +9,8 @@ sudo lsof -i :8000
 sudo rm -rf /etc/nginx/sites-available/default
 sudo rm /etc/nginx/sites-enabled/default 
 
-envsubst '$SERVER_IP' < /home/ubuntu/blackout/deploy/nginx.conf > /etc/nginx/nginx.conf
+cd ~/blackout/deploy
+envsubst '$SERVER_IP' < nginx.conf | tee nginx.conf.e
+sudo mv nginx.conf.e /etc/nginx/nginx.conf
 
 sudo service nginx restart
