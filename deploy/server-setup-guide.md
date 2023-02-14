@@ -3,7 +3,24 @@
 System and network requirements:
 - Ubuntu 18.04 LTS
 - Public static IP address
+## Automated server setup:
+### Run both scripts:
+#### 1. Clone repository
+```sh
+git clone https://github.com/WebUraXalys/blackout.git
+```
+#### 2. Run initial script
+```sh
+. ~/blackout/deploy/auto-setup-server-initial.sh
+```
+This script will reboot your system in the end.
 
+#### 3. Run continue script
+```sh
+. ~/blackout/deploy/auto-setup-server-continue.sh
+```
+
+## Manual server setup
 ### Prepeare system:
 #### 1. Upgrade system packages
 ```sh
