@@ -1,6 +1,6 @@
 # blackout
 
-## How to run
+## How to run development server (deprecated)
 1. Clone repository
 ```
 git clone https://github.com/WebUraXalys/blackout.git
@@ -17,3 +17,5 @@ docker compose up
 ```
 
 4. Appliaction will appear on localhost:80
+
+## [Deploy guide](deploy/server-setup-guide.md)
