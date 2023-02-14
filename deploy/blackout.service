@@ -1,0 +1,12 @@
+[Unit]
+Description=gunicorn blackout daemon
+After=network.target[Service]
+
+[Service]
+User=root
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/blackout/blackout
+ExecStart=/bin/bash /home/ubuntu/blackout/deploy/run-gunicorn.sh
+
+[Install]
+WantedBy=multi-user.target
