@@ -6,3 +6,4 @@ redis
 bs4
 requests
 geocoder
+python-dotenv
