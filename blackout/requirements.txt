@@ -1,4 +1,9 @@
 django
 gunicorn
 celery
+gevent
+redis
+bs4
+requests
+geocoder
 python-dotenv
