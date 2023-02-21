@@ -1,9 +1,12 @@
+import os
+from pathlib import Path
 from datetime import datetime
 from bs4 import BeautifulSoup
 import sqlite3
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 import time
+import json
 
 
 def start_browser():
@@ -66,51 +69,79 @@ def scrap_data(page_data):
             "time_on": other[7].text
         }
         data.append(j)
+    date = soup.find(title="Source Title").text
+
+    # Replace characters from date
+    chars = [" ", ".", ":"]
+    for el in chars:
+        if el != ".":
+            date = date.replace(el, "_")
+        else:
+            date = date.replace(el, "")
+
+    if "pages" not in os.listdir():  # Checks does directory "pages" exist and create if not
+        os.makedirs("pages")
+    with open(f"pages/{date[1:]}.json", "w", encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+        f.close()
+
     return data
 
 
-def save_data(data):
+def save_data():
     connection = sqlite3.connect("../../db.sqlite3")
     cur = connection.cursor()
     summary = 0
     streets_number = 0
+    files = os.listdir(path="pages")
 
-    for row in data:
-        region = row["district"].title()
-        otg = row["otg"].title()
-        city = row["np"].title()
-        street = row["street"].title()
-        buildings = row["buildings"]
+    for file in files:
+        if ".json" not in file:
+            files.remove(file)
 
-        interruption = save_interruption(
-            cause=row["cause"],
-            time_off=row["time_off"],
-            time_on=row["time_on"],
-            cur=cur,
-            con=connection
-        )
+    for file in files:
+        with open(f"pages/{file}", "r") as json_data:
+            data = json.load(json_data)
+        for row in data[:10]:
+            region = row["district"].title()
+            otg = row["otg"].title()
+            city = row["np"].title()
+            street = row["street"].title()
+            buildings = row["buildings"]
 
-        exist = cur.execute(
-            f"SELECT * FROM parserapp_streets WHERE Name='{street}' AND City='{city}' AND OTG='{otg}';"
-        ).fetchall()
-
-        if len(exist) < 1:
-            cur.execute(
-                f"INSERT INTO parserapp_streets(Name, City, OTG, Region) VALUES('{street}', '{city}', '{otg}', '{region}')"
+            interruption = save_interruption(
+                cause=row["cause"],
+                time_off=row["time_off"],
+                time_on=row["time_on"],
+                cur=cur,
+                con=connection
             )
-            connection.commit()
-            print(f"{street} added")
-            streets_number += 1
 
-            street_id = cur.lastrowid  # returns id of the last inserted record
-            buildings_number = save_buildings(buildings, street_id, cur, connection, interruption)
-            summary += buildings_number
+            exist = cur.execute(
+                f"SELECT * FROM parserapp_streets WHERE Name='{street}' AND City='{city}' AND OTG='{otg}';"
+            ).fetchall()
 
-        else:
-            print(f"Street {street} already exist.")
-            street_id = exist[0][0]  # exist[0] returns record (id, Name, City, OTG, Region)
-            buildings_number = save_buildings(buildings, street_id, cur, connection, interruption)
-            summary += buildings_number
+            if len(exist) < 1:
+                cur.execute(
+                    f"INSERT INTO parserapp_streets(Name, City, OTG, Region) VALUES('{street}', '{city}', '{otg}', '{region}')"
+                )
+                connection.commit()
+                print(f"{street} added")
+                streets_number += 1
+
+                street_id = cur.lastrowid  # returns id of the last inserted record
+                buildings_number = save_buildings(buildings, street_id, cur, connection, interruption)
+                summary += buildings_number
+
+            else:
+                print(f"Street {street} already exist.")
+                street_id = exist[0][0]  # exist[0] returns record (id, Name, City, OTG, Region)
+                buildings_number = save_buildings(buildings, street_id, cur, connection, interruption)
+                summary += buildings_number
+
+        if "saved" not in os.listdir(path="pages"):
+            os.makedirs("pages/saved")
+        Path(f"pages/{file}").rename(f"pages/saved/{file}")
 
     counts = [streets_number, summary]
     print(f"Parsing finished. Added {streets_number} streets")
@@ -156,7 +187,6 @@ def save_interruption(cause, time_off, time_on, cur, con):
 def save_buildings(buildings, street_id, cur, connection, interruption):
     buildings_number = 0
     buildings = buildings.split(",")
-    print(interruption)
     for building in buildings:
         letter = 0
         building = building.replace('"', "")
@@ -180,8 +210,8 @@ def save_buildings(buildings, street_id, cur, connection, interruption):
 if __name__ == "__main__":
     start = datetime.now()
     driver = start_browser()
-    data = get_page(driver)
-    counts = save_data(data)
+    get_page(driver)
+    counts = save_data()
     time = datetime.now() - start
     print(f"Time of working: {time}")
     print(f"Parser recording speed: {100 / time.total_seconds() * 3600} streets per hour")
