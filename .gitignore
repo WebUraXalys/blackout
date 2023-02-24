@@ -13,8 +13,7 @@ env/
 *.sqlite3
 *.sqlite3-journal
 migrations/
-services/test.py
-services/pages/
+*.sjson
 
 # Logs
 logs

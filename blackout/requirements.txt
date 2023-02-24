@@ -7,3 +7,4 @@ bs4
 requests
 geocoder
 python-dotenv
+django-admin-extra-buttons

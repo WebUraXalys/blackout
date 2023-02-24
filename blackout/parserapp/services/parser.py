@@ -79,13 +79,21 @@ def scrap_data(page_data):
         else:
             date = date.replace(el, "")
 
-    if "pages" not in os.listdir():  # Checks does directory "pages" exist and create if not
-        os.makedirs("pages")
-    with open(f"pages/{date[1:]}.json", "w", encoding='utf-8') as f:
+    # Following block checks if program started outside of folder parserapp.
+    # It's caused by using django management commands
+    if "parserapp" in os.listdir():
+        prefix = "parserapp/services/"
+        if "pages" not in os.listdir(path="parserapp/services/"):  # Checks does directory "pages" exist and create if not
+            os.makedirs("parserapp/services/pages")
+    else:
+        prefix = None
+        if "pages" not in os.listdir():
+            os.makedirs("pages")
+
+    with open(f"{prefix}pages/{date[1:]}.sjson", "w", encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
         f.close()
-
-    return data
+    return len(data)
 
 
 def save_data():
@@ -93,14 +101,20 @@ def save_data():
     cur = connection.cursor()
     summary = 0
     streets_number = 0
-    files = os.listdir(path="pages")
+
+    if "parserapp" in os.listdir():
+        path = "parserapp/services/pages"
+        files = os.listdir(path=path)
+    else:
+        path = "pages"
+        files = os.listdir(path=path)
 
     for file in files:
-        if ".json" not in file:
-            files.remove(file)
+        if ".sjson" not in file:
+            files.remove(file)  # Removes all not json files
 
     for file in files:
-        with open(f"pages/{file}", "r") as json_data:
+        with open(f"{path}/{file}", "r") as json_data:
             data = json.load(json_data)
         for row in data[:10]:
             region = row["district"].title()
@@ -116,29 +130,30 @@ def save_data():
                 cur=cur,
                 con=connection
             )
+            if street != "Не Визначена" and '"' not in street:
+                exist = cur.execute(
+                    f"SELECT * FROM parserapp_streets WHERE Name='{street}' AND City='{city}' AND OTG='{otg}';"
+                ).fetchall()
 
-            exist = cur.execute(
-                f"SELECT * FROM parserapp_streets WHERE Name='{street}' AND City='{city}' AND OTG='{otg}';"
-            ).fetchall()
+                if len(exist) < 1:
+                    cur.execute(
+                        f"INSERT INTO parserapp_streets(Name, City, OTG, Region) VALUES('{street}', '{city}', '{otg}', '{region}')"
+                    )
+                    connection.commit()
+                    print(f"{street} added")
+                    streets_number += 1
 
-            if len(exist) < 1:
-                cur.execute(
-                    f"INSERT INTO parserapp_streets(Name, City, OTG, Region) VALUES('{street}', '{city}', '{otg}', '{region}')"
-                )
-                connection.commit()
-                print(f"{street} added")
-                streets_number += 1
+                    street_id = cur.lastrowid  # returns id of the last inserted record
+                    buildings_number = save_buildings(buildings, street_id, cur, connection, interruption)
+                    summary += buildings_number
 
-                street_id = cur.lastrowid  # returns id of the last inserted record
-                buildings_number = save_buildings(buildings, street_id, cur, connection, interruption)
-                summary += buildings_number
-
+                else:
+                    print(f"Street {street} already exist.")
+                    street_id = exist[0][0]  # exist[0] returns record (id, Name, City, OTG, Region)
+                    buildings_number = save_buildings(buildings, street_id, cur, connection, interruption)
+                    summary += buildings_number
             else:
-                print(f"Street {street} already exist.")
-                street_id = exist[0][0]  # exist[0] returns record (id, Name, City, OTG, Region)
-                buildings_number = save_buildings(buildings, street_id, cur, connection, interruption)
-                summary += buildings_number
-
+                print(street)
         if "saved" not in os.listdir(path="pages"):
             os.makedirs("pages/saved")
         Path(f"pages/{file}").rename(f"pages/saved/{file}")
@@ -175,10 +190,8 @@ def save_interruption(cause, time_off, time_on, cur, con):
 
     time_on = time_on.split(" ")
     time_on = f"{time_on[0]}/{month_dict[time_on[1]]}/{time_on[2]} {time_on[4]}"
-    time_on_obj = datetime.strptime(time_off, '%d/%m/%Y %H:%M')
-    cur.execute(
-        f"INSERT INTO parserapp_interruptions(Start, End, Type) VALUES('{time_on_obj}', '{time_off}', '{cause}')"
-    )
+    time_on_obj = datetime.strptime(time_on, '%d/%m/%Y %H:%M')
+    cur.execute(f"INSERT INTO parserapp_interruptions(Start, End, Type) VALUES('{time_on_obj}', '{time_off_obj}', '{cause}')")
     con.commit()
     interruption_id = cur.lastrowid
     return interruption_id

@@ -61,6 +61,7 @@ class Buildings(models.Model):
         max_length=10,
         choices=GroupChoices.choices,
         blank=True,
+        null=True,
     )
     Interruption = models.ForeignKey(
         Interruptions,
