@@ -2,7 +2,8 @@ import os
 from pathlib import Path
 from datetime import datetime
 from bs4 import BeautifulSoup
-import sqlite3
+from django.utils.timezone import make_aware
+from ..models import Streets, Interruptions, Buildings
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 import time
@@ -97,11 +98,8 @@ def scrap_data(page_data):
 
 
 def save_data():
-    connection = sqlite3.connect("../../db.sqlite3")
-    cur = connection.cursor()
-    summary = 0
     streets_number = 0
-
+    buildings_number = 0
     if "parserapp" in os.listdir():
         path = "parserapp/services/pages"
         files = os.listdir(path=path)
@@ -116,7 +114,7 @@ def save_data():
     for file in files:
         with open(f"{path}/{file}", "r") as json_data:
             data = json.load(json_data)
-        for row in data[:10]:
+        for row in data:
             region = row["district"].title()
             otg = row["otg"].title()
             city = row["np"].title()
@@ -126,45 +124,28 @@ def save_data():
             interruption = save_interruption(
                 cause=row["cause"],
                 time_off=row["time_off"],
-                time_on=row["time_on"],
-                cur=cur,
-                con=connection
+                time_on=row["time_on"]
             )
+
             if street != "Не Визначена" and '"' not in street:
-                exist = cur.execute(
-                    f"SELECT * FROM parserapp_streets WHERE Name='{street}' AND City='{city}' AND OTG='{otg}';"
-                ).fetchall()
-
-                if len(exist) < 1:
-                    cur.execute(
-                        f"INSERT INTO parserapp_streets(Name, City, OTG, Region) VALUES('{street}', '{city}', '{otg}', '{region}')"
-                    )
-                    connection.commit()
-                    print(f"{street} added")
+                street_id, created = Streets.objects.get_or_create(Name=street, City=city, OTG=otg, Region=region)
+                buildings_number = save_buildings(buildings, street_id, interruption)
+                print("Added street")
+                if created:
                     streets_number += 1
-
-                    street_id = cur.lastrowid  # returns id of the last inserted record
-                    buildings_number = save_buildings(buildings, street_id, cur, connection, interruption)
-                    summary += buildings_number
-
-                else:
-                    print(f"Street {street} already exist.")
-                    street_id = exist[0][0]  # exist[0] returns record (id, Name, City, OTG, Region)
-                    buildings_number = save_buildings(buildings, street_id, cur, connection, interruption)
-                    summary += buildings_number
             else:
                 print(street)
-        if "saved" not in os.listdir(path="pages"):
-            os.makedirs("pages/saved")
-        Path(f"pages/{file}").rename(f"pages/saved/{file}")
+        if "saved" not in os.listdir(path=path):
+            os.makedirs(f"{path}/saved")
+        Path(f"{path}/{file}").rename(f"{path}/saved/{file}")
 
-    counts = [streets_number, summary]
+    stats = [streets_number, buildings_number]
     print(f"Parsing finished. Added {streets_number} streets")
 
-    return counts
+    return stats
 
 
-def save_interruption(cause, time_off, time_on, cur, con):
+def save_interruption(cause, time_off, time_on):
     if cause == "ГПВ":
         cause = "Plan"
     else:
@@ -187,45 +168,33 @@ def save_interruption(cause, time_off, time_on, cur, con):
     time_off = time_off.split(" ")
     time_off = f"{time_off[0]}/{month_dict[time_off[1]]}/{time_off[2]} {time_off[4]}"
     time_off_obj = datetime.strptime(time_off, '%d/%m/%Y %H:%M')
+    time_off_obj = make_aware(time_off_obj)
 
     time_on = time_on.split(" ")
     time_on = f"{time_on[0]}/{month_dict[time_on[1]]}/{time_on[2]} {time_on[4]}"
     time_on_obj = datetime.strptime(time_on, '%d/%m/%Y %H:%M')
-    cur.execute(f"INSERT INTO parserapp_interruptions(Start, End, Type) VALUES('{time_on_obj}', '{time_off_obj}', '{cause}')")
-    con.commit()
-    interruption_id = cur.lastrowid
-    return interruption_id
+    time_on_obj = make_aware(time_on_obj)
+
+    interruption = Interruptions.objects.create(Start=time_on_obj, End=time_off_obj, Type=cause)
+
+    return interruption
 
 
-def save_buildings(buildings, street_id, cur, connection, interruption):
+def save_buildings(buildings, street_id, interruption):
     buildings_number = 0
     buildings = buildings.split(",")
     for building in buildings:
         letter = 0
         building = building.replace('"', "")
         for letters in building:
-            if letters.isalpha() and letter < 2:  # isalpha method checks
+            if letters.isalpha() and letter < 2:  # isalpha method checks is character a letter or not
                 letter += 1
         if letter < 2:
-            exist = cur.execute(f'SELECT * FROM parserapp_buildings WHERE Address="{building}" and Street_id="{street_id}"').fetchall()
-            if len(exist) < 1:
-                cur.execute(f'INSERT INTO parserapp_buildings(Address, Street_id, Interruption_id) VALUES("{building}", "{street_id}", "{interruption}")')
-                connection.commit()
+            build, created = Buildings.objects.update_or_create(Address=building, Street=street_id, Interruption=interruption)
+            if created:
                 buildings_number += 1
-            else:
-                cur.execute(f'UPDATE parserapp_buildings '
-                            f'SET Interruption_id = {interruption} '
-                            f'WHERE id="{exist[0][0]}"')
-                connection.commit()
     return buildings_number
 
 
 if __name__ == "__main__":
-    start = datetime.now()
-    driver = start_browser()
-    get_page(driver)
-    counts = save_data()
-    time = datetime.now() - start
-    print(f"Time of working: {time}")
-    print(f"Parser recording speed: {100 / time.total_seconds() * 3600} streets per hour")
-    print(f"Count of buildings: {counts[1]}\nRecording speed:{counts[1] / time.total_seconds() * 3600} buildings per hour")
+    print("If you want to run parser, run instead this command: python(3) manage.py parse")
