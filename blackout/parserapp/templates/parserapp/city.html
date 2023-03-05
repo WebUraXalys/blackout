@@ -1,0 +1,11 @@
+{%extends 'parserapp/base.html'%}
+
+{%block title%}Cities List{%endblock%}
+
+{%block content%}
+    <ul>
+        {% for city in cities%}
+            <li><a href="{%url 'city' city=city.City%}">{{city.City}}</a></li>
+        {%endfor%}
+    </ul>
+{%endblock%}

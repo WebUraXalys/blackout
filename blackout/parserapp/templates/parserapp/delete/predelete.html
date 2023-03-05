@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% if street == None %}
+        <h2>Ви підтверджуєте, що збираєтесь видалити місто {{city}}?</h2>
+        <h1 style="color:red">Цю дію не можна буде скасувати!!!</h1>
+        <button><a href="{%url 'confirm-delete-city' city=city%}">Так!</a></button>
+        <button><a href="{%url 'city' city=city%}">Ні. Повернутись на попередню сторінку</a></button>
+    {% else %}
+        {{name}}
+        <h2>Ви підтверджуєте, що збираєтесь видалити street?</h2>
+        <h1 style="color:red">Цю дію не можна буде скасувати!!!</h1>
+        <button><a href="{%url 'confirm-delete-street' city=city street=street%}">Так!</a></button>
+        <button><a href="{%url 'street' city=city street=street%}">Ні. Повернутись на попередню сторінку</a></button>
+    {%endif%}
+</body>
+</html>

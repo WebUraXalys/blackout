@@ -1,0 +1,15 @@
+{%extends 'parserapp/base.html'%}
+
+{%block title%}Streets List{%endblock%}
+
+{%block content%}
+    <h1>{{city}}</h1>
+    <button><a href="{%url 'delete' city=city%}">Delete City</a></button>
+    <button><a href="{%url 'start'%}">Повернутись на попередню сторінку</a></button>
+
+    <ul>
+        {% for street in streets%}
+            <li><a href="{%url 'street' city=city street=street%}">{{street}}</a></li>
+        {%endfor%}
+    </ul>
+{%endblock%}
