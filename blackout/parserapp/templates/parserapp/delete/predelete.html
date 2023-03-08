@@ -3,19 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+	{%load static%} 
+	<link href="{% static 'parserapp/output.css'%}" rel="stylesheet"> 
 </head>
-<body>
+<body class="bg-gray-900 text-gray-100/75 pl-2">
     {% if street == None %}
-        <h2>Ви підтверджуєте, що збираєтесь видалити місто {{city}}?</h2>
-        <h1 style="color:red">Цю дію не можна буде скасувати!!!</h1>
-        <button><a href="{%url 'confirm-delete-city' city=city%}">Так!</a></button>
-        <button><a href="{%url 'city' city=city%}">Ні. Повернутись на попередню сторінку</a></button>
+        <h2 class="text-2xl">Ви підтверджуєте, що збираєтесь <span class="text-red-500/75">назавжди видалити</span> місто {{city}}?</h2>
+        <a href="{%url 'city' city=city%}"><button class="p-2 rounded border border-green-600 mb-6 mt-4 mr-2">Ні. Повернутись на попередню сторінку</button></a>
+        <a href="{%url 'confirm-delete-city' city=city%}"><button class="p-2 rounded border border-red-600 mb-6">Так!</button></a>
     {% else %}
-        {{name}}
-        <h2>Ви підтверджуєте, що збираєтесь видалити street?</h2>
-        <h1 style="color:red">Цю дію не можна буде скасувати!!!</h1>
-        <button><a href="{%url 'confirm-delete-street' city=city street=street%}">Так!</a></button>
-        <button><a href="{%url 'street' city=city street=street%}">Ні. Повернутись на попередню сторінку</a></button>
+        <h2 class="text-2xl">Ви підтверджуєте, що збираєтесь <span class="text-red-500/75">назавжди видалити</span> вулицю {{street}}?</h2>
+        <a href="{%url 'street' city=city street=street%}"><button class="p-2 rounded border border-green-600 mb-6 mt-4 mr-2">Ні. Повернутись на попередню сторінку</button></a>
+        <a href="{%url 'confirm-delete-street' city=city street=street%}"><button class="p-2 rounded border border-red-600 mb-6">Так!</button></a>
     {%endif%}
 </body>
 </html>

@@ -3,12 +3,16 @@
 {%block title%}Buildings List{%endblock%}
 
 {%block content%}
-    <h1>{{city}}, {{street}} вулиця</h1>
-    <button><a href="{%url 'delete-street' city=city street=street%}">Delete street</a></button>
-    <button><a href="{%url 'city' city=city%}">Повернутись на попередню сторінку</a></button>
-    <ul>
+<div class="pl-2">
+    <h1 class="text-7xl border-b pb-1 mb-4">{{city}}, {{street}} вулиця</h1>
+    <a href="{%url 'city' city=city%}"><button class="p-2 rounded border mr-1">← Назад</button></a>
+    <a href="{%url 'delete-street' city=city street=street%}"><button class="p-2 rounded border border-red-600 mb-6">Видалити вулицю</button></a>
+
+    <h2 class="text-2xl text-center">Будівлі:</h2>
+    <ul class="grid grid-cols-3 place-items-center">
         {% for building in buildings%}
-            <li>{{building}}</li>
+            <li class="hover:text-blue-200 duration-200">{{building}}</li>
         {%endfor%}
     </ul>
+</div>
 {%endblock%}
