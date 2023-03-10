@@ -1,22 +1,22 @@
-import React from "react";
-import {Alert, Snackbar} from "@mui/material";
+import React, { useState } from "react";
+import Box from "@mui/material/Box";
+import Button from '@mui/material/Button';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 export default function Success() {
 
-    const [open, setOpen] = React.useState(true);
+	const [open, setOpen] = useState(true);
 
-    const handleClose = () => {
-        setOpen(false);
-    };
+	const handleClose = () => setOpen(false);
 
-    return (
-        <>
-            <Snackbar open={open} autoHideDuration={5000} onClose={handleClose}>
-                <Alert onClose={handleClose} variant="filled" elevation={6} severity="success" sx={{ width: '100%' }}>
-                    This is a success message!
-                    You will get an email with further instructions
-                </Alert>
-            </Snackbar>
-        </>
-    );
+	return (
+		<>
+			<Box>
+				<Button onClick={handleClose}>
+					<CancelIcon />
+				</Button>
+				Location created!
+			</Box>
+		</>
+	);
 }

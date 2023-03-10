@@ -7,48 +7,52 @@ import Typography from "@mui/material/Typography";
 import FirstStep from "./FirstStep";
 import SecondStep from "./SecondStep";
 import Confirm from "./Confirm";
-import Success from "./Success";
 import { AppContext } from "../Context";
+import CardTemplate from "./UI/CardTemplate.jsx";
 
-const labels = ["First Step", "Second Step", "Confirmation"];
+const labels = ["Address", "Name location", "Confirm"];
+const handleSubmit = (data) => {
+	console.log(data)
+}
 
 const handleSteps = (step) => {
-    switch (step) {
-        case 0:
-            return <FirstStep/>
-        case 1:
-            return <SecondStep/>
-        case 2:
-            return <Confirm/>
-        default:
-            throw new Error("Unknown step");
-    }
+	switch (step) {
+		case 0:
+			return <FirstStep />
+		case 1:
+			return <SecondStep />
+		case 2:
+			return <Confirm onSubmit={handleSubmit}/>
+		default:
+			throw new Error("Unknown step");
+	}
 };
 export default function StepForm() {
-    const { activeStep } = useContext(AppContext);
+	const { activeStep } = useContext(AppContext);
 
-    return (
-        activeStep === labels.length
-            ? (<Success />)
-            : (<div style={{ borderRadius: '7px'}}>
-                <Box>
-                    <Typography variant="h4" align="center" sx={{fontFamily: 'Rubik, sans-serif', padding: '10px 0'}}>
-                        Registration
-                    </Typography>
-                </Box>
-                <Stepper activeStep={activeStep} sx={{ py: 2 }} alternativeLabel>
-                    {labels.map((label) => (
-                        <Step sx={{
-                            '& 	.MuiStepLabel-label': {
-                                fontFamily: 'Rubik, sans-serif'
-                            }
-                        }} key={label}>
-                            <StepLabel>{label}</StepLabel>
-                        </Step>
-                    ))}
-                </Stepper>
+	return (
+		activeStep === labels.length
+			? (<CardTemplate/>)
+			: (<div>
+				<Box>
+					<Typography variant="h4" align="center" sx={{ fontFamily: 'Rubik, sans-serif', padding: '10px 0' }}>
+						Location
+					</Typography>
+				</Box>
+				<Stepper activeStep={activeStep} sx={{ py: 2 }} alternativeLabel>
+					{labels.map((label) => (
+						<Step sx={{
+							'& 	.MuiStepLabel-label': {
+								fontFamily: 'Rubik, sans-serif'
+							}
+						}} key={label}>
+							<StepLabel>{label}</StepLabel>
+						</Step>
+					))}
+				</Stepper>
 
-                {handleSteps(activeStep)}
-            </div>)
-)
+				{handleSteps(activeStep)}
+			</div>)
+	)
 }
+

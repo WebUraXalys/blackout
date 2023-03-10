@@ -4,20 +4,21 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { AppContext } from "../Context";
+import {Checkbox, FormControlLabel, FormHelperText} from "@mui/material";
 
 
 export default function FirstStep() {
 
 	const { formValues, handleChange, handleNext, variant, size } = useContext(AppContext);
-	const { firstName, lastName, email, gender } = formValues;
+	const { city, street, number, agreement } = formValues;
 
 	const isError = useCallback(() =>
-		Object.keys({ firstName, lastName, email, gender }).some(
+		Object.keys({ city, street, number, agreement }).some(
 			(name) =>
 				(formValues[name].required && !formValues[name].value) ||
 				formValues[name].error
 		),
-		[formValues, firstName, lastName, email, gender])
+		[formValues, city, street, number, agreement])
 
 	return (
 		<>
@@ -32,14 +33,14 @@ export default function FirstStep() {
 						variant={variant}
 						size={size}
 						fullWidth
-						label="First Name"
-						name="firstName"
-						placeholder="Your first name"
-						value={firstName.value}
+						label="City"
+						name="city"
+						placeholder="Lviv"
+						value={city.value}
 						onChange={handleChange}
-						error={!!firstName.error}
-						helperText={firstName.error || " "}
-						required={firstName.required}
+						error={!!city.error}
+						helperText={city.error || " "}
+						required={city.required}
 					/>
 				</Grid>
 				<Grid item xs={12} sm={10}>
@@ -52,17 +53,16 @@ export default function FirstStep() {
 						variant={variant}
 						size={size}
 						fullWidth
-						label="Last Name"
-						name="lastName"
-						placeholder="Your last name"
-						value={lastName.value}
+						label="Street"
+						name="street"
+						placeholder="Skisna"
+						value={street.value}
 						onChange={handleChange}
-						error={!!lastName.error}
-						helperText={lastName.error || " "}
-						required={lastName.required}
+						error={!!street.error}
+						helperText={street.error || " "}
+						required={street.required}
 					/>
 				</Grid>
-
 				<Grid item xs={12} sm={10}>
 					<TextField
 						sx={{
@@ -73,17 +73,38 @@ export default function FirstStep() {
 						variant={variant}
 						size={size}
 						fullWidth
-						label="Email"
-						name="email"
-						placeholder="Your email address"
-						type="email"
-						value={email.value}
+						label="House number"
+						name="number"
+						placeholder="21B"
+						value={number.value}
 						onChange={handleChange}
-						error={!!email.error}
-						helperText={email.error || " "}
-						required={email.required}
-
+						error={!!number.error}
+						helperText={number.error || " "}
+						required={number.required}
 					/>
+				</Grid>
+				<Grid item xs={10}>
+					<FormControlLabel sx={{
+						'& .MuiFormControlLabel-label': {
+							fontFamily: 'Rubik, sans-serif',
+							color: '#48484a'
+						}
+					}}
+									  control={
+										  <Checkbox
+											  size="small"
+											  checked={agreement.value}
+											  onChange={handleChange}
+											  name="agreement"
+											  color="primary"
+											  required={agreement.required}
+										  />
+									  }
+									  label="Agree to terms and conditions"
+					/>
+					<FormHelperText error={!!agreement.error}>
+						{agreement.error}
+					</FormHelperText>
 				</Grid>
 			</Grid>
 

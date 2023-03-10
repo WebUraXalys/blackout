@@ -30,31 +30,31 @@ const Footer = () => {
                         component={Link}
                         to="/"
                         className="NavItem"
-                        label="Дім"
+                        label="Home"
                         icon={<HomeOutlinedIcon />} />
                     <BottomNavigationAction
                         component={Link}
                         to="/timer"
                         className="NavItem"
-                        label="Таймер"
+                        label="Timer"
                         icon={<TimerOutlinedIcon />} />
                     <BottomNavigationAction
                         component={Link}
                         to="/map"
                         className="NavItem"
-                        label="Мапа"
+                        label="Map"
                         icon={<MapOutlinedIcon />} />
                     <BottomNavigationAction
                         component={Link}
                         to="/meet"
                         className="NavItem"
-                        label="Зустріч"
+                        label="Meet"
                         icon={<GroupsOutlinedIcon />} />
                     <BottomNavigationAction
                         component={Link}
                         to="/settings"
                         className="NavItem"
-                        label="Налаштування"
+                        label="Settings"
                         icon={<SettingsOutlinedIcon />} />
                 </BottomNavigation>
             </Box>

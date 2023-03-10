@@ -1,30 +1,44 @@
 export const initialValues = {
-    firstName: {
+    // firstName: {
+    //     value: '',
+    //     error: '',
+    //     required: true,
+    //     validate: 'text',
+    //     minLength: 2,
+    //     maxLength: 20,
+    //     helperText: 'Custom error message'
+    // },
+    // lastName: {
+    //     value: '',
+    //     error: '',
+    //     required: true,
+    //     validate: 'text',
+    //     minLength: 2,
+    //     maxLength: 20
+    // },
+    // email: {
+    //     value: '',
+    //     error: '',
+    //     validate: 'email'
+    // },
+    // gender: {
+    //     value: '',
+    //     error: '',
+    //     validate: 'select'
+    // },
+    location: {
         value: '',
         error: '',
-        required: true,
         validate: 'text',
         minLength: 2,
-        maxLength: 20,
-        helperText: 'Custom error message'
-    },
-    lastName: {
-        value: '',
-        error: '',
         required: true,
-        validate: 'text',
-        minLength: 2,
-        maxLength: 20
+        maxLength: 15
     },
-    email: {
+    // icon: {
+    //     value: 'home',
+    // },
+    icon: {
         value: '',
-        error: '',
-        validate: 'email'
-    },
-    gender: {
-        value: '',
-        error: '',
-        validate: 'select'
     },
     city: {
         value: '',
@@ -56,10 +70,10 @@ export const initialValues = {
         validate: 'checkbox',
         helperText: 'Please accept our terms and conditions'
     },
-    phone: {
-        value: '',
-        error: '',
-        validate: 'phone',
-        maxLength: 15
-    }
+    // phone: {
+    //     value: '',
+    //     error: '',
+    //     validate: 'phone',
+    //     maxLength: 15
+    // }
 };

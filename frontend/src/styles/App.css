@@ -72,6 +72,12 @@ a {
     font-size: 2rem !important;
 }
 
+.grid-container {
+    padding: 20px;
+    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
 
 @media (max-width: 500px) {
     .logo_d {
