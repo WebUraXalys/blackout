@@ -1,27 +1,27 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404, get_list_or_404
 from django.contrib.admin.views.decorators import staff_member_required
 from .models import Streets, Buildings
 
 
 @staff_member_required()
-def start(request):
+def fetch_cities(request):
     cities = Streets.objects.order_by('City').values('City').distinct()
     context = {'cities': cities}
-    return render(request, 'parserapp/city.html', context=context)
+    return render(request, 'parserapp/cities_list.html', context=context)
 
 
 @staff_member_required()
-def city_view(request, city):
-    streets = Streets.objects.filter(City=city).order_by('Name')
+def fetch_streets(request, city):
+    streets = get_list_or_404(Streets, City=city)
     context = {'city': city,
                'streets': streets}
-    return render(request, 'parserapp/streets.html', context=context)
+    return render(request, 'parserapp/streets_list.html', context=context)
 
 
 @staff_member_required()
-def predelete_view(request, **kwargs):
+def delete_confirmation(request, **kwargs):
     """
-    Method for confirming deleting objects. Kwargs gets city and street
+    Method for confirming deleting objects. Kwargs contains city and street
     """
     try:
         street = kwargs['street']
@@ -29,24 +29,23 @@ def predelete_view(request, **kwargs):
         street = None
     context = {'city': kwargs['city'],
                'street': street}
-
-    return render(request, 'parserapp/delete/predelete.html', context=context)
+    return render(request, 'parserapp/delete/delete_confirm.html', context=context)
 
 
 @staff_member_required()
-def delete_view(request, **kwargs):
+def delete_object(request, **kwargs):
     try:
         Streets.objects.get(City=kwargs['city'], Name=kwargs['street']).delete()  # Delete street
     except:
         Streets.objects.filter(City=kwargs['city']).delete()  # Delete city if kwargs['city'] is not defined
-    return redirect('/parser/')
+    return redirect('/cities/')
 
 
 @staff_member_required()
-def streets_view(request, street, city):
-    street_obj = Streets.objects.get(Name=street, City=city)
+def fetch_buildings(request, street, city):
+    street_obj = get_object_or_404(Streets, Name=street, City=city)
     buildings = Buildings.objects.filter(Street=street_obj)
     context = {'city': city,
                'street': street,
                'buildings': buildings}
-    return render(request, 'parserapp/buildings.html', context=context)
+    return render(request, 'parserapp/buildings_list.html', context=context)
