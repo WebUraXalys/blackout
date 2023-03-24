@@ -8,6 +8,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 import time
 import json
+from .validator import validate
 
 
 def start_browser():
@@ -127,7 +128,7 @@ def save_data():
                 time_on=row["time_on"]
             )
 
-            if street != "Не Визначена" and '"' not in street:
+            if street != "Не Визначена" or '"' not in street:
                 street_id, created = Streets.objects.get_or_create(Name=street, City=city, OTG=otg, Region=region)
                 buildings_number = save_buildings(buildings, street_id, interruption)
                 print("Added street")
@@ -182,17 +183,14 @@ def save_interruption(cause, time_off, time_on):
 
 def save_buildings(buildings, street_id, interruption):
     buildings_number = 0
-    buildings = buildings.split(",")
+    try:
+        buildings = validate(buildings)
+    except TypeError:
+        print(buildings)
     for building in buildings:
-        letter = 0
-        building = building.replace('"', "")
-        for letters in building:
-            if letters.isalpha() and letter < 2:  # isalpha method checks is character a letter or not
-                letter += 1
-        if letter < 2:
-            build, created = Buildings.objects.update_or_create(Address=building, Street=street_id, Interruption=interruption)
-            if created:
-                buildings_number += 1
+        build, created = Buildings.objects.update_or_create(Address=building, Street=street_id, Interruption=interruption)
+        if created:
+            buildings_number += 1
     return buildings_number
 
 
