@@ -183,10 +183,7 @@ def save_interruption(cause, time_off, time_on):
 
 def save_buildings(buildings, street_id, interruption):
     buildings_number = 0
-    try:
-        buildings = validate(buildings)
-    except TypeError:
-        print(buildings)
+    buildings = validate(buildings)
     for building in buildings:
         build, created = Buildings.objects.update_or_create(Address=building, Street=street_id, Interruption=interruption)
         if created:
