@@ -1,58 +1,210 @@
-import React, { useContext } from "react";
-import Box from "@mui/material/Box";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import Typography from "@mui/material/Typography";
-import FirstStep from "./FirstStep";
-import SecondStep from "./SecondStep";
-import Confirm from "./Confirm";
-import { AppContext } from "../Context";
-import CardTemplate from "./UI/CardTemplate.jsx";
+import React, {useCallback, useContext, useState} from 'react';
+import {Button, TextField, ToggleButton, ToggleButtonGroup} from "@mui/material";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded.js";
+import WorkRoundedIcon from "@mui/icons-material/WorkRounded.js";
+import FitnessCenterRoundedIcon from "@mui/icons-material/FitnessCenterRounded.js";
+import SchoolIcon from "@mui/icons-material/School.js";
+import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore.js";
+import LocalHotelRoundedIcon from "@mui/icons-material/LocalHotelRounded.js";
+import {styled} from "@mui/material/styles";
+import Grid from "@mui/material/Grid";
+import {AppContext} from "../Context.jsx";
 
-const labels = ["Address", "Name location", "Confirm"];
-const handleSubmit = (data) => {
-	console.log(data)
-}
+const LocationForm = ({setOpen, create}) => {
+	const { formValues, handleChange, variant, size } = useContext(AppContext);
+	const { city, street, number } = formValues;
 
-const handleSteps = (step) => {
-	switch (step) {
-		case 0:
-			return <FirstStep />
-		case 1:
-			return <SecondStep />
-		case 2:
-			return <Confirm onSubmit={handleSubmit}/>
-		default:
-			throw new Error("Unknown step");
+	const isError = useCallback(() =>
+			Object.keys({ city, street, number }).some(
+				(name) =>
+					(formValues[name].required && !formValues[name].value) ||
+					formValues[name].error
+			),
+		[formValues, city, street, number])
+
+	const addNewPost = (e) => {
+		e.preventDefault()
+		let form = {};
+
+		const newLocation = {
+			...locationForm, id: Date.now()
+		}
+		create(newLocation)
+		setLocationForm({city: '',
+			street: '',
+			number: '',
+			title: '',
+			icon: null})
+		Object.keys(formValues).map((name) => {
+			form = {
+				...form,
+				[name]: formValues[name].value
+			};
+			return form;
+		});
+		city.value = ''
+		street.value = ''
+		number.value = ''
+		console.log(form);
+		setOpen(false)
 	}
-};
-export default function StepForm() {
-	const { activeStep } = useContext(AppContext);
 
-	return (
-		activeStep === labels.length
-			? (<CardTemplate/>)
-			: (<div>
-				<Box>
-					<Typography variant="h4" align="center" sx={{ fontFamily: 'Rubik, sans-serif', padding: '10px 0' }}>
-						Location
-					</Typography>
-				</Box>
-				<Stepper activeStep={activeStep} sx={{ py: 2 }} alternativeLabel>
-					{labels.map((label) => (
-						<Step sx={{
-							'& 	.MuiStepLabel-label': {
+	const handleSwitch = (e, newAlignment) => {
+		setAlignment(newAlignment)
+		setLocationForm({...locationForm, icon: newAlignment})
+	};
+
+	const [alignment, setAlignment] = useState('');
+
+	const [locationForm, setLocationForm] = useState({
+		city: '',
+		street: '',
+		number: '',
+		title: '',
+		icon: null,
+	});
+
+	const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
+		'& .MuiToggleButtonGroup-grouped': {
+			margin: theme.spacing(0.5),
+			border: 0,
+			'&.Mui-disabled': {
+				border: 0,
+			},
+
+			'&:not(:first-of-type)': {
+				borderRadius: theme.shape.borderRadius,
+			},
+			'&:first-of-type': {
+				borderRadius: theme.shape.borderRadius,
+			},
+		},
+	}));
+
+    return (
+		<form style={{background: 'white', padding: '20px'}}>
+
+			<Grid justifyContent="center" container spacing={1}>
+				<Grid item xs={6} sm={6}>
+					<TextField
+						sx={{
+							'& .MuiInputLabel-root, .MuiInputBase-root': {
 								fontFamily: 'Rubik, sans-serif'
 							}
-						}} key={label}>
-							<StepLabel>{label}</StepLabel>
-						</Step>
-					))}
-				</Stepper>
+						}}
+						variant={variant}
+						size={size}
+						fullWidth
+						label="City"
+						name="city"
+						placeholder="Lviv"
+						value={city.value}
+						onChange={handleChange}
+						error={!!city.error}
+						helperText={city.error || " "}
+						required={city.required}
+					/>
+				</Grid>
+				<Grid item xs={6} sm={6}>
+					<TextField
+						sx={{
+							'& .MuiInputLabel-root, .MuiInputBase-root': {
+								fontFamily: 'Rubik, sans-serif'
+							}
+						}}
+						variant={variant}
+						size={size}
+						fullWidth
+						label="Street"
+						name="street"
+						placeholder="Skisna"
+						value={street.value}
+						onChange={handleChange}
+						error={!!street.error}
+						helperText={street.error || " "}
+						required={street.required}
+					/>
+				</Grid>
+				<Grid item xs={6} sm={6}>
+					<TextField
+						sx={{
+							'& .MuiInputLabel-root, .MuiInputBase-root': {
+								fontFamily: 'Rubik, sans-serif'
+							}
+						}}
+						variant={variant}
+						size={size}
+						fullWidth
+						label="House number"
+						name="number"
+						placeholder="21B"
+						value={number.value}
+						onChange={handleChange}
+						error={!!number.error}
+						helperText={number.error || " "}
+						required={number.required}
+					/>
+				</Grid>
+				<Grid item xs={6} sm={6}>
+					<TextField
+						sx={{
+							'& .MuiInputLabel-root, .MuiInputBase-root': {
+								fontFamily: 'Rubik, sans-serif'
+							}
+						}}
+						variant={variant}
+						size={size}
+						fullWidth
+						label="Title"
+						name="title"
+						placeholder="Home"
+						value={locationForm.title}
+						onChange={e => setLocationForm({...locationForm, title: e.target.value})}
+						// error={!!title.error}
+						// helperText={title.error || " "}
+						// required={title.required}
+					/>
+				</Grid>
+				<StyledToggleButtonGroup
+				color="primary"
+				value={alignment}
+				exclusive
+				onChange={handleSwitch}
+				aria-label="Platform"
+			>
+				<ToggleButton value='home'><HomeRoundedIcon/></ToggleButton>
+				<ToggleButton value='work'><WorkRoundedIcon/></ToggleButton>
+				<ToggleButton value='gym'><FitnessCenterRoundedIcon/></ToggleButton>
+				<ToggleButton value='school'><SchoolIcon/></ToggleButton>
+				<ToggleButton value='market'><LocalGroceryStoreIcon/></ToggleButton>
+				<ToggleButton value='hotel'><LocalHotelRoundedIcon/></ToggleButton>
+			</StyledToggleButtonGroup>
+			</Grid>
+			<Button disabled={isError()} onClick={!isError() ? addNewPost : () => null} variant={"contained"}>Submit</Button>
+		</form>
 
-				{handleSteps(activeStep)}
-			</div>)
-	)
-}
+);
+};
 
+export default LocationForm;
+
+// <form style={{background: 'white', padding: '20px'}}>
+//
+// 	<TextField value={locationForm.title} onChange={e => setLocationForm({...locationForm, title: e.target.value})} label="Title" variant="outlined" placeholder="Location name" size="medium"/>
+//
+// 	<StyledToggleButtonGroup
+// 		color="primary"
+// 		value={alignment}
+// 		exclusive
+// 		onChange={handleSwitch}
+// 		aria-label="Platform"
+// 	>
+// 		<ToggleButton value='home'><HomeRoundedIcon/></ToggleButton>
+// 		<ToggleButton value='work'><WorkRoundedIcon/></ToggleButton>
+// 		<ToggleButton value='gym'><FitnessCenterRoundedIcon/></ToggleButton>
+// 		<ToggleButton value='school'><SchoolIcon/></ToggleButton>
+// 		<ToggleButton value='market'><LocalGroceryStoreIcon/></ToggleButton>
+// 		<ToggleButton value='hotel'><LocalHotelRoundedIcon/></ToggleButton>
+// 	</StyledToggleButtonGroup>
+// 	<Button onClick={addNewPost} variant={"contained"}>Submit</Button>
+// </form>

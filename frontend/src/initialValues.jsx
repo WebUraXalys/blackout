@@ -1,45 +1,4 @@
 export const initialValues = {
-    // firstName: {
-    //     value: '',
-    //     error: '',
-    //     required: true,
-    //     validate: 'text',
-    //     minLength: 2,
-    //     maxLength: 20,
-    //     helperText: 'Custom error message'
-    // },
-    // lastName: {
-    //     value: '',
-    //     error: '',
-    //     required: true,
-    //     validate: 'text',
-    //     minLength: 2,
-    //     maxLength: 20
-    // },
-    // email: {
-    //     value: '',
-    //     error: '',
-    //     validate: 'email'
-    // },
-    // gender: {
-    //     value: '',
-    //     error: '',
-    //     validate: 'select'
-    // },
-    location: {
-        value: '',
-        error: '',
-        validate: 'text',
-        minLength: 2,
-        required: true,
-        maxLength: 15
-    },
-    // icon: {
-    //     value: 'home',
-    // },
-    icon: {
-        value: '',
-    },
     city: {
         value: '',
         error: '',
@@ -63,17 +22,24 @@ export const initialValues = {
         required: true,
         maxLength: 5
     },
-    agreement: {
-        value: false,
-        error: '',
-        required: true,
-        validate: 'checkbox',
-        helperText: 'Please accept our terms and conditions'
-    },
-    // phone: {
+    // title: {
     //     value: '',
     //     error: '',
-    //     validate: 'phone',
-    //     maxLength: 15
+    //     minLength: 1,
+    //     validate: 'text',
+    //     required: true,
+    //     maxLength: 10
+    // },
+    // icon: {
+    //     value: null,
+    //     error: '',
+    //     required: true
     // }
+    // agreement: {
+    //     value: false,
+    //     error: '',
+    //     required: true,
+    //     validate: 'checkbox',
+    //     helperText: 'Please accept our terms and conditions'
+    // },
 };
