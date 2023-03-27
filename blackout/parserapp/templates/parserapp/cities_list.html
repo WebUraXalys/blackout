@@ -3,11 +3,13 @@
 {%block title%}Cities List{%endblock%}
 
 {%block content%}
-    {%if cities%}
-        <h1 class="text-4xl text-center mb-4 border-b">Список міст</h1>
+    {%if data%}
+        <h1 class="text-4xl text-center mb-4 border-b">Cities:</h1>
         <ul class="grid grid-cols-3 place-items-center">
-            {% for city in cities%}
-                <li class="text-lg hover:list-decimal hover:text-blue-200 duration-200"><a href="{%url 'city' city=city.City%}">{{city.City}}</a></li>
+            {% for row in data%}
+                <li class="text-lg hover:list-decimal hover:text-blue-200 duration-200">
+                    <a href="{%url 'city' city_slug=row.slug%}">{{row.city.City}}</a>
+                </li>
             {%endfor%}
         </ul>
     {%else%}

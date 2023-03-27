@@ -1,5 +1,7 @@
 from django.db import models
+from django.utils.text import slugify
 from django.core.validators import MinValueValidator, MaxValueValidator
+from translitua import translit
 
 
 class Streets(models.Model):
@@ -7,10 +9,17 @@ class Streets(models.Model):
     City = models.CharField("City", max_length=40)
     OTG = models.CharField("OTG", max_length=40)
     Region = models.CharField("Region", max_length=40)
+    Slug_city = models.SlugField("Slug city", null=True, blank=True, allow_unicode=True)
+    Slug_street = models.SlugField("Slug street", null=True, blank=True, allow_unicode=True)
 
     class Meta:
         verbose_name = "Street"
         verbose_name_plural = "Streets"
+
+    def save(self):
+        self.Slug_city = slugify(translit(self.City))
+        self.Slug_street = slugify(translit(self.Name))
+        return super().save()
 
     def __str__(self):
         return f"{self.Name}"
