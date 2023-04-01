@@ -8,6 +8,7 @@ import LocalGroceryStoreIcon from "@mui/icons-material/LocalGroceryStore.js";
 import LocalHotelRoundedIcon from "@mui/icons-material/LocalHotelRounded.js";
 import {styled} from "@mui/material/styles";
 import Grid from "@mui/material/Grid";
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import {AppContext} from "../Context.jsx";
 
 const LocationForm = ({setOpen, create}) => {
@@ -80,11 +81,23 @@ const LocationForm = ({setOpen, create}) => {
 			},
 		},
 	}));
-
+	// background: 'white', padding: '20px'
     return (
-		<form style={{background: 'white', padding: '20px'}}>
-
-			<Grid justifyContent="center" container spacing={1}>
+		<form style={{
+			position: 'absolute',
+			borderRadius: '10px',
+			top: '50%',
+			left: '50%',
+			transform: 'translate(-50%, -50%)',
+			width: 400,
+			backgroundColor: 'white',
+			border: '1px solid #111',
+			boxShadow: 24,
+			p: 4,
+			zIndex: 100
+		}}>
+			<CloseRoundedIcon sx={{cursor: 'pointer', position: 'absolute', top: '5px', right: '5px'}} onClick={() => setOpen(false)}/>
+			<Grid sx={{p: 4}} justifyContent="center" container spacing={1}>
 				<Grid item xs={6} sm={6}>
 					<TextField
 						sx={{
@@ -171,16 +184,16 @@ const LocationForm = ({setOpen, create}) => {
 				exclusive
 				onChange={handleSwitch}
 				aria-label="Platform"
-			>
-				<ToggleButton value='home'><HomeRoundedIcon/></ToggleButton>
-				<ToggleButton value='work'><WorkRoundedIcon/></ToggleButton>
-				<ToggleButton value='gym'><FitnessCenterRoundedIcon/></ToggleButton>
-				<ToggleButton value='school'><SchoolIcon/></ToggleButton>
-				<ToggleButton value='market'><LocalGroceryStoreIcon/></ToggleButton>
-				<ToggleButton value='hotel'><LocalHotelRoundedIcon/></ToggleButton>
+				>
+					<ToggleButton value='home'><HomeRoundedIcon/></ToggleButton>
+					<ToggleButton value='work'><WorkRoundedIcon/></ToggleButton>
+					<ToggleButton value='gym'><FitnessCenterRoundedIcon/></ToggleButton>
+					<ToggleButton value='school'><SchoolIcon/></ToggleButton>
+					<ToggleButton value='market'><LocalGroceryStoreIcon/></ToggleButton>
+					<ToggleButton value='hotel'><LocalHotelRoundedIcon/></ToggleButton>
 			</StyledToggleButtonGroup>
+				<Button disabled={isError()} onClick={!isError() ? addNewPost : () => null} variant={"contained"}>Submit</Button>
 			</Grid>
-			<Button disabled={isError()} onClick={!isError() ? addNewPost : () => null} variant={"contained"}>Submit</Button>
 		</form>
 
 );

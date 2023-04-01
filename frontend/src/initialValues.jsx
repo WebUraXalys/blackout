@@ -22,19 +22,19 @@ export const initialValues = {
         required: true,
         maxLength: 5
     },
-    // title: {
-    //     value: '',
-    //     error: '',
-    //     minLength: 1,
-    //     validate: 'text',
-    //     required: true,
-    //     maxLength: 10
-    // },
-    // icon: {
-    //     value: null,
-    //     error: '',
-    //     required: true
-    // }
+    title: {
+        value: '',
+        error: '',
+        minLength: 1,
+        validate: 'text',
+        required: true,
+        maxLength: 10
+    },
+    icon: {
+        value: null,
+        error: '',
+        required: true
+    }
     // agreement: {
     //     value: false,
     //     error: '',
