@@ -10,6 +10,40 @@ import time
 import json
 
 
+MONTHS = {
+    "січня": "01",
+    "лютого": "02",
+    "березня": "03",
+    "квітня": "04",
+    "травня": "05",
+    "червня": "06",
+    "липня": "07",
+    "серпня": "08",
+    "вересня": "09",
+    "жовтня": "10",
+    "листопада": "11",
+    "грудня": "12",
+}
+DEFAULT_SAVES_DIRECTORY = "/tmp/blk/saves"
+SAVED_FOLDER_LOCAL_PATH = "saved"
+
+
+def get_saves_folder_path():
+    path = os.environ.get("BLACKOUT_SAVES", None)
+    if path is None:
+        print("BLACKOUT_SAVES environment variable is not defined. Define save files folder path in this variable")
+        print(f"Default is {DEFAULT_SAVES_DIRECTORY}")
+        path = DEFAULT_SAVES_DIRECTORY
+    return path
+
+
+def get_or_create_saved_folder_path(saves_folder):
+    saved_dir = os.path.join(saves_folder, SAVED_FOLDER_LOCAL_PATH)
+    if not os.path.isdir(saved_dir):
+        os.makedirs(saved_dir)
+    return saved_dir
+
+
 def start_browser():
     options = webdriver.ChromeOptions()
     options.add_argument("--disable-blink-features=AutomationControlled")
@@ -33,9 +67,8 @@ def get_page(driver):
     try:
         driver.get(url)
         time.sleep(10)
-        data = driver.page_source
-        return scrap_data(page_data=data)
-
+        page = driver.page_source
+        return page
     except Exception as ex:
         print(ex)
     finally:
@@ -43,146 +76,188 @@ def get_page(driver):
         driver.quit()
 
 
-def scrap_data(page_data):
-    soup = BeautifulSoup(page_data, "html.parser")
-    page_table = soup.find("table", style="background-color: white;")
-    page_tbody = page_table.find_all("tbody")
-    data = []
-    rows = []
-    for tbody in page_tbody:
-        tr = tbody.find("tr")
-        rows.append(tr)
-    for row in rows[1:]:
-        other = row.find_all("td")
-        buildings = []
-        for building in other[3].text.split(", "):
-            if building != "":
-                buildings.append(building)
-        j = {
-            'district': row.find("th").text,
-            'otg': other[0].text,
-            "np": other[1].text,
-            "street": other[2].text,
-            "buildings": other[3].text,
-            "type_off": other[4].text,
-            "cause": other[5].text,
-            "time_off": other[6].text,
-            "time_on": other[7].text
-        }
-        data.append(j)
-    date = soup.find(title="Source Title").text
+def split_buildings(buildings: str):
+    building_list = []
+    buildings = buildings.split(", ")
+    for building in buildings:
+        if building != "":
+            building_list.append(building)
+    return building_list
+
+
+def parse_poweroff_row(row):
+    table_cell = row.find_all("td")
+
+    buildings = split_buildings(table_cell[3].text)
+
+    j = {
+        'region': row.find("th").text.title(),
+        'otg': table_cell[0].text.title(),
+        "city": table_cell[1].text.title(),
+        "street": table_cell[2].text.title(),
+        "buildings": buildings,
+        "type_off": table_cell[4].text,
+        "cause": table_cell[5].text,
+        "time_off": table_cell[6].text,
+        "time_on": table_cell[7].text
+    }
+    return j
+
+
+def parse_page_date(page: BeautifulSoup):
+    date = page.find(title="Source Title").text
 
     # Replace characters from date
-    chars = [" ", ".", ":"]
+    chars = [" ", ":"]
     for el in chars:
-        if el != ".":
-            date = date.replace(el, "_")
-        else:
-            date = date.replace(el, "")
+        date = date.replace(el, "_")
+    date = date.replace(".", "")
+    return date
 
-    # Following block checks if program started outside of folder parserapp.
-    # It's caused by using django management commands
-    if "parserapp" in os.listdir():
-        prefix = "parserapp/services/"
-        if "pages" not in os.listdir(path="parserapp/services/"):  # Checks does directory "pages" exist and create if not
-            os.makedirs("parserapp/services/pages")
-    else:
-        prefix = None
-        if "pages" not in os.listdir():
-            os.makedirs("pages")
 
-    with open(f"{prefix}pages/{date[1:]}.sjson", "w", encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+def get_poweroffs_table(page):
+    page_table = page.find("table", style="background-color: white;")
+    return page_table.find_all("tbody")
+
+
+def get_rows_of_table(table):
+    rows = []
+    for table_row in table:
+        tr = table_row.find("tr")
+        rows.append(tr)
+    return rows
+
+
+def parse_poweroff_rows(rows):
+    poweroffs = []
+    for row in rows:
+        data = parse_poweroff_row(row)
+        poweroffs.append(data)
+    return poweroffs
+
+
+def scrap_data(page):
+    soup = BeautifulSoup(page, "html.parser")
+    poweroffs_table = get_poweroffs_table(soup)
+
+    rows = get_rows_of_table(poweroffs_table)
+    poweroffs = parse_poweroff_rows(rows)
+
+    date = parse_page_date(soup)
+    save_powroffs(poweroffs, date)
+
+    return len(poweroffs)
+
+
+def save_powroffs(interruptions, date):
+    saves_folder = get_saves_folder_path()
+    save_file = os.path.join(saves_folder, date[1:] + ".sjson")
+    with open(save_file, "w", encoding='utf-8') as f:
+        json.dump(interruptions, f, ensure_ascii=False, indent=4)
         f.close()
-    return len(data)
+
+
+def get_save_files(saves_folder):
+    files = os.listdir(saves_folder)
+    files = filter(lambda f: ".sjson" in f, files)  # Filters all not sjson files from list
+    return files
+
+
+def load_json_from_save_file(save_folder, file_name):
+    with open(f"{save_folder}/{file_name}", "r") as save_file:
+        return json.load(save_file)
+
+
+def create_interruption_from_save(save):
+    interruption = save_interruption(
+        cause=save["cause"],
+        time_off=save["time_off"],
+        time_on=save["time_on"]
+    )
+    return interruption
+
+
+def street_name_is_valid(street) -> bool:
+    return street != "Не Визначена" and '"' not in street
+
+
+def create_street_from_save(save) -> int:
+    street_name = save["street"]
+    if not street_name_is_valid(street_name):
+        return 0
+
+    interruption = create_interruption_from_save(save)
+    buildings = save["buildings"]
+    region = save["region"]
+    otg = save["otg"]
+    city = save["city"]
+
+    street_id, street_created = Streets.objects.get_or_create(Name=street_name, City=city, OTG=otg, Region=region)
+    if street_created:
+        buildings_created = save_buildings(buildings, street_id, interruption)
+        return buildings_created
+    else:
+        print(f"Invalid street: {street_name}")
+        return 0
+
+
+def move_file_to_saved(file, saves_folder):
+    saved_folder = get_or_create_saved_folder_path(saves_folder)
+    before = os.path.join(saves_folder, file)
+    after = os.path.join(saved_folder, file)
+    os.rename(before, after)
 
 
 def save_data():
     streets_number = 0
     buildings_number = 0
-    if "parserapp" in os.listdir():
-        path = "parserapp/services/pages"
-        files = os.listdir(path=path)
-    else:
-        path = "pages"
-        files = os.listdir(path=path)
 
-    for file in files:
-        if ".sjson" not in file:
-            files.remove(file)  # Removes all not json files
+    saves_folder = get_saves_folder_path()
+    save_files = get_save_files(saves_folder)
 
-    for file in files:
-        with open(f"{path}/{file}", "r") as json_data:
-            data = json.load(json_data)
-        for row in data:
-            region = row["district"].title()
-            otg = row["otg"].title()
-            city = row["np"].title()
-            street = row["street"].title()
-            buildings = row["buildings"]
+    for file in save_files:
+        saves = load_json_from_save_file(saves_folder, file)
+        for save in saves:
+            buildings_created = create_street_from_save(save)
+            if buildings_created > 0:
+                streets_number += 1
+                buildings_number += buildings_created
 
-            interruption = save_interruption(
-                cause=row["cause"],
-                time_off=row["time_off"],
-                time_on=row["time_on"]
-            )
-
-            if street != "Не Визначена" and '"' not in street:
-                street_id, created = Streets.objects.get_or_create(Name=street, City=city, OTG=otg, Region=region)
-                buildings_number = save_buildings(buildings, street_id, interruption)
-                print("Added street")
-                if created:
-                    streets_number += 1
-            else:
-                print(street)
-        if "saved" not in os.listdir(path=path):
-            os.makedirs(f"{path}/saved")
-        Path(f"{path}/{file}").rename(f"{path}/saved/{file}")
+        move_file_to_saved(file, saves_folder)
 
     stats = [streets_number, buildings_number]
-    print(f"Parsing finished. Added {streets_number} streets")
+    print(f"Parsing finished. Added {streets_number} streets, and {buildings_number} buildings")
 
     return stats
 
 
 def save_interruption(cause, time_off, time_on):
-    if cause == "ГПВ":
-        cause = "Plan"
-    else:
-        cause = "Emergency"
+    cause = cause_str_to_objtype(cause)
 
-    month_dict = {
-            "січня": "01",
-            "лютого": "02",
-            "березня": "03",
-            "квітня": "04",
-            "травня": "05",
-            "червня": "06",
-            "липня": "07",
-            "серпня": "08",
-            "вересня": "09",
-            "жовтня": "10",
-            "листопада": "11",
-            "грудня": "12",
-        }
-    time_off = time_off.split(" ")
-    time_off = f"{time_off[0]}/{month_dict[time_off[1]]}/{time_off[2]} {time_off[4]}"
-    time_off_obj = datetime.strptime(time_off, '%d/%m/%Y %H:%M')
-    time_off_obj = make_aware(time_off_obj)
+    start_time = time_str_to_obj(time_on)
+    end_time = time_str_to_obj(time_off)
 
-    time_on = time_on.split(" ")
-    time_on = f"{time_on[0]}/{month_dict[time_on[1]]}/{time_on[2]} {time_on[4]}"
-    time_on_obj = datetime.strptime(time_on, '%d/%m/%Y %H:%M')
-    time_on_obj = make_aware(time_on_obj)
-
-    interruption = Interruptions.objects.create(Start=time_on_obj, End=time_off_obj, Type=cause)
+    interruption = Interruptions.objects.create(Start=start_time, End=end_time, Type=cause)
 
     return interruption
 
 
+def time_str_to_obj(time_string):
+    time_string = time_string.split()
+    time_string = f"{time_string[0]}/{MONTHS[time_string[1]]}/{time_string[2]} {time_string[4]}"
+    time_obj = datetime.strptime(time_string, '%d/%m/%Y %H:%M')
+    return make_aware(time_obj)
+
+
+def cause_str_to_objtype(cause_str):
+    if cause_str == "ГПВ":
+        return "Plan"
+    else:
+        return "Emergency"
+
+
 def save_buildings(buildings, street_id, interruption):
     buildings_number = 0
-    buildings = buildings.split(",")
     for building in buildings:
         letter = 0
         building = building.replace('"', "")
