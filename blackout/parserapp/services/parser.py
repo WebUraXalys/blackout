@@ -8,6 +8,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 import time
 import json
+from .validator import validate
 
 
 MONTHS = {
@@ -178,7 +179,7 @@ def create_interruption_from_save(save):
 
 
 def street_name_is_valid(street) -> bool:
-    return street != "Не Визначена" and '"' not in street
+    return street != "Не Визначена" or '"' not in street
 
 
 def create_street_from_save(save) -> int:
@@ -258,16 +259,11 @@ def cause_str_to_objtype(cause_str):
 
 def save_buildings(buildings, street_id, interruption):
     buildings_number = 0
+    buildings = validate(buildings)
     for building in buildings:
-        letter = 0
-        building = building.replace('"', "")
-        for letters in building:
-            if letters.isalpha() and letter < 2:  # isalpha method checks is character a letter or not
-                letter += 1
-        if letter < 2:
-            build, created = Buildings.objects.update_or_create(Address=building, Street=street_id, Interruption=interruption)
-            if created:
-                buildings_number += 1
+        build, created = Buildings.objects.update_or_create(Address=building, Street=street_id, Interruption=interruption)
+        if created:
+            buildings_number += 1
     return buildings_number
 
 
