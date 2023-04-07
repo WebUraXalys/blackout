@@ -1,12 +1,14 @@
-# from .services.parser import saving
-
-# Create your views here.
-
-from django.http import HttpResponse
+from rest_framework import generics
+from .models import Buildings
+from .serializers import BuildingSerializer
 
 
-def start(request):
-    # x = saving()
-    # return HttpResponse(x)
-    None
-    
+class BuildingList(generics.ListCreateAPIView):
+    queryset = Buildings.objects.all()
+    serializer_class = BuildingSerializer
+
+
+class BuildingDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Buildings.objects.all()
+    serializer_class = BuildingSerializer
+    lookup_field = 'id'
