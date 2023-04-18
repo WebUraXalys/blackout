@@ -5,7 +5,7 @@ from .models import Buildings, Interruptions, Streets
 class StreetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Streets
-        fields = ['Name', 'City', 'OTG', 'Region']
+        fields = ['Name','City', 'OTG', 'Region']
 
 
 class InterruptionSerializer(serializers.ModelSerializer):
@@ -15,6 +15,9 @@ class InterruptionSerializer(serializers.ModelSerializer):
 
 
 class BuildingSerializer(serializers.ModelSerializer):
+    Street = serializers.CharField()
+    
+
     class Meta:
         model = Buildings
         fields = ['Address', 'Street', 'Group', 'Interruption', 'Longitude', 'Latitude']

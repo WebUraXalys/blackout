@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import BuildingList, BuildingDetail
+from .views import BuildingList
 
-urlpatterns = [path('buildings/', BuildingList.as_view()),
-                path('buildings/<int:id>/', BuildingDetail.as_view())]
+urlpatterns = [
+    path('buildings/', BuildingList.as_view()),
+]

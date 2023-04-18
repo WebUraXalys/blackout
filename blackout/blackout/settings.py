@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "parserapp.apps.ParserappConfig",
     'rest_framework',
+    'django_filters',
     "bs4",
 ]
 
