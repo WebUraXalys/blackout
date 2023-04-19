@@ -1,9 +1,9 @@
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import BuildingFilter
-from .models import Buildings, Streets
-from .serializers import BuildingSerializer
+from .models import Buildings, Streets, Interruptions
+from .serializers import BuildingSerializer, StreetSerializer, InterruptionSerializer
 
 
 class BuildingList(generics.ListCreateAPIView):
@@ -13,7 +13,7 @@ class BuildingList(generics.ListCreateAPIView):
     filterset_class = BuildingFilter
 
     def perform_create(self, serializer):
-        Street = get_object_or_404(Streets, Name = self.request.data.get('Street'))
+        Street = get_object_or_404(Streets, Name=self.request.data.get('Street'))
         return serializer.save(Street=Street)
 
 
@@ -23,3 +23,11 @@ class BuildingDetail(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'id'
 
 
+class StreetViewSet(viewsets.ModelViewSet):
+    queryset = Streets.objects.all()
+    serializer_class = StreetSerializer
+
+
+class InterruptionViewSet(viewsets.ModelViewSet):
+    queryset = Interruptions.objects.all()
+    serializer_class = InterruptionSerializer
