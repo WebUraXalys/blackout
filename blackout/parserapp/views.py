@@ -1,4 +1,5 @@
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets, status, serializers
+from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import BuildingFilter
@@ -31,3 +32,11 @@ class StreetViewSet(viewsets.ModelViewSet):
 class InterruptionViewSet(viewsets.ModelViewSet):
     queryset = Interruptions.objects.all()
     serializer_class = InterruptionSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    
