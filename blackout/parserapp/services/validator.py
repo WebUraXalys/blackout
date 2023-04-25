@@ -2,7 +2,6 @@ import re
 
 
 def validate(buildings):
-    buildings = buildings.split(",")
     validated = []
     for b in buildings:
         b = re.sub('[-,. ]', "", b)  # Remove following characters, space included

@@ -13,7 +13,8 @@ env/
 *.sqlite3
 *.sqlite3-journal
 migrations/
-*.sjson
+*.json
+tmp/
 
 # Logs
 logs

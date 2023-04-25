@@ -1,13 +1,11 @@
-import os
-from pathlib import Path
+import os, time, json
 from datetime import datetime
 from bs4 import BeautifulSoup
 from django.utils.timezone import make_aware
-from ..models import Streets, Interruptions, Buildings
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-import time
-import json
+from blackout.settings import BASE_DIR
+from ..models import Streets, Interruptions, Buildings
 from .validator import validate
 
 
@@ -25,24 +23,9 @@ MONTHS = {
     "листопада": "11",
     "грудня": "12",
 }
-DEFAULT_SAVES_DIRECTORY = "/tmp/blk/saves"
-SAVED_FOLDER_LOCAL_PATH = "saved"
-
-
-def get_saves_folder_path():
-    path = os.environ.get("BLACKOUT_SAVES", None)
-    if path is None:
-        print("BLACKOUT_SAVES environment variable is not defined. Define save files folder path in this variable")
-        print(f"Default is {DEFAULT_SAVES_DIRECTORY}")
-        path = DEFAULT_SAVES_DIRECTORY
-    return path
-
-
-def get_or_create_saved_folder_path(saves_folder):
-    saved_dir = os.path.join(saves_folder, SAVED_FOLDER_LOCAL_PATH)
-    if not os.path.isdir(saved_dir):
-        os.makedirs(saved_dir)
-    return saved_dir
+DEFAULT_SAVES_DIRECTORY = str(BASE_DIR.parent.joinpath('tmp'))
+if not os.path.isdir(DEFAULT_SAVES_DIRECTORY):
+    os.makedirs(DEFAULT_SAVES_DIRECTORY+'/saved/')
 
 
 def start_browser():
@@ -78,31 +61,22 @@ def get_page(driver):
 
 
 def split_buildings(buildings: str):
-    building_list = []
-    buildings = buildings.split(", ")
-    for building in buildings:
-        if building != "":
-            building_list.append(building)
-    return building_list
-
+    return [build for build in buildings.split(", ") if build != ""]
 
 def parse_poweroff_row(row):
     table_cell = row.find_all("td")
-
     buildings = split_buildings(table_cell[3].text)
 
-    j = {
-        'region': row.find("th").text.title(),
-        'otg': table_cell[0].text.title(),
+    return {
+        "region": row.find("th").text.title(),
+        "otg": table_cell[0].text.title(),
         "city": table_cell[1].text.title(),
         "street": table_cell[2].text.title(),
         "buildings": buildings,
         "type_off": table_cell[4].text,
-        "cause": table_cell[5].text,
-        "time_off": table_cell[6].text,
-        "time_on": table_cell[7].text
+        "time_off": table_cell[5].text,
+        "time_on": table_cell[6].text
     }
-    return j
 
 
 def parse_page_date(page: BeautifulSoup):
@@ -121,28 +95,12 @@ def get_poweroffs_table(page):
     return page_table.find_all("tbody")
 
 
-def get_rows_of_table(table):
-    rows = []
-    for table_row in table:
-        tr = table_row.find("tr")
-        rows.append(tr)
-    return rows
-
-
-def parse_poweroff_rows(rows):
-    poweroffs = []
-    for row in rows:
-        data = parse_poweroff_row(row)
-        poweroffs.append(data)
-    return poweroffs
-
-
 def scrap_data(page):
     soup = BeautifulSoup(page, "html.parser")
     poweroffs_table = get_poweroffs_table(soup)
 
-    rows = get_rows_of_table(poweroffs_table)
-    poweroffs = parse_poweroff_rows(rows)
+    rows = [row.find("tr") for row in poweroffs_table]
+    poweroffs = list(map(parse_poweroff_row, rows))
 
     date = parse_page_date(soup)
     save_powroffs(poweroffs, date)
@@ -151,27 +109,20 @@ def scrap_data(page):
 
 
 def save_powroffs(interruptions, date):
-    saves_folder = get_saves_folder_path()
-    save_file = os.path.join(saves_folder, date[1:] + ".sjson")
-    with open(save_file, "w", encoding='utf-8') as f:
+    file = f"{DEFAULT_SAVES_DIRECTORY}/{date[1:]}.json"
+    with open(file, "w", encoding='utf-8') as f:
         json.dump(interruptions, f, ensure_ascii=False, indent=4)
-        f.close()
+
 
 
 def get_save_files(saves_folder):
     files = os.listdir(saves_folder)
-    files = filter(lambda f: ".sjson" in f, files)  # Filters all not sjson files from list
+    files = filter(lambda f: ".json" in f, files)  # Filters all not json files from list
     return files
-
-
-def load_json_from_save_file(save_folder, file_name):
-    with open(f"{save_folder}/{file_name}", "r") as save_file:
-        return json.load(save_file)
 
 
 def create_interruption_from_save(save):
     interruption = save_interruption(
-        cause=save["cause"],
         time_off=save["time_off"],
         time_on=save["time_on"]
     )
@@ -188,58 +139,53 @@ def create_street_from_save(save) -> int:
         return 0
 
     interruption = create_interruption_from_save(save)
-    buildings = save["buildings"]
+    buildings = validate(save["buildings"])
     region = save["region"]
     otg = save["otg"]
     city = save["city"]
 
     street_id, street_created = Streets.objects.get_or_create(Name=street_name, City=city, OTG=otg, Region=region)
     if street_created:
-        buildings_created = save_buildings(buildings, street_id, interruption)
-        return buildings_created
+        return save_buildings(buildings, street_id, interruption)
     else:
         print(f"Invalid street: {street_name}")
         return 0
 
 
-def move_file_to_saved(file, saves_folder):
-    saved_folder = get_or_create_saved_folder_path(saves_folder)
-    before = os.path.join(saves_folder, file)
-    after = os.path.join(saved_folder, file)
-    os.rename(before, after)
+def move_file_to_saved(file_name):
+    temp_file = f"{DEFAULT_SAVES_DIRECTORY}/{file_name}"
+    saves_folder = f"{DEFAULT_SAVES_DIRECTORY}/saved/{file_name}"
+    os.rename(temp_file, saves_folder)
 
 
 def save_data():
     streets_number = 0
     buildings_number = 0
 
-    saves_folder = get_saves_folder_path()
+    saves_folder = DEFAULT_SAVES_DIRECTORY
     save_files = get_save_files(saves_folder)
 
-    for file in save_files:
-        saves = load_json_from_save_file(saves_folder, file)
-        for save in saves:
-            buildings_created = create_street_from_save(save)
-            if buildings_created > 0:
-                streets_number += 1
-                buildings_number += buildings_created
+    for file_name in save_files:
+        with open(f"{saves_folder}/{file_name}", "r", encoding='utf-8') as save_file:
+            json_file = json.load(save_file)
 
-        move_file_to_saved(file, saves_folder)
+            for save in json_file:
+                buildings_created = create_street_from_save(save)
+                if buildings_created > 0:
+                    streets_number += 1
+                    buildings_number += buildings_created
 
-    stats = [streets_number, buildings_number]
+        move_file_to_saved(file_name)
+
     print(f"Parsing finished. Added {streets_number} streets, and {buildings_number} buildings")
 
-    return stats
+    return [streets_number, buildings_number]
 
 
-def save_interruption(cause, time_off, time_on):
-    cause = cause_str_to_objtype(cause)
-
+def save_interruption(time_off, time_on):
     start_time = time_str_to_obj(time_on)
     end_time = time_str_to_obj(time_off)
-
-    interruption = Interruptions.objects.create(Start=start_time, End=end_time, Type=cause)
-
+    interruption = Interruptions.objects.create(Start=start_time, End=end_time)
     return interruption
 
 
@@ -250,18 +196,11 @@ def time_str_to_obj(time_string):
     return make_aware(time_obj)
 
 
-def cause_str_to_objtype(cause_str):
-    if cause_str == "ГПВ":
-        return "Plan"
-    else:
-        return "Emergency"
-
-
 def save_buildings(buildings, street_id, interruption):
     buildings_number = 0
-    buildings = validate(buildings)
+
     for building in buildings:
-        build, created = Buildings.objects.update_or_create(Address=building, Street=street_id, Interruption=interruption)
+        _, created = Buildings.objects.update_or_create(Address=building, Street=street_id, Interruption=interruption)
         if created:
             buildings_number += 1
     return buildings_number
