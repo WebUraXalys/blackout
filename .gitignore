@@ -12,7 +12,10 @@ venv/
 env/
 *.sqlite3
 *.sqlite3-journal
-*.sjson
+*.json
+
+
+
 
 # Logs
 logs
