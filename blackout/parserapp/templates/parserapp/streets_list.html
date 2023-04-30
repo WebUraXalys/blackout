@@ -1,0 +1,17 @@
+{%extends 'parserapp/base.html'%}
+
+{%block title%}Streets List{%endblock%}
+
+{%block content%}
+<div class="pl-2">
+    <h1 class="text-7xl border-b pb-1 mb-4">{{city}}</h1>
+    <a href="{%url 'cities'%}"><button class="p-2 rounded border mr-1">← Previous</button></a>
+    <a href="{%url 'delete-confirm-city' city_slug=city_slug%}"><button class="p-2 rounded border border-red-600 mb-6">Delete city</button></a>
+    <ul class="grid">
+        <li class="text-2xl">Streets:</li>
+        {% for street in streets%}
+            <li class="hover:text-blue-200 duration-200"><a href="{%url 'street' city_slug=city_slug street_slug=street.Slug_street%}">{{street}}</a></li>
+        {%endfor%}
+    </ul>
+</div>
+{%endblock%}
