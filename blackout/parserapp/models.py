@@ -59,6 +59,7 @@ class Buildings(models.Model):
     Group = models.CharField(
         "Group",
         max_length=10,
+        null=True,
         choices=GroupChoices.choices,
         blank=True,
         null=True,
