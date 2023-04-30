@@ -61,3 +61,4 @@ def fetch_buildings(request, street_slug, city_slug):
                'street': street_obj,
                'buildings': buildings}
     return render(request, 'parserapp/buildings_list.html', context=context)
+

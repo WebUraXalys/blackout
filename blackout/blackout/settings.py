@@ -17,7 +17,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [os.getenv('SERVER_URL'),'127.0.0.1']
+ALLOWED_HOSTS = [os.getenv('SERVER_URL'), '127.0.0.1']
 
 
 # Application definition
@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "parserapp.apps.ParserappConfig",
+    "admin_extra_buttons",
     "bs4",
 ]
 
@@ -99,7 +100,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "uk"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/Kyiv"
 
 USE_I18N = True
 

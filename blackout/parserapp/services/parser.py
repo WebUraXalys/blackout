@@ -1,9 +1,31 @@
+import os, time, json
+from re import sub
 from datetime import datetime
 from bs4 import BeautifulSoup
-import sqlite3
+from django.utils.timezone import make_aware
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-import time
+from blackout.settings import BASE_DIR
+from ..models import Streets, Interruptions, Buildings
+
+
+MONTHS = {
+    "січня": "01",
+    "лютого": "02",
+    "березня": "03",
+    "квітня": "04",
+    "травня": "05",
+    "червня": "06",
+    "липня": "07",
+    "серпня": "08",
+    "вересня": "09",
+    "жовтня": "10",
+    "листопада": "11",
+    "грудня": "12",
+}
+DEFAULT_SAVES_DIRECTORY = str(BASE_DIR.parent.joinpath('tmp'))
+if not os.path.isdir(DEFAULT_SAVES_DIRECTORY):
+    os.makedirs(DEFAULT_SAVES_DIRECTORY+'/saved/')
 
 
 def start_browser():
@@ -29,9 +51,8 @@ def get_page(driver):
     try:
         driver.get(url)
         time.sleep(10)
-        data = driver.page_source
-        return scrap_data(page_data=data)
-
+        page = driver.page_source
+        return page
     except Exception as ex:
         print(ex)
     finally:
@@ -39,150 +60,159 @@ def get_page(driver):
         driver.quit()
 
 
-def scrap_data(page_data):
-    soup = BeautifulSoup(page_data, "html.parser")
-    page_table = soup.find("table", style="background-color: white;")
-    page_tbody = page_table.find_all("tbody")
-    data = []
-    rows = []
-    for tbody in page_tbody:
-        tr = tbody.find("tr")
-        rows.append(tr)
-    for row in rows[1:]:
-        other = row.find_all("td")
-        buildings = []
-        for building in other[3].text.split(", "):
-            if building != "":
-                buildings.append(building)
-        j = {
-            'district': row.find("th").text,
-            'otg': other[0].text,
-            "np": other[1].text,
-            "street": other[2].text,
-            "buildings": other[3].text,
-            "type_off": other[4].text,
-            "cause": other[5].text,
-            "time_off": other[6].text,
-            "time_on": other[7].text
-        }
-        data.append(j)
-    return data
+def split_buildings(buildings: str):
+    return [build for build in buildings.split(", ") if build != ""]
+
+def parse_poweroff_row(row):
+    table_cell = row.find_all("td")
+    buildings = split_buildings(table_cell[3].text)
+
+    return {
+        "region": row.find("th").text.title(),
+        "otg": table_cell[0].text.title(),
+        "city": table_cell[1].text.title(),
+        "street": table_cell[2].text.title(),
+        "buildings": buildings,
+        "type_off": table_cell[4].text,
+        "time_on": table_cell[5].text,
+        "time_off": table_cell[6].text
+    }
 
 
-def save_data(data):
-    connection = sqlite3.connect("../../db.sqlite3")
-    cur = connection.cursor()
-    summary = 0
-    streets_number = 0
+def parse_page_date(page: BeautifulSoup):
+    date = page.find(title="Source Title").text
 
-    for row in data:
-        region = row["district"].title()
-        otg = row["otg"].title()
-        city = row["np"].title()
-        street = row["street"].title()
-        buildings = row["buildings"]
-
-        interruption = save_interruption(
-            cause=row["cause"],
-            time_off=row["time_off"],
-            time_on=row["time_on"],
-            cur=cur,
-            con=connection
-        )
-
-        exist = cur.execute(
-            f"SELECT * FROM parserapp_streets WHERE Name='{street}' AND City='{city}' AND OTG='{otg}';"
-        ).fetchall()
-
-        if len(exist) < 1:
-            cur.execute(
-                f"INSERT INTO parserapp_streets(Name, City, OTG, Region) VALUES('{street}', '{city}', '{otg}', '{region}')"
-            )
-            connection.commit()
-            print(f"{street} added")
-            streets_number += 1
-
-            street_id = cur.lastrowid  # returns id of the last inserted record
-            buildings_number = save_buildings(buildings, street_id, cur, connection, interruption)
-            summary += buildings_number
-
-        else:
-            print(f"Street {street} already exist.")
-            street_id = exist[0][0]  # exist[0] returns record (id, Name, City, OTG, Region)
-            buildings_number = save_buildings(buildings, street_id, cur, connection, interruption)
-            summary += buildings_number
-
-    counts = [streets_number, summary]
-    print(f"Parsing finished. Added {streets_number} streets")
-
-    return counts
+    # Replace characters from date
+    chars = [" ", ":"]
+    for el in chars:
+        date = date.replace(el, "_")
+    date = date.replace(".", "")
+    return date
 
 
-def save_interruption(cause, time_off, time_on, cur, con):
-    if cause == "ГПВ":
-        cause = "Plan"
-    else:
-        cause = "Emergency"
+def get_poweroffs_table(page):
+    page_table = page.find("table", style="background-color: white;")
+    return page_table.find_all("tbody")
 
-    month_dict = {
-            "січня": "01",
-            "лютого": "02",
-            "березня": "03",
-            "квітня": "04",
-            "травня": "05",
-            "червня": "06",
-            "липня": "07",
-            "серпня": "08",
-            "вересня": "09",
-            "жовтня": "10",
-            "листопада": "11",
-            "грудня": "12",
-        }
-    time_off = time_off.split(" ")
-    time_off = f"{time_off[0]}/{month_dict[time_off[1]]}/{time_off[2]} {time_off[4]}"
-    time_off_obj = datetime.strptime(time_off, '%d/%m/%Y %H:%M')
 
-    time_on = time_on.split(" ")
-    time_on = f"{time_on[0]}/{month_dict[time_on[1]]}/{time_on[2]} {time_on[4]}"
-    time_on_obj = datetime.strptime(time_off, '%d/%m/%Y %H:%M')
-    cur.execute(
-        f"INSERT INTO parserapp_interruptions(Start, End, Type) VALUES('{time_on_obj}', '{time_off}', '{cause}')"
+def scrap_data(page):
+    soup = BeautifulSoup(page, "html.parser")
+    poweroffs_table = get_poweroffs_table(soup)
+
+    rows = [row.find("tr") for row in poweroffs_table]
+    poweroffs = list(map(parse_poweroff_row, rows))
+
+    date = parse_page_date(soup)
+    save_powroffs(poweroffs, date)
+
+    return len(poweroffs)
+
+
+def save_powroffs(interruptions, date):
+    file = f"{DEFAULT_SAVES_DIRECTORY}/{date[1:]}.json"
+    with open(file, "w", encoding='utf-8') as f:
+        json.dump(interruptions, f, ensure_ascii=False, indent=4)
+
+
+
+def get_save_files(saves_folder):
+    files = os.listdir(saves_folder)
+    files = filter(lambda f: ".json" in f, files)  # Filters all not json files from list
+    return files
+
+
+def create_interruption_from_save(save):
+    interruption = save_interruption(
+        time_off=save["time_off"],
+        time_on=save["time_on"]
     )
-    con.commit()
-    interruption_id = cur.lastrowid
-    return interruption_id
+    return interruption
 
 
-def save_buildings(buildings, street_id, cur, connection, interruption):
+def street_name_is_valid(street) -> bool:
+    return street != "Не Визначена" or '"' not in street
+
+def update_buildings(buildings):
+    buildings_list = []
+    for build in buildings:
+        build = sub('[-,. ]', "", build)  # Remove following characters, space included
+        build = sub("[а-яґєіїА-ЯҐЄІЇ]{2,}", "", build)
+        if len(build) != 0:
+            buildings_list.append(build.lower())
+    return buildings_list
+
+def create_street_from_save(save) -> int:
+    street_name = save["street"]
+    if not street_name_is_valid(street_name):
+        return 0
+
+    interruption = create_interruption_from_save(save)
+    buildings = update_buildings(save["buildings"])
+    region = save["region"]
+    otg = save["otg"]
+    city = save["city"]
+
+    street_id, street_created = Streets.objects.get_or_create(Name=street_name, City=city, OTG=otg, Region=region)
+    if street_created:
+        return save_buildings(buildings, street_id, interruption)
+    else:
+        print(f"Invalid street: {street_name}")
+        return 0
+
+
+def move_file_to_saved(file_name):
+    temp_file = f"{DEFAULT_SAVES_DIRECTORY}/{file_name}"
+    saves_folder = f"{DEFAULT_SAVES_DIRECTORY}/saved/{file_name}"
+    os.rename(temp_file, saves_folder)
+
+
+def save_data():
+    streets_number = 0
     buildings_number = 0
-    buildings = buildings.split(",")
-    print(interruption)
+
+    saves_folder = DEFAULT_SAVES_DIRECTORY
+    save_files = get_save_files(saves_folder)
+
+    for file_name in save_files:
+        with open(f"{saves_folder}/{file_name}", "r", encoding='utf-8') as save_file:
+            json_file = json.load(save_file)
+
+            for save in json_file:
+                buildings_created = create_street_from_save(save)
+                if buildings_created > 0:
+                    streets_number += 1
+                    buildings_number += buildings_created
+
+        move_file_to_saved(file_name)
+
+    print(f"Parsing finished. Added {streets_number} streets, and {buildings_number} buildings")
+
+    return [streets_number, buildings_number]
+
+
+def save_interruption(time_off, time_on):
+    start_time = time_str_to_obj(time_on)
+    end_time = time_str_to_obj(time_off)
+    interruption = Interruptions.objects.create(Start=start_time, End=end_time)
+    return interruption
+
+
+def time_str_to_obj(time_string):
+    time_string = time_string.split()
+    time_string = f"{time_string[0]}/{MONTHS[time_string[1]]}/{time_string[2]} {time_string[4]}"
+    time_obj = datetime.strptime(time_string, '%d/%m/%Y %H:%M')
+    return make_aware(time_obj)
+
+
+def save_buildings(buildings, street_id, interruption):
+    buildings_number = 0
+
     for building in buildings:
-        letter = 0
-        building = building.replace('"', "")
-        for letters in building:
-            if letters.isalpha() and letter < 2:  # isalpha method checks
-                letter += 1
-        if letter < 2:
-            exist = cur.execute(f'SELECT * FROM parserapp_buildings WHERE Address="{building}" and Street_id="{street_id}"').fetchall()
-            if len(exist) < 1:
-                cur.execute(f'INSERT INTO parserapp_buildings(Address, Street_id, Interruption_id) VALUES("{building}", "{street_id}", "{interruption}")')
-                connection.commit()
-                buildings_number += 1
-            else:
-                cur.execute(f'UPDATE parserapp_buildings '
-                            f'SET Interruption_id = {interruption} '
-                            f'WHERE id="{exist[0][0]}"')
-                connection.commit()
+        _, created = Buildings.objects.update_or_create(Address=building, Street=street_id, Interruption=interruption)
+        if created:
+            buildings_number += 1
     return buildings_number
 
 
 if __name__ == "__main__":
-    start = datetime.now()
-    driver = start_browser()
-    data = get_page(driver)
-    counts = save_data(data)
-    time = datetime.now() - start
-    print(f"Time of working: {time}")
-    print(f"Parser recording speed: {100 / time.total_seconds() * 3600} streets per hour")
-    print(f"Count of buildings: {counts[1]}\nRecording speed:{counts[1] / time.total_seconds() * 3600} buildings per hour")
+    print("If you want to run parser, run instead this command: python(3) manage.py parse")
