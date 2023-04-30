@@ -1,4 +1,5 @@
 import os, time, json
+from re import sub
 from datetime import datetime
 from bs4 import BeautifulSoup
 from django.utils.timezone import make_aware
@@ -6,7 +7,6 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from blackout.settings import BASE_DIR
 from ..models import Streets, Interruptions, Buildings
-from .validator import validate
 
 
 MONTHS = {
@@ -74,8 +74,8 @@ def parse_poweroff_row(row):
         "street": table_cell[2].text.title(),
         "buildings": buildings,
         "type_off": table_cell[4].text,
-        "time_off": table_cell[5].text,
-        "time_on": table_cell[6].text
+        "time_on": table_cell[5].text,
+        "time_off": table_cell[6].text
     }
 
 
@@ -132,6 +132,14 @@ def create_interruption_from_save(save):
 def street_name_is_valid(street) -> bool:
     return street != "Не Визначена" or '"' not in street
 
+def update_buildings(buildings):
+    buildings_list = []
+    for build in buildings:
+        build = sub('[-,. ]', "", build)  # Remove following characters, space included
+        build = sub("[а-яґєіїА-ЯҐЄІЇ]{2,}", "", build)
+        if len(build) != 0:
+            buildings_list.append(build.lower())
+    return buildings_list
 
 def create_street_from_save(save) -> int:
     street_name = save["street"]
@@ -139,7 +147,7 @@ def create_street_from_save(save) -> int:
         return 0
 
     interruption = create_interruption_from_save(save)
-    buildings = validate(save["buildings"])
+    buildings = update_buildings(save["buildings"])
     region = save["region"]
     otg = save["otg"]
     city = save["city"]
