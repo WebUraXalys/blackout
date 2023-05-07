@@ -4,7 +4,7 @@ from admin_extra_buttons.utils import HttpResponseRedirectToReferrer
 
 from .models import Streets, Buildings, Interruptions
 from .services.parser import start_browser, get_page, save_data, scrap_data
-
+from .services.generators import generate_interruptions
 
 @admin.register(Streets)
 class StreetsAdmin(ExtraButtonsMixin, admin.ModelAdmin):
@@ -53,6 +53,14 @@ class BuildingsAdmin(admin.ModelAdmin):
 
 
 @admin.register(Interruptions)
-class InterruptionAdmin(admin.ModelAdmin):
+class InterruptionAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     list_display = ["pk", "Start", "End", "Type"]
     ordering = ["pk"]
+
+    @button(html_attrs={'style': 'background-color:#88FF88;color:black'})
+    def generate_interruptions(self, request):
+        generate_interruptions()
+
+        self.message_user(request, "Interruptions generated")
+
+        return HttpResponseRedirectToReferrer(request)
