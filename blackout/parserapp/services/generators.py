@@ -49,7 +49,7 @@ def generate_plan_interruption():
 
 
 geolocator = Nominatim(user_agent="Blackout")
-streets = Streets.objects.all()
+streets = list(Streets.objects.all())
 buildings = Buildings.objects.all()
 
 
@@ -70,4 +70,3 @@ def generate_planned_interrupted_buildings():
                 Latitude=location.latitude,
             )
             building_obj.save()
-        break
