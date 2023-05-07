@@ -1,6 +1,8 @@
-from random import randint
+from random import randint, choice
 from datetime import datetime, timedelta
 from ..models import Streets, Interruptions, Buildings
+from geopy.geocoders import Nominatim
+import sqlite3
 
 
 weekday = datetime.now().isoweekday()
@@ -44,3 +46,28 @@ def generate_plan_interruption():
                 )
                 plan_interruption.save()
             break
+
+
+geolocator = Nominatim(user_agent="Blackout")
+streets = Streets.objects.all()
+buildings = Buildings.objects.all()
+
+
+def generate_planned_interrupted_buildings():
+
+    plan_interruption = Interruptions.objects.get(Type="Plan")
+    for street in streets:
+        for building in range(1, randint(32, 78)):
+            location = geolocator.geocode(
+                str(building) + " " + street.Name + " " + street.City
+            )
+            building_obj = Buildings(
+                Address=building,
+                Street=street,
+                Group=choice(["First", "Second", "Third"]),
+                Interruption=plan_interruption,
+                Longitude=location.longitude,
+                Latitude=location.latitude,
+            )
+            building_obj.save()
+        break

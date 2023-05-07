@@ -4,7 +4,8 @@ from admin_extra_buttons.utils import HttpResponseRedirectToReferrer
 
 from .models import Streets, Buildings, Interruptions
 from .services.parser import start_browser, get_page, save_data, scrap_data
-from .services.generators import generate_emergency_interruption, generate_plan_interruption
+from .services.generators import generate_emergency_interruption, generate_plan_interruption, generate_planned_interrupted_buildings
+
 
 @admin.register(Streets)
 class StreetsAdmin(ExtraButtonsMixin, admin.ModelAdmin):
@@ -31,7 +32,7 @@ class StreetsAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     
 
 @admin.register(Buildings)
-class BuildingsAdmin(admin.ModelAdmin):
+class BuildingsAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     list_display = [
         "pk",
         "Address",
@@ -43,6 +44,16 @@ class BuildingsAdmin(admin.ModelAdmin):
         "Latitude",
     ]
     ordering = ["pk"]
+
+    @button(html_attrs={'style': 'background-color:#88FF88;color:black'})
+    def generate_planned_interrupted_buildings(self, request):
+        if Streets.objects.exists() and Interruptions.objects.filter(Type="Plan").exists():
+            generate_planned_interrupted_buildings()
+            self.message_user(request, "Buildings and interruption generated")
+        else:
+            self.message_user(request, "Firstly create Streets and Interruptions!!!")
+        
+        return HttpResponseRedirectToReferrer(request)
 
     def get_type_interruption(self, obj):
         if obj.Interruption:
