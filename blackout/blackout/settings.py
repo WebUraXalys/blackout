@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from datetime import timedelta
 from dotenv import load_dotenv
 
 
@@ -30,6 +31,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "parserapp.apps.ParserappConfig",
+    "authentication.apps.AuthenticationConfig",
+    "rest_framework_simplejwt",
+    'rest_framework',
     "admin_extra_buttons",
     "bs4",
 ]
@@ -94,6 +98,21 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ALGORITHM': 'HS256',
+  }
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
