@@ -3,7 +3,7 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
-
+from rest_framework.serializers import ValidationError
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -25,10 +25,10 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
-            raise serializers.ValidationError({'password': 'Password does not match'})
+            raise ValidationError({'password': 'Password does not match'})
 
         if User.objects.filter(email=attrs['email']).exists():
-            raise serializers.ValidationError({'email': 'Email already exist'})
+            raise ValidationError({'email': 'Email already exist'})
 
 
         return attrs
@@ -44,3 +44,32 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         return user
 
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(required=True, write_only=True, validators=[validate_password])
+    password2 = serializers.CharField(required=True, write_only=True,)
+    old_password = serializers.CharField(required=True, write_only=True,)
+
+    class Meta:
+        model = User
+        fields = ('old_password', 'password', 'password2')
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password2']:
+            raise ValidationError({'password': 'Password does not match'})
+
+        return attrs
+
+    def validate_old_password(self, value):
+        user = self.context['request'].user
+
+        if not user.check_password(value):
+            raise ValidationError('Old password is not correct')
+
+        return value
+
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['password'])
+        instance.save()
+
+        return instance
