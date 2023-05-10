@@ -2,7 +2,6 @@ from random import randint, choice
 from datetime import datetime, timedelta
 from ..models import Streets, Interruptions, Buildings
 from geopy.geocoders import Nominatim
-import sqlite3
 
 
 weekday = datetime.now().isoweekday()
