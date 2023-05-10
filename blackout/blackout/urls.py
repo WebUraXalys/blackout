@@ -28,4 +28,5 @@ urlpatterns = [
     ),
     path("admin/", admin.site.urls),
     path("cities/", include("parserapp.urls")),
+    path('api/', include('cards.urls'))
 ]

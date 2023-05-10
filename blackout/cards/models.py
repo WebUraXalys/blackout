@@ -19,8 +19,8 @@ class Cards(models.Model):
     Building = models.ForeignKey(Buildings, on_delete=models.CASCADE, related_name='Building_Number')
 
     class Meta:
-        verbose_name = "Card"
-        verbose_name_plural = "Cards"
+        verbose_name = 'Card'
+        verbose_name_plural = 'Cards'
 
     def __str__(self):
         return self.Title
