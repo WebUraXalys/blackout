@@ -30,6 +30,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "parserapp.apps.ParserappConfig",
+    "cards.apps.CardsConfig",
+    "rest_framework",
     "admin_extra_buttons",
     "bs4",
 ]
