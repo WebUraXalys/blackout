@@ -48,24 +48,25 @@ def generate_plan_interruption():
 
 
 geolocator = Nominatim(user_agent="Blackout")
-streets = list(Streets.objects.all())
+streets = Streets.objects.all()
 buildings = Buildings.objects.all()
 
 
 def generate_planned_interrupted_buildings():
-
     plan_interruption = Interruptions.objects.get(Type="Plan")
     for street in streets:
         for building in range(1, randint(32, 78)):
             location = geolocator.geocode(
                 str(building) + " " + street.Name + " " + street.City
             )
-            building_obj = Buildings(
-                Address=building,
-                Street=street,
-                Group=choice(["First", "Second", "Third"]),
-                Interruption=plan_interruption,
-                Longitude=location.longitude,
-                Latitude=location.latitude,
-            )
-            building_obj.save()
+
+            if not Buildings.objects.filter(Address=building, Street=street).exists():
+                building_obj = Buildings(
+                    Address=building,
+                    Street=street,
+                    Group=choice(["First", "Second", "Third"]),
+                    Interruption=plan_interruption,
+                    Longitude=location.longitude,
+                    Latitude=location.latitude,
+                )
+                building_obj.save()
