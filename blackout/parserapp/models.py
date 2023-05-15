@@ -16,7 +16,7 @@ class Streets(models.Model):
         verbose_name = "Street"
         verbose_name_plural = "Streets"
 
-    def save(self):
+    def save(self, *args, **kwargs):
         self.Slug_city = slugify(translit(self.City))
         self.Slug_street = slugify(translit(self.Name))
         return super().save()

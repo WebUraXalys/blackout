@@ -36,14 +36,13 @@ def generate_plan_interruption():
                     End=datetime(tomorrow.year, tomorrow.month, tomorrow.day, 1, 0, 0),
                     Type="Plan",
                 )
-                plan_interruption.save()
             else:
                 plan_interruption = Interruptions(
                     Start=datetime(year, month, day, start_hour, 0, 0),
                     End=datetime(year, month, day, end_hour, 0, 0),
                     Type="Plan",
                 )
-                plan_interruption.save()
+            plan_interruption.save()
             break
 
 
@@ -53,20 +52,21 @@ buildings = Buildings.objects.all()
 
 
 def generate_planned_interrupted_buildings():
-    plan_interruption = Interruptions.objects.get(Type="Plan")
-    for street in streets:
-        for building in range(1, randint(32, 78)):
-            location = geolocator.geocode(
-                str(building) + " " + street.Name + " " + street.City
-            )
-
-            if not Buildings.objects.filter(Address=building, Street=street).exists():
-                building_obj = Buildings(
-                    Address=building,
-                    Street=street,
-                    Group=choice(["First", "Second", "Third"]),
-                    Interruption=plan_interruption,
-                    Longitude=location.longitude,
-                    Latitude=location.latitude,
+    plan_interruptions = Interruptions.objects.filter(Type="Plan")
+    for plan_interruption in plan_interruptions:    
+        for street in streets:
+            for building in range(1, randint(32, 78)):
+                location = geolocator.geocode(
+                    str(building) + " " + street.Name + " " + street.City
                 )
-                building_obj.save()
+                if location is not None:
+                    if not Buildings.objects.filter(Address=building, Street=street).exists():
+                        building_obj = Buildings(
+                            Address=building,
+                            Street=street,
+                            Group=choice(["First", "Second", "Third"]),
+                            Interruption=plan_interruption,
+                            Longitude=location.longitude,
+                            Latitude=location.latitude,
+                        )
+                        building_obj.save()
