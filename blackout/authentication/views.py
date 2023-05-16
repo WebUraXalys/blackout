@@ -3,7 +3,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth.models import User
-from .serializers import RegisterSerializer, MyTokenObtainPairSerializer, ChangePasswordSerializer
+from .serializers import RegisterSerializer, MyTokenObtainPairSerializer, ChangePasswordSerializer, UpdateProfileSerializer
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -34,3 +34,11 @@ class ChangePasswordApiView(UpdateAPIView):
             "status": 200
         }
         return Response(result)
+
+class UpdateProfileApiView(UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UpdateProfileSerializer
+    permission_class = (IsAuthenticated)
+
+    def get_object(self):
+        return self.request.user

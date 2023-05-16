@@ -20,7 +20,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.CharField(required=True, validators=[validate_email])
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'password2' ]
+        fields = ('username', 'email', 'password', 'password2')
 
 
     def validate(self, attrs):
@@ -73,3 +73,25 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+class UpdateProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('email', 'username', 'first_name', 'last_name', 'last_login')
+        extra_kwargs = {'first_name': {'required':False},
+                        'last_name': {'required':False},
+                        'username': {'required':False},
+                        'last_login': {'read_only':True}}
+
+    def validate_email(self, value):
+        user = self.context['request'].user
+        if User.objects.exclude(pk=user.pk).filter(email=value).exists():
+            raise serializers.ValidationError({"email": "This email is already in use."})
+        return value
+
+    def validate_username(self, value):
+        user = self.context['request'].user
+        if User.objects.exclude(pk=user.pk).filter(username=value).exists():
+            raise serializers.ValidationError({"username": "This username is already in use."})
+        return value
+    
