@@ -1,4 +1,4 @@
-from rest_framework.generics import CreateAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, UpdateAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -37,7 +37,7 @@ class ChangePasswordApiView(UpdateAPIView):
         }
         return Response(result)
 
-class UpdateProfileApiView(UpdateAPIView):
+class UpdateProfileApiView(UpdateAPIView, RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UpdateProfileSerializer
     permission_classes = (IsAuthenticated,)
