@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "parserapp.apps.ParserappConfig",
     "authentication.apps.AuthenticationConfig",
+    'rest_framework_simplejwt.token_blacklist',
     "rest_framework_simplejwt",
     'rest_framework',
     "admin_extra_buttons",
@@ -113,7 +114,8 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(hours=12),
     'ALGORITHM': 'HS256',
     'UPDATE_LAST_LOGIN': True,
-  }
+    'ROTATE_REFRESH_TOKENS': True,
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
