@@ -1,8 +1,17 @@
-// Відправляє GET запит з параметрами status: 200 та map: default при завантаженні сторінки
-fetch('/api/data?status=200&map=default')
+// Перевіряємо наявність та значення access token в localStorage
+const accessToken = localStorage.getItem('access_token');
+const mapType = accessToken && accessToken.trim() !== '' ? 'authorized' : 'default';
+
+// Формуємо параметри запиту залежно від значення access token
+const queryParams = {
+  status: 200,
+  map: mapType
+};
+
+// Відправляємо GET запит з відповідними параметрами
+fetch('/api/data?' + new URLSearchParams(queryParams))
   .then(response => response.json())
   .then(data => {
-    // Якщо відповідь містить статус 200 та масив координат, то запускаємо функцію для обробки цих даних
     if (data.status === 200 && Array.isArray(data.coordinates)) {
       handleCoordinates(data.coordinates);
     }
@@ -10,12 +19,10 @@ fetch('/api/data?status=200&map=default')
   .catch(error => console.error('Помилка запиту: ', error));
 
 function handleCoordinates(coordinates) {
-  // Підключаємо інший js файл, в якому буде використовуватися масив з координатами
   const script = document.createElement('script');
   script.src = 'path/to/other-file.js';
   document.body.appendChild(script);
 
-  // Записуємо масив координат у змінну heat_point у іншому js файлі
   script.onload = function() {
     window.heat_point = coordinates;
   }
