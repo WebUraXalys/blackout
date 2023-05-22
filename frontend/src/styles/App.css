@@ -79,6 +79,17 @@ a {
     grid-template-columns: repeat(6, 1fr);
 }
 
+/* home */
+.main_container_home{
+    width: 350px;
+    margin: auto;
+}
+.information_container_home {
+    width: 650px;
+    color:#ffd60a;
+    margin: auto;
+}
+
 @media (max-width: 500px) {
     .logo_d {
         display: flex;
