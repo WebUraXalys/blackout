@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Blackout - карта вимкнень</title>
+   <link rel="stylesheet" href="../src/styles/App.css">
+   <link rel="stylesheet" href="style/style.css">
+   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+      integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+      integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+   <script src="script/leaflet-heat.js"></script>
+   <script src="script/main.js"></script>
+   <script src="script/other-file.js"></script>
+</head>
+<body>
+   <div class="App">
+      <header class="header none">
+         <div class="logo_d">
+            <img src="../src/assets/logo_header.png" alt="" class="logo"></div>
+            <hr class="header_line">
+      </header>
+      <div class="contend_map">
+         <div id="map">
+         </div>
+      </div>
+      <footer class="foorer none">
+         <hr class="footer-line">
+         <div class="menu">
+         <svg class="link" viewBox="0 0 24 24" >
+            <path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61 1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z">
+            </path>
+         </svg>
+            <!-- <a class="MuiButtonBase-root MuiBottomNavigationAction-root Mui-selected NavItem css-1bjk3jo-MuiButtonBase-root-MuiBottomNavigationAction-root"
+               tabindex="0" href="/"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                  focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="HomeOutlinedIcon">
+                  <path d="m12 5.69 5 4.5V18h-2v-6H9v6H7v-7.81l5-4.5M12 3 2 12h3v8h6v-6h2v6h6v-8h3L12 3z"></path>
+               </svg>
+               <span
+                  class="MuiBottomNavigationAction-label Mui-selected css-imwso6-MuiBottomNavigationAction-label">Home</span><span
+                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root">
+               </span>
+            </a>
+            <a class="MuiButtonBase-root MuiBottomNavigationAction-root NavItem css-1bjk3jo-MuiButtonBase-root-MuiBottomNavigationAction-root"
+               tabindex="0" href="/map"><svg
+                  class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root" focusable="false"
+                  aria-hidden="true" viewBox="0 0 24 24" data-testid="MapOutlinedIcon">
+                  <path
+                     d="m20.5 3-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM10 5.47l4 1.4v11.66l-4-1.4V5.47zm-5 .99 3-1.01v11.7l-3 1.16V6.46zm14 11.08-3 1.01V6.86l3-1.16v11.84z">
+                  </path>
+               </svg>
+               <span class="MuiBottomNavigationAction-label css-imwso6-MuiBottomNavigationAction-label">Map</span>
+                  <span class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root">
+               </span>
+            </a> -->
+         </div>
+      </footer>
+   </div>
+    <script>
+       var map = L.map('map').setView([49.287, 23.4162], 13);
+
+       L.tileLayer('//tiles.openstreetmap.org.ua/osm/{z}/{x}/{y}.png', {
+          minZoom: 6,
+          maxZoom: 18,
+          attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright/">OpenStreetMap</a> contributors, <a href="http://opendatacommons.org/licenses/odbl/">ODbL</a>',
+          id: 'base'
+       }).addTo(map);
+
+       var heat = L.heatLayer(heat_points, {
+          radius: 12,
+          blur: 25,
+          maxZoom: 11
+       }).addTo(map).setOpacity(255);
+    </script>
+
+</body>
+</html>
