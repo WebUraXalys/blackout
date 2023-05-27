@@ -29,3 +29,10 @@ class BuildingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Buildings
         fields = ['Address', 'Street', 'Group', 'Interruption', 'Longitude', 'Latitude']
+
+
+class CoordinatesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Buildings
+        fields = ['Longitude', 'Latitude']
