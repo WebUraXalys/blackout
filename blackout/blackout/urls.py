@@ -5,6 +5,7 @@ from django.views.generic.base import RedirectView
 
 
 urlpatterns = [
+    path('api/', include('authentication.urls')),
     path('accounts/login/', RedirectView.as_view(permanent=False, url='/admin/')),
     path(
         "admin/password_reset/",
