@@ -11,7 +11,7 @@ class StreetSerializer(serializers.ModelSerializer):
 class InterruptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Interruptions
-        fields = ['Start', 'End', 'Type']
+        fields = ['id', 'Start', 'End', 'Type']
 
     def validate(self, attrs):
         start_date = attrs.get('Start')
@@ -29,6 +29,19 @@ class BuildingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Buildings
         fields = ['Address', 'Street', 'Group', 'Interruption', 'Longitude', 'Latitude']
+
+    def to_representation(self, instance):
+        representation = super(BuildingSerializer, self).to_representation(instance)
+        Interruption = Interruptions.objects.filter(id = representation['Interruption']).first()
+        if Interruption:
+            representation['Interruption'] = {
+                'id': Interruption.id,
+                'Start': Interruption.Start.strftime('%d/%m/%Y %H:%M:%S'),
+                'End': Interruption.End.strftime('%d/%m/%Y %H:%M:%S'),
+                'Type': Interruption.Type,
+
+            }
+        return representation
 
 
 class CoordinatesSerializer(serializers.ModelSerializer):

@@ -16,3 +16,4 @@ beautifulsoup4==4.11.1
 selenium==4.8.0
 djangorestframework==3.14.0
 django_filter==23.1
+fuzzywuzzy == 0.18.0

@@ -3,6 +3,7 @@ from rest_framework import viewsets, status, generics
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from fuzzywuzzy import fuzz
 from .filters import BuildingFilter
 from .models import Buildings, Streets, Interruptions
 from .serializers import BuildingSerializer, StreetSerializer, InterruptionSerializer, CoordinatesSerializer
@@ -15,7 +16,9 @@ class BuildingList(generics.ListCreateAPIView):
     filterset_class = BuildingFilter
 
     def perform_create(self, serializer):
-        Street = get_object_or_404(Streets, Name=self.request.data.get('Street'))
+        for street in Streets.objects.all():
+            if fuzz.partial_ratio(street.Name, self.request.data.get('Street'))>70:
+                Street = get_object_or_404(Streets, Name=street.Name)
         return serializer.save(Street=Street)
 
 
@@ -57,7 +60,10 @@ class CoordinatesApiView(generics.ListAPIView):
 
         for street in streets:
             builds_of_street = Buildings.objects.filter(Street=street, Interruption__End__gte=datetime.now())
-            coordinates = [(float(build.Longitude), float(build.Latitude)) for build in builds_of_street]
+            coordinates = []
+            for build in builds_of_street: 
+                if build.Longitude or build.Latitude:
+                    coordinates.append((float(build.Longitude), float(build.Latitude))) 
             if coordinates:
                 context[street.Name] = coordinates
 
