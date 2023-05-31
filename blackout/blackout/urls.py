@@ -12,7 +12,7 @@ router.register('interruptions', InterruptionViewSet, basename='interruptions')
 
 urlpatterns = [
     path('api/', include('parserapp.urls',)),
-    path('api/', include('authentication.urls')),
+    path('auth/', include('authentication.urls')),
     path('api/', include(router.urls)),
 
     path('accounts/login/', RedirectView.as_view(permanent=False, url='/admin/')),
