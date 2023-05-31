@@ -4,7 +4,7 @@ from admin_extra_buttons.utils import HttpResponseRedirectToReferrer
 
 from .models import Streets, Buildings, Interruptions
 from .services.parser import start_browser, get_page, save_data, scrap_data
-from .services.generators import generate_emergency_interruption, generate_plan_interruption, generate_planned_interrupted_buildings
+from .services.generators import generate_streets, generate_emergency_interruption, generate_plan_interruption, generate_planned_interrupted_buildings
 
 
 @admin.register(Streets)
@@ -27,6 +27,14 @@ class StreetsAdmin(ExtraButtonsMixin, admin.ModelAdmin):
         save_data()
 
         self.message_user(request, "Saved all jsons")
+
+        return HttpResponseRedirectToReferrer(request)
+    
+    @button(html_attrs={'style': 'background-color:#88FF88;color:black'})
+    def generate_streets(self, request):
+        generate_streets()
+
+        self.message_user(request, "Streets generated")
 
         return HttpResponseRedirectToReferrer(request)
     

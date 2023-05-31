@@ -12,7 +12,27 @@ year = datetime.now().year
 yesterday = datetime.now() - timedelta(days=1)
 tomorrow = datetime.now() + timedelta(days=1)
 interruption_hours = [(0, 1), (1, 5), (5, 9), (9, 13), (13, 17), (17, 21), (21, 23)]
+streets_list = ["Проспект свободи", "Проспект Тараса Шевченка", "Галицька площа", "Соборна площа", "Площа ринок", "Площа різні"
+                , "Валова вулиця", "Підвальна вул", "Шевська вулиця", "Івана Ґонти вул", "Лесі Українки вул", "Друкарська вул"
+                , "Шевська вул", "Краківська вул", "Театральна вул", "Староєврейська вул", "Братів Рогатинців", "Сербська вул"
+                , "Валова вул", "Вічева вул", "Проспект В’ячеслава Чорновола", "Академіка Володимира Гнатюка вул", "Северина Наливайка вул"
+                , "Торгова вул", "Січових Стрільців вул", "Гетьмана Дорошенка вуд", "Університецька вул", "Листопадового Чину вул"
+                , "Степана Бандери вул", "Миколи Коперника вул", "Івана Франка вул", "Під Дубом вул", "Дорошенка вул"
+                , "Генерала Тернаського", "Личаківська вул", "Стрийська вул", "Зелена вул", "Під Дубом вул", "Чернівецька вул"
+                , "Городоцька вул", "Кульпарківська вул", "Проспект Червоної калини", "Стрийська вул"]
 
+
+def generate_streets():
+    for street_name in streets_list:
+        street = Streets(
+            Name = street_name,
+            City = "Львів",
+            OTG = "Львівська",
+            Region = "Львів",
+            Slug_city = "Львів",
+            Slug_street = street_name,
+        )
+        street.save()
 
 def generate_emergency_interruption():
     emergency_interruption = Interruptions(
@@ -53,20 +73,24 @@ buildings = Buildings.objects.all()
 
 def generate_planned_interrupted_buildings():
     plan_interruptions = Interruptions.objects.filter(Type="Plan")
-    for plan_interruption in plan_interruptions:    
-        for street in streets:
-            for building in range(1, randint(32, 78)):
-                location = geolocator.geocode(
-                    str(building) + " " + street.Name + " " + street.City
+    for street in streets:
+        existing_buildings = Buildings.objects.filter(Street=street).order_by('-Address')
+        if existing_buildings.exists():
+            max_address = existing_buildings.first().Address
+        else:
+            max_address = 0
+
+        for building in range(max_address + 1, max_address + 1 + randint(32, 78)):
+            location = geolocator.geocode(
+                str(building) + " " + street.Name + " " + street.City
+            )
+            if location is not None:
+                building_obj = Buildings(
+                    Address=building,
+                    Street=street,
+                    Group=choice(["First", "Second", "Third"]),
+                    Interruption=plan_interruptions[0],
+                    Longitude=location.longitude,
+                    Latitude=location.latitude,
                 )
-                if location is not None:
-                    if not Buildings.objects.filter(Address=building, Street=street).exists():
-                        building_obj = Buildings(
-                            Address=building,
-                            Street=street,
-                            Group=choice(["First", "Second", "Third"]),
-                            Interruption=plan_interruption,
-                            Longitude=location.longitude,
-                            Latitude=location.latitude,
-                        )
-                        building_obj.save()
+                building_obj.save()
