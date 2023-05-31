@@ -50,7 +50,7 @@ class CoordinatesApiView(generics.ListAPIView):
 
 
     def list(self, request):
-        context = {}
+        coordinates = []
         authenticated = request.user.is_authenticated
 
         if authenticated:
@@ -60,15 +60,13 @@ class CoordinatesApiView(generics.ListAPIView):
 
         for street in streets:
             builds_of_street = Buildings.objects.filter(Street=street, Interruption__End__gte=datetime.now())
-            coordinates = []
             for build in builds_of_street: 
                 if build.Longitude or build.Latitude:
                     coordinates.append((float(build.Longitude), float(build.Latitude))) 
-            if coordinates:
-                context[street.Name] = coordinates
+            
 
-        if context:
-            return Response({'message': 'ok', 'Coordinates': context})
+        if coordinates:
+            return Response({'message': 'ok', 'Coordinates': coordinates})
         else:
             message = 'No coordinates available.'
             return Response({'message': message})
