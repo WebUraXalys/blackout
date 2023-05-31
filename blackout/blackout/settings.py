@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "parserapp.apps.ParserappConfig",
+    'django_filters',
     "authentication.apps.AuthenticationConfig",
     'rest_framework_simplejwt.token_blacklist',
     "rest_framework_simplejwt",
@@ -100,6 +101,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 REST_FRAMEWORK = {
+    'DATETIME_FORMAT': '%d/%m/%Y %H:%M:%S',
+    'DATETIME_INPUT_FORMATS': ['%d/%m/%Y %H:%M:%S',],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
@@ -116,13 +119,14 @@ SIMPLE_JWT = {
     'UPDATE_LAST_LOGIN': True,
     'ROTATE_REFRESH_TOKENS': True,
 }
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = "uk"
 
+
 TIME_ZONE = "Europe/Kyiv"
+
 
 USE_I18N = True
 

@@ -1,7 +1,9 @@
 from django.urls import path
-from .views import *
+from .views import BuildingList, CoordinatesApiView
 
 urlpatterns = [
+    path('buildings/', BuildingList.as_view()),
+    path('coordinates/', CoordinatesApiView.as_view())
     path("", fetch_cities, name="cities"),
     path("<city_slug>/", fetch_streets, name="city"),
     path("confirm/<city_slug>/", delete_confirmation, name="delete-confirm-city"),

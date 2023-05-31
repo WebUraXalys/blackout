@@ -2,10 +2,19 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from django.views.generic.base import RedirectView
+from rest_framework.routers import DefaultRouter
+from parserapp.views import  StreetViewSet, InterruptionViewSet
+
+router = DefaultRouter()
+router.register('streets', StreetViewSet, basename='streets')
+router.register('interruptions', InterruptionViewSet, basename='interruptions')
 
 
 urlpatterns = [
+    path('api/', include('parserapp.urls',)),
     path('api/', include('authentication.urls')),
+    path('api/', include(router.urls)),
+
     path('accounts/login/', RedirectView.as_view(permanent=False, url='/admin/')),
     path(
         "admin/password_reset/",
