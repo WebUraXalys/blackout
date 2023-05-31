@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from datetime import timedelta
 from dotenv import load_dotenv
 
 
@@ -17,7 +18,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [os.getenv('SERVER_URL'),'127.0.0.1']
+ALLOWED_HOSTS = [os.getenv('SERVER_URL'), '127.0.0.1']
 
 
 # Application definition
@@ -30,8 +31,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "parserapp.apps.ParserappConfig",
-    'rest_framework',
     'django_filters',
+    "authentication.apps.AuthenticationConfig",
+    'rest_framework_simplejwt.token_blacklist',
+    "rest_framework_simplejwt",
+    'rest_framework',
+    "admin_extra_buttons",
     "bs4",
 ]
 
@@ -98,13 +103,30 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%d/%m/%Y %H:%M:%S',
     'DATETIME_INPUT_FORMATS': ['%d/%m/%Y %H:%M:%S',],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(hours=12),
+    'ALGORITHM': 'HS256',
+    'UPDATE_LAST_LOGIN': True,
+    'ROTATE_REFRESH_TOKENS': True,
 }
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
 LANGUAGE_CODE = "uk"
 
-TIME_ZONE = "Europe/Kiev"
+
+TIME_ZONE = "Europe/Kyiv"
+
 
 USE_I18N = True
 

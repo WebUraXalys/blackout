@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete confirmation</title>
+	{%load static%} 
+	<link href="{% static 'parserapp/output.css'%}" rel="stylesheet"> 
+</head>
+<body class="bg-gray-900 text-gray-100/75 pl-2">
+    {% if street == None %}
+        <h2 class="text-2xl">You confirm that You want to <span class="text-red-500/75">DELETE PERMANENTLY</span> city {{city}}?</h2>
+        <a href="{%url 'city' city_slug=city_slug%}"><button class="p-2 rounded border border-green-600 mb-6 mt-4 mr-2">No. Return to previous page</button></a>
+        <a href="{%url 'delete-city' city_slug=city_slug%}"><button class="p-2 rounded border border-red-600 mb-6">Yes!</button></a>
+    {% else %}
+        <h2 class="text-2xl">You confirm that You want to <span class="text-red-500/75">DELETE PERMANENTLY</span> street {{street}}?</h2>
+        <h3>Note: City will be deleted if there is none streets in it</h3>
+        <a href="{%url 'street' city_slug=city_slug street_slug=street_slug%}"><button class="p-2 rounded border border-green-600 mb-6 mt-4 mr-2">No. Return to previous page</button></a>
+        <a href="{%url 'delete-street' city_slug=city_slug street_slug=street_slug%}"><button class="p-2 rounded border border-red-600 mb-6">Yes!</button></a>
+    {%endif%}
+</body>
+</html>
