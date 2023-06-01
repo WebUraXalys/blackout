@@ -14,7 +14,7 @@ const Map = () => {
         //         url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png"
         //     />
         // </MapContainer>
-        <iframe class="iframe_div" src="http://127.0.0.1:5501/frontend/map/index.html" frameborder="0"></iframe>
+        <iframe className="iframe_div" src="http://127.0.0.1:5501/frontend/map/index.html" frameborder="0"></iframe>
     );
 };
 

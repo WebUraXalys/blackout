@@ -12,6 +12,7 @@ html {
 }
 
 body {
+    
     margin: 0;
     background-color: #000000;
 }
@@ -19,9 +20,20 @@ body {
 .logo {
     margin-top: 5px;
     margin-left: 25px;
+    /* position: fixed; */
+    
+}
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    background: #000;
 }
 
 .header_line {
+    /* position: fixed; */
     width: 99.8%;
     margin-top: 3px;
     border: 1px solid #1C1C1E;
@@ -30,6 +42,37 @@ body {
 
 .contend {
     height: 82vh;
+    /* margin-top: 100px; */
+}
+
+.paragraph-power {
+    margin-top: 45px;
+    color: #ffffff;
+    text-shadow: 1px 1px 1px rgba(rgb(103, 103, 103));
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    background-color: #c96800;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: 'Rubik';
+    text-align: center;
+}
+
+.paragraph-information {
+    margin-top: 45px;
+    color: #ffffff;
+    text-shadow: 1px 1px 1px rgba(rgb(103, 103, 103));
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    background-color: #48484a;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: 'Rubik';
+    text-align: center;
+}
+
+.container {
+    margin-top: 90px;
 }
 .contend_map{
     height: 98vh;
@@ -43,9 +86,10 @@ body {
 }
 
 .footer {
-    /* position: absolute;
-    bottom: 5px; */
+    bottom: 0px;
+    position: fixed;
     width: 99.8vw;
+    background: #000;
 }
 
 .footer-line {
@@ -84,6 +128,7 @@ a {
 .iframe_div{
     width: 100%;
     height: 100%;
+    margin-top: 67px;
 }
 
 /* home */

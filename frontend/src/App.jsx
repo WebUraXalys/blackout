@@ -9,7 +9,7 @@ function App() {
     <div className="App">
         <Router>
             <Header/>
-            <div className="contend">
+            <div className="contend" >
               <AppRouter/>
             </div>
             <Footer/>

@@ -21,7 +21,7 @@ const Timer = () => {
 
 
     return (
-        <div>
+        <div className='container'>
             {open && (
                 <LocationForm setOpen={setOpen} create={createLocation} setLocations={setLocations}/>
             )}

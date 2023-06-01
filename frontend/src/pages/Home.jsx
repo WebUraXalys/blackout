@@ -20,9 +20,6 @@ function Home() {
 
 	     return (
 			<div className="div main_container_home">
-			{/* // 	<div>
-      //       <LocationList locations={locations}/>
-      //  	 </div> */}
          <div className="container">
             <Card sx={{ height: 165, width: 180, display: 'flex', background: '#48484a', margin: '15px 23.5%', border: '1px solid #ffd60a'}}>
 
@@ -39,7 +36,6 @@ function Home() {
                 <CardContent sx={{display: 'flex',alignItems: 'center', justifyContent: 'center', padding: '10px 0 5px 0'}}>
                     <ElectricBoltOutlinedIcon sx={{fontSize: '25px', color: '#0a8f37'}}/>
                     <Typography sx={{color: '#8e8e91'}} variant="h7">
-                        {/*{location.electricity}*/}
                         false
                     </Typography>
                 </CardContent>
@@ -54,7 +50,16 @@ function Home() {
 
             </CardActionArea>
         </Card>
-            {/* <CardAdd handleOpen={handleOpen}/> */}
+
+        <p class="paragraph-power">
+            ! АВАРІЙНІ ВИМКНЕННЯ !
+            <br></br>
+            зафіксовані у львівській області
+        </p>
+        <p class="paragraph-information">
+            Текст про Blackout
+        </p>
+
         </div>
 		</div>
     );
