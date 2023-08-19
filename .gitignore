@@ -10,6 +10,7 @@ debug/
 target/
 venv/
 env/
+media/
 *.sqlite3
 *.sqlite3-journal
 *.json

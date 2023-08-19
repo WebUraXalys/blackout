@@ -1,8 +1,8 @@
 import string
 from random import choice
 from django.db import migrations
-from django.contrib.auth.models import User
 from django.conf import settings
+from user.models import User
 from django.core.mail import send_mail
 
 

@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from user.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
