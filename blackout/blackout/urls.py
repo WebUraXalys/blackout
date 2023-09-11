@@ -4,6 +4,8 @@ from django.contrib.auth import views as auth_views
 from django.views.generic.base import RedirectView
 from rest_framework.routers import DefaultRouter
 from parserapp.views import  StreetViewSet, InterruptionViewSet
+from django.conf import settings
+from django.conf.urls.static import static
 
 router = DefaultRouter()
 router.register('streets', StreetViewSet, basename='streets')
@@ -38,4 +40,4 @@ urlpatterns = [
     ),
     path("admin/", admin.site.urls),
     path("cities/", include("parserapp.urls")),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
