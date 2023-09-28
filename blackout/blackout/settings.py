@@ -1,13 +1,8 @@
 import os
 from pathlib import Path
-<<<<<<< HEAD
 from datetime import timedelta
 from dotenv import load_dotenv
 
-=======
-from dotenv import load_dotenv
-import os
->>>>>>> origin/deploy-ready
 
 load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -23,11 +18,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-<<<<<<< HEAD
 ALLOWED_HOSTS = [os.getenv('SERVER_URL'), '127.0.0.1']
-=======
-ALLOWED_HOSTS = [os.getenv('SERVER_URL')]
->>>>>>> origin/deploy-ready
 
 
 # Application definition

@@ -43,4 +43,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("cities/", include("parserapp.urls")),
     path('api/', include('cards.urls'))
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] 
+# + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
