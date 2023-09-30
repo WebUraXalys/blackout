@@ -32,8 +32,8 @@ class ChangePasswordApiView(UpdateAPIView):
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         result = {
-            "message": "success",
-            "status": 200
+            'message': 'success',
+            'status': 200
         }
         return Response(result)
 
@@ -53,8 +53,8 @@ class APILogoutView(APIView):
         if self.request.data.get('all'):
             for token in OutstandingToken.objects.filter(user=request.user):
                 _, _ = BlacklistedToken.objects.get_or_create(token=token)
-            return Response({"status": "OK, goodbye, all refresh tokens blacklisted"})
+            return Response({'status': 'OK, goodbye, all refresh tokens blacklisted'})
         refresh_token = self.request.data.get('refresh_token')
         token = RefreshToken(token=refresh_token)
         token.blacklist()
-        return Response({"status": "OK, goodbye"})
+        return Response({'status': 'OK, goodbye'})

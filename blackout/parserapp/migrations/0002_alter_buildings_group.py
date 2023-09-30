@@ -6,19 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("parserapp", "0001_initial"),
+        ('parserapp', '0001_initial'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name="buildings",
-            name="Group",
+            model_name='buildings',
+            name='Group',
             field=models.CharField(
                 blank=True,
-                choices=[("First", "First"), ("Second", "Second"), ("Third", "Third")],
+                choices=[('First', 'First'), ('Second', 'Second'), ('Third', 'Third')],
                 max_length=10,
                 null=True,
-                verbose_name="Group",
+                verbose_name='Group',
             ),
         ),
     ]
