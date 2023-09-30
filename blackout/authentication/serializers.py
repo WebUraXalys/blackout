@@ -14,14 +14,15 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['email'] = user.email
         return token
 
+
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(required=True, write_only=True, validators=[validate_password])
     password2 = serializers.CharField(required=True, write_only=True)
     email = serializers.CharField(required=True, validators=[validate_email])
+
     class Meta:
         model = User
         fields = ('username', 'email', 'password', 'password2')
-
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
@@ -30,24 +31,27 @@ class RegisterSerializer(serializers.ModelSerializer):
         if User.objects.filter(email=attrs['email']).exists():
             raise ValidationError({'email': 'Email already exist'})
 
-
         return attrs
 
     def create(self, validated_data):
-        user = User(
-            username=validated_data['username'],
-            email = self.validated_data['email']
-        )
+        user = User(username=validated_data['username'], email=self.validated_data['email'])
 
         user.set_password(validated_data['password'])
         user.save()
 
         return user
 
+
 class ChangePasswordSerializer(serializers.ModelSerializer):
     password = serializers.CharField(required=True, write_only=True, validators=[validate_password])
-    password2 = serializers.CharField(required=True, write_only=True,)
-    old_password = serializers.CharField(required=True, write_only=True,)
+    password2 = serializers.CharField(
+        required=True,
+        write_only=True,
+    )
+    old_password = serializers.CharField(
+        required=True,
+        write_only=True,
+    )
 
     class Meta:
         model = User
@@ -67,21 +71,23 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 
         return value
 
-
     def update(self, instance, validated_data):
         instance.set_password(validated_data['password'])
         instance.save()
 
         return instance
 
+
 class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('email', 'username', 'first_name', 'last_name', 'last_login')
-        extra_kwargs = {'first_name': {'required':False},
-                        'last_name': {'required':False},
-                        'username': {'required':False},
-                        'last_login': {'read_only':True}}
+        extra_kwargs = {
+            'first_name': {'required': False},
+            'last_name': {'required': False},
+            'username': {'required': False},
+            'last_login': {'read_only': True},
+        }
 
     def validate_email(self, value):
         user = self.context['request'].user
@@ -94,4 +100,3 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
         if User.objects.exclude(pk=user.pk).filter(username=value).exists():
             raise serializers.ValidationError({'username': 'This username is already in use.'})
         return value
-    

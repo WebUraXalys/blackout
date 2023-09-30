@@ -13,9 +13,7 @@ def geocoding_process():
     number = len(buildings)
     err = 0
     for building in buildings:
-        address = cur.execute(
-            f'SELECT Name, City FROM parserapp_streets WHERE id = {building[3]}'
-        ).fetchone()
+        address = cur.execute(f'SELECT Name, City FROM parserapp_streets WHERE id = {building[3]}').fetchone()
         street = address[0]
         city = address[1]
         address = f'{building[1]} {street} вулиця, {city}, Львівська область, Україна'
@@ -45,9 +43,7 @@ def geocode_addresses(b_id, address):
 
 
 def update_address(long, lat, b_id):
-    cur.execute(
-        f'UPDATE parserapp_buildings SET Longitude = {long}, Latitude = {lat} WHERE id = {b_id}'
-    )
+    cur.execute(f'UPDATE parserapp_buildings SET Longitude = {long}, Latitude = {lat} WHERE id = {b_id}')
     connection.commit()
 
 
@@ -55,6 +51,4 @@ if __name__ == '__main__':
     start = datetime.datetime.now()
     count = geocoding_process()
     time = datetime.datetime.now() - start
-    print(
-        f'Швидкість геокодера: {count / time.total_seconds() * 3600 * 24} записів/день'
-    )
+    print(f'Швидкість геокодера: {count / time.total_seconds() * 3600 * 24} записів/день')

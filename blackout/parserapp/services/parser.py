@@ -25,7 +25,7 @@ MONTHS = {
 }
 DEFAULT_SAVES_DIRECTORY = str(BASE_DIR.parent.joinpath('tmp'))
 if not os.path.isdir(DEFAULT_SAVES_DIRECTORY):
-    os.makedirs(DEFAULT_SAVES_DIRECTORY+'/saved/')
+    os.makedirs(DEFAULT_SAVES_DIRECTORY + '/saved/')
 
 
 def start_browser():
@@ -35,19 +35,24 @@ def start_browser():
     s = Service(executable_path='path_to_chromedriver')
     driver = webdriver.Chrome(service=s, options=options)
 
-    driver.execute_cdp_cmd('Page.addScriptToEvaluateOnNewDocument', {
-        'source': '''
+    driver.execute_cdp_cmd(
+        'Page.addScriptToEvaluateOnNewDocument',
+        {
+            'source': '''
             delete window.cdc_adoQpoasnfa76pfcZLmcfl_Array;
             delete window.cdc_adoQpoasnfa76pfcZLmcfl_Promise;
             delete window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol;
       '''
-    })
+        },
+    )
     return driver
 
 
 def get_page(driver):
-    url = 'https://poweroff.loe.lviv.ua/search_off?csrfmiddlewaretoken=RQrf7SkNXi1AM9WNlaRv50wMeqqoDa5I' \
-          'LN7t6S0PNd5eR7zOaXc9Iy5QgxG1mld2&city=&street=&otg=&q=%D0%9F%D0%BE%D1%88%D1%83%D0%BA'
+    url = (
+        'https://poweroff.loe.lviv.ua/search_off?csrfmiddlewaretoken=RQrf7SkNXi1AM9WNlaRv50wMeqqoDa5I'
+        'LN7t6S0PNd5eR7zOaXc9Iy5QgxG1mld2&city=&street=&otg=&q=%D0%9F%D0%BE%D1%88%D1%83%D0%BA'
+    )
     try:
         driver.get(url)
         time.sleep(10)
@@ -63,6 +68,7 @@ def get_page(driver):
 def split_buildings(buildings: str):
     return [build for build in buildings.split(', ') if build != '']
 
+
 def parse_poweroff_row(row):
     table_cell = row.find_all('td')
     buildings = split_buildings(table_cell[3].text)
@@ -75,7 +81,7 @@ def parse_poweroff_row(row):
         'buildings': buildings,
         'type_off': table_cell[4].text,
         'time_on': table_cell[5].text,
-        'time_off': table_cell[6].text
+        'time_off': table_cell[6].text,
     }
 
 
@@ -114,7 +120,6 @@ def save_powroffs(interruptions, date):
         json.dump(interruptions, f, ensure_ascii=False, indent=4)
 
 
-
 def get_save_files(saves_folder):
     files = os.listdir(saves_folder)
     files = filter(lambda f: '.json' in f, files)  # Filters all not json files from list
@@ -122,15 +127,13 @@ def get_save_files(saves_folder):
 
 
 def create_interruption_from_save(save):
-    interruption = save_interruption(
-        time_off=save['time_off'],
-        time_on=save['time_on']
-    )
+    interruption = save_interruption(time_off=save['time_off'], time_on=save['time_on'])
     return interruption
 
 
 def street_name_is_valid(street) -> bool:
     return street != 'Не Визначена' or '"' not in street
+
 
 def update_buildings(buildings):
     buildings_list = []
@@ -140,6 +143,7 @@ def update_buildings(buildings):
         if len(build) != 0:
             buildings_list.append(build.lower())
     return buildings_list
+
 
 def create_street_from_save(save) -> int:
     street_name = save['street']

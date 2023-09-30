@@ -6,16 +6,24 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
 from rest_framework_simplejwt.tokens import RefreshToken
 from user.models import User
-from .serializers import RegisterSerializer, MyTokenObtainPairSerializer, ChangePasswordSerializer, UpdateProfileSerializer
+from .serializers import (
+    RegisterSerializer,
+    MyTokenObtainPairSerializer,
+    ChangePasswordSerializer,
+    UpdateProfileSerializer,
+)
+
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
     permission_classes = (AllowAny,)
 
+
 class RegisterApiView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = (AllowAny,)
+
 
 class ChangePasswordApiView(UpdateAPIView):
     queryset = User.objects.all()
@@ -31,11 +39,9 @@ class ChangePasswordApiView(UpdateAPIView):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
-        result = {
-            'message': 'success',
-            'status': 200
-        }
+        result = {'message': 'success', 'status': 200}
         return Response(result)
+
 
 class UpdateProfileApiView(UpdateAPIView, RetrieveAPIView):
     queryset = User.objects.all()

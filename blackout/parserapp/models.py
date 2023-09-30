@@ -45,7 +45,6 @@ class Interruptions(models.Model):
 
     def __str__(self):
         if self.Start and self.End:
-
             time_start = self.Start.time().strftime('%H:%M')
             time_end = self.End.time().strftime('%H:%M')
             return f'{time_start} - {time_end}'

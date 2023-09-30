@@ -104,13 +104,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%d/%m/%Y %H:%M:%S',
-    'DATETIME_INPUT_FORMATS': ['%d/%m/%Y %H:%M:%S',],
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
+    'DATETIME_INPUT_FORMATS': [
+        '%d/%m/%Y %H:%M:%S',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework_simplejwt.authentication.JWTAuthentication',),
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
 }
 
 AUTH_USER_MODEL = 'user.User'

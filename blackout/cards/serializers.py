@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from .models import Cards
 
-class CardsSerializer(serializers.ModelSerializer):
 
+class CardsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cards
         exclude = ('Owner',)
@@ -14,7 +14,7 @@ class CardsSerializer(serializers.ModelSerializer):
         data['Owner'] = instance.Owner.username
         return data
 
-    def create(self,validated_data):
+    def create(self, validated_data):
         validated_data['Owner'] = self.context['request'].user
         obj = Cards.objects.create(**validated_data)
         return obj

@@ -6,7 +6,6 @@ from .serializers import CardsSerializer
 from .models import Cards
 
 
-
 class ChangeCardApiView(RetrieveUpdateDestroyAPIView):
     queryset = Cards.objects.all()
     serializer_class = CardsSerializer
@@ -25,7 +24,6 @@ class CreateCardsApiView(ListCreateAPIView):
 
     def get_queryset(self):
         return Cards.objects.filter(Owner=self.request.user)
-
 
     def list(self, request):
         queryset = self.get_queryset()

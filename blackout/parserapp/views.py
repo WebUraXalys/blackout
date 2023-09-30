@@ -17,10 +17,9 @@ class BuildingList(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         for street in Streets.objects.all():
-            if fuzz.partial_ratio(street.Name, self.request.data.get('Street'))>70:
+            if fuzz.partial_ratio(street.Name, self.request.data.get('Street')) > 70:
                 Street = get_object_or_404(Streets, Name=street.Name)
         return serializer.save(Street=Street)
-
 
 
 class BuildingDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -49,7 +48,6 @@ class CoordinatesApiView(generics.ListAPIView):
     queryset = Buildings.objects.all()
     serializer_class = CoordinatesSerializer
 
-
     def list(self, request):
         coordinates = []
         authenticated = request.user.is_authenticated
@@ -61,9 +59,9 @@ class CoordinatesApiView(generics.ListAPIView):
 
         for street in streets:
             builds_of_street = Buildings.objects.filter(Street=street, Interruption__End__gte=datetime.now())
-            for build in builds_of_street: 
+            for build in builds_of_street:
                 if build.Longitude or build.Latitude:
-                    coordinates.append((float(build.Longitude), float(build.Latitude))) 
+                    coordinates.append((float(build.Longitude), float(build.Latitude)))
 
         if coordinates:
             return Response({'message': 'ok', 'Coordinates': coordinates})

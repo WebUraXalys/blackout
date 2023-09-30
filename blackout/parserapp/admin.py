@@ -28,7 +28,7 @@ class StreetsAdmin(ExtraButtonsMixin, admin.ModelAdmin):
         self.message_user(request, 'Saved all jsons')
 
         return HttpResponseRedirectToReferrer(request)
-    
+
 
 @admin.register(Buildings)
 class BuildingsAdmin(admin.ModelAdmin):
