@@ -12,9 +12,7 @@ def user_directory_path(instance, filename):
 
 
 class UserManager(BaseUserManager):
-    
     def create_user(self, username, email, password=None, **kwargs):
-        
         if username is None:
             raise TypeError('User must have an username')
         if email is None:
@@ -22,16 +20,13 @@ class UserManager(BaseUserManager):
         if password is None:
             raise TypeError('User must have a password')
 
-        user = self.model(
-            username=username, email=self.normalize_email(email), **kwargs
-        )
+        user = self.model(username=username, email=self.normalize_email(email), **kwargs)
         user.set_password(password)
         user.save(using=self._db)
 
         return user
 
     def create_superuser(self, username, email, password, **kwargs):
-        
         user = self.create_user(username, email, password, **kwargs)
 
         user.is_staff = True

@@ -3,7 +3,7 @@ from ...services.parser import save_data
 
 
 class Command(BaseCommand):
-    help = "Saves all collected data in JSON to DB"
+    help = 'Saves all collected data in JSON to DB'
 
     def handle(self, *args, **options):
         save_data()

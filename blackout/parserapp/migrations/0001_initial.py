@@ -15,87 +15,87 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="Interruptions",
+            name='Interruptions',
             fields=[
                 (
-                    "id",
+                    'id',
                     models.BigAutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        verbose_name="ID",
+                        verbose_name='ID',
                     ),
                 ),
-                ("Start", models.DateTimeField(null=True, verbose_name="Start")),
-                ("End", models.DateTimeField(null=True, verbose_name="End")),
+                ('Start', models.DateTimeField(null=True, verbose_name='Start')),
+                ('End', models.DateTimeField(null=True, verbose_name='End')),
                 (
-                    "Type",
+                    'Type',
                     models.CharField(
-                        choices=[("Plan", "Plan"), ("Emergency", "Emergency")],
-                        default="Plan",
+                        choices=[('Plan', 'Plan'), ('Emergency', 'Emergency')],
+                        default='Plan',
                         max_length=10,
-                        verbose_name="Type",
+                        verbose_name='Type',
                     ),
                 ),
             ],
             options={
-                "verbose_name": "Interruption",
-                "verbose_name_plural": "Interruptions",
+                'verbose_name': 'Interruption',
+                'verbose_name_plural': 'Interruptions',
             },
         ),
         migrations.CreateModel(
-            name="Streets",
+            name='Streets',
             fields=[
                 (
-                    "id",
+                    'id',
                     models.BigAutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        verbose_name="ID",
+                        verbose_name='ID',
                     ),
                 ),
-                ("Name", models.CharField(max_length=40, verbose_name="Name")),
-                ("City", models.CharField(max_length=40, verbose_name="City")),
-                ("OTG", models.CharField(max_length=40, verbose_name="OTG")),
-                ("Region", models.CharField(max_length=40, verbose_name="Region")),
+                ('Name', models.CharField(max_length=40, verbose_name='Name')),
+                ('City', models.CharField(max_length=40, verbose_name='City')),
+                ('OTG', models.CharField(max_length=40, verbose_name='OTG')),
+                ('Region', models.CharField(max_length=40, verbose_name='Region')),
             ],
             options={
-                "verbose_name": "Street",
-                "verbose_name_plural": "Streets",
+                'verbose_name': 'Street',
+                'verbose_name_plural': 'Streets',
             },
         ),
         migrations.CreateModel(
-            name="Buildings",
+            name='Buildings',
             fields=[
                 (
-                    "id",
+                    'id',
                     models.BigAutoField(
                         auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        verbose_name="ID",
+                        verbose_name='ID',
                     ),
                 ),
-                ("Address", models.CharField(max_length=4, verbose_name="Address")),
+                ('Address', models.CharField(max_length=4, verbose_name='Address')),
                 (
-                    "Group",
+                    'Group',
                     models.CharField(
                         blank=True,
                         choices=[
-                            ("First", "First"),
-                            ("Second", "Second"),
-                            ("Third", "Third"),
+                            ('First', 'First'),
+                            ('Second', 'Second'),
+                            ('Third', 'Third'),
                         ],
                         max_length=10,
 
                         null=True,
 
-                        verbose_name="Group",
+                        verbose_name='Group',
                     ),
                 ),
                 (
-                    "Longitude",
+                    'Longitude',
                     models.DecimalField(
                         blank=True,
                         decimal_places=5,
@@ -108,7 +108,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "Latitude",
+                    'Latitude',
                     models.DecimalField(
                         blank=True,
                         decimal_places=5,
@@ -121,28 +121,28 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    "Interruption",
+                    'Interruption',
                     models.ForeignKey(
                         blank=True,
                         default=None,
                         null=True,
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="parserapp.interruptions",
+                        to='parserapp.interruptions',
                     ),
                 ),
                 (
-                    "Street",
+                    'Street',
                     models.ForeignKey(
                         null=True,
                         on_delete=django.db.models.deletion.CASCADE,
-                        to="parserapp.streets",
-                        verbose_name="Street",
+                        to='parserapp.streets',
+                        verbose_name='Street',
                     ),
                 ),
             ],
             options={
-                "verbose_name": "Building",
-                "verbose_name_plural": "Buildings",
+                'verbose_name': 'Building',
+                'verbose_name_plural': 'Buildings',
             },
         ),
     ]

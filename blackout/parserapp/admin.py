@@ -8,8 +8,8 @@ from .services.parser import start_browser, get_page, save_data, scrap_data
 
 @admin.register(Streets)
 class StreetsAdmin(ExtraButtonsMixin, admin.ModelAdmin):
-    list_display = ["pk", "Name", "City", "OTG", "Region"]
-    ordering = ["Name"]
+    list_display = ['pk', 'Name', 'City', 'OTG', 'Region']
+    ordering = ['Name']
 
     @button(html_attrs={'style': 'background-color:#88FF88;color:black'})
     def parse(self, request):
@@ -17,7 +17,7 @@ class StreetsAdmin(ExtraButtonsMixin, admin.ModelAdmin):
         page = get_page(driver)
         counts = scrap_data(page)
 
-        self.message_user(request, f"Parser finished. Saved in JSON {counts} rows")
+        self.message_user(request, f'Parser finished. Saved in JSON {counts} rows')
 
         return HttpResponseRedirectToReferrer(request)
 
@@ -25,34 +25,34 @@ class StreetsAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     def save(self, request):
         save_data()
 
-        self.message_user(request, "Saved all jsons")
+        self.message_user(request, 'Saved all jsons')
 
         return HttpResponseRedirectToReferrer(request)
-    
+
 
 @admin.register(Buildings)
 class BuildingsAdmin(admin.ModelAdmin):
     list_display = [
-        "pk",
-        "Address",
-        "Street",
-        "Group",
-        "Interruption",
-        "get_type_interruption",
-        "Longitude",
-        "Latitude",
+        'pk',
+        'Address',
+        'Street',
+        'Group',
+        'Interruption',
+        'get_type_interruption',
+        'Longitude',
+        'Latitude',
     ]
-    ordering = ["pk"]
+    ordering = ['pk']
 
     def get_type_interruption(self, obj):
         if obj.Interruption:
             return obj.Interruption.Type
         return None
 
-    get_type_interruption.short_description = "Type Interruption"
+    get_type_interruption.short_description = 'Type Interruption'
 
 
 @admin.register(Interruptions)
 class InterruptionAdmin(admin.ModelAdmin):
-    list_display = ["pk", "Start", "End", "Type"]
-    ordering = ["pk"]
+    list_display = ['pk', 'Start', 'End', 'Type']
+    ordering = ['pk']

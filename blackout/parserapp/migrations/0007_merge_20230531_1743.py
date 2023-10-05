@@ -5,8 +5,8 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("parserapp", "0002_first_user"),
-        ("parserapp", "0006_alter_streets_slug_city_alter_streets_slug_street"),
+        ('parserapp', '0002_first_user'),
+        ('parserapp', '0006_alter_streets_slug_city_alter_streets_slug_street'),
     ]
 
     operations = []
